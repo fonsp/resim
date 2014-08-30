@@ -1,0 +1,5 @@
+C:\dev\Projects\resim\Resim\bin\Release\Resim.exe.config
+C:\dev\Projects\resim\Resim\bin\Release\Resim.exe
+C:\dev\Projects\resim\Resim\bin\Release\Resim.pdb
+C:\dev\Projects\resim\Resim\obj\Release\Resim.exe
+C:\dev\Projects\resim\Resim\obj\Release\Resim.pdb
