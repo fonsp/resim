@@ -1,6 +1,0 @@
-C:\dev\Projects\resim\Resim\bin\Debug\Resim.exe.config
-C:\dev\Projects\resim\Resim\bin\Debug\Resim.exe
-C:\dev\Projects\resim\Resim\bin\Debug\Resim.pdb
-C:\dev\Projects\resim\Resim\obj\Debug\Resim.csprojResolveAssemblyReference.cache
-C:\dev\Projects\resim\Resim\obj\Debug\Resim.exe
-C:\dev\Projects\resim\Resim\obj\Debug\Resim.pdb
