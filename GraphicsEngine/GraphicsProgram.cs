@@ -1,21 +1,12 @@
-﻿// GraphicsProgram.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using GraphicsLibrary.Core;
 
-
 namespace GraphicsLibrary
 {
-	/* Deze class moet overridden worden door het spel
-	 * Verder wordt hier het .log-bestand aangemaakt
-	 */
-	public class GraphicsProgram : IDisposable
+	public class GraphicsProgram:IDisposable
 	{
 		public bool enableLogging;
 		public string logFilename;
@@ -25,21 +16,21 @@ namespace GraphicsLibrary
 
 		public GraphicsProgram(string[] arguments, bool enableLogging, string logFilename)
 		{
-			
+
 			RenderWindow.Instance.program = this;
 			this.enableLogging = enableLogging;
 			this.logFilename = logFilename;
 			programArguments = arguments;
 
 			Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
-			if (enableLogging)
+			if(enableLogging)
 			{
 				try
 				{
-					StreamWriter streamWriter = new StreamWriter(new FileStream(logFilename, FileMode.Append)) {AutoFlush = true};
+					StreamWriter streamWriter = new StreamWriter(new FileStream(logFilename, FileMode.Append)) { AutoFlush = true };
 					Debug.Listeners.Add(new TextWriterTraceListener(streamWriter));
 				}
-				catch (Exception exception)
+				catch(Exception exception)
 				{
 					Debug.WriteLine("Failed to create log file. Make sure you have admin rights and close all processes using this file: {0}", exception.Message);
 				}
@@ -52,7 +43,7 @@ namespace GraphicsLibrary
 			Debug.WriteLine("---------------");
 			Debug.WriteLine("Program launched at " + DateTime.Now);
 			Debug.Write("Received arguments: ");
-			foreach (string s in programArguments)
+			foreach(string s in programArguments)
 			{
 				Debug.Write(s + ", ");
 			}
@@ -62,7 +53,7 @@ namespace GraphicsLibrary
 		public virtual void LoadResources()
 		{
 
-			
+
 		}
 
 		public virtual void InitGame()
@@ -72,12 +63,12 @@ namespace GraphicsLibrary
 
 		public virtual void Update(float timeSinceLastUpdate)
 		{
-			
+
 		}
 
 		public virtual void Resize(Rectangle newDimensions)
 		{
-			
+
 		}
 
 		public void Run()

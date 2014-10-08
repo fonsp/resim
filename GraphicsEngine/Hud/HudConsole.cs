@@ -1,22 +1,12 @@
-﻿// HudDebug.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-using System;
-
+﻿using System;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
 
 namespace GraphicsLibrary.Hud
 {
-	/* Een HudConsole is een HudElement met een reeks TextFields met een zwarte achtergrond
-	 * Het werkt net als een console/terminal op een PC
-	 * 
-	 * Met tab of ~ kan het ogpebracht worden in het spel
-	 */
-	public class HudDebugInputEventArgs : EventArgs
+	public class HudDebugInputEventArgs:EventArgs
 	{
 		private readonly string input;
 		private readonly string[] inputArray;
@@ -24,7 +14,7 @@ namespace GraphicsLibrary.Hud
 		public HudDebugInputEventArgs(string input)
 		{
 			this.input = input;
-			inputArray = input.Split(new char[]{' '});
+			inputArray = input.Split(new char[] { ' ' });
 		}
 
 		public string Input
@@ -45,7 +35,7 @@ namespace GraphicsLibrary.Hud
 	}
 	public delegate void HudDebugInputHandler(object sender, HudDebugInputEventArgs e);
 
-	public class HudDebug : HudElement
+	public class HudDebug:HudElement
 	{
 		public event HudDebugInputHandler DebugInput;
 
@@ -58,7 +48,7 @@ namespace GraphicsLibrary.Hud
 			}
 			set
 			{
-				if (numberOfLines != value)
+				if(numberOfLines != value)
 				{
 					numberOfLines = value;
 					UpdateTextFields();
@@ -79,7 +69,7 @@ namespace GraphicsLibrary.Hud
 			set
 			{
 				fontTextureName = value;
-				foreach (TextField t in textFields)
+				foreach(TextField t in textFields)
 				{
 					t.textMaterial.textureName = fontTextureName;
 				}
@@ -97,7 +87,7 @@ namespace GraphicsLibrary.Hud
 			set
 			{
 				textColor = value;
-				foreach (TextField t in textFields)
+				foreach(TextField t in textFields)
 				{
 					t.textMaterial.baseColor = textColor;
 				}
@@ -118,7 +108,7 @@ namespace GraphicsLibrary.Hud
 			set
 			{
 				size = value;
-				foreach (TextField t in textFields)
+				foreach(TextField t in textFields)
 				{
 					t.size = value;
 				}
@@ -129,32 +119,47 @@ namespace GraphicsLibrary.Hud
 		private TextField[] textFields;
 		private TextField inputField = new TextField("asdf");
 
-		public HudDebug(string name, uint numberOfLines) : base(name)
+		public HudDebug(string name, uint numberOfLines)
+			: base(name)
 		{
 			this.numberOfLines = numberOfLines;
-			
+
 			UpdateTextFields();
 
 			RenderWindow.Instance.KeyPress += HandleKeyPress;
+			RenderWindow.Instance.KeyDown += HandleKeyDown;
 		}
 
-		private void HandleKeyPress(object sender, KeyPressEventArgs e)
+		private void HandleKeyDown(object sender, KeyboardKeyEventArgs e)
 		{
-			if (enabled)
+			if(enabled)
 			{
-				byte key = (byte) e.KeyChar;
-				if (key == 8) //BACKSPACE
+				if(e.Key == Key.BackSpace)
 				{
-					if (input.Length > 0)
+					if(input.Length > 0)
 						input = input.Remove(input.Length - 1);
 				}
-				else if (key == 13) //ENTER
+				else if(e.Key == Key.Enter || e.Key == Key.KeypadEnter)
 				{
-					if (DebugInput != null)
+					if(DebugInput != null)
 					{
 						DebugInput(this, new HudDebugInputEventArgs(input));
 					}
 					input = "";
+				}
+			}
+		}
+
+		private void HandleKeyPress(object sender, KeyPressEventArgs e)
+		{
+			if(enabled)
+			{
+				byte key = (byte)e.KeyChar;
+				if(key == 8) //BACKSPACE
+				{
+				}
+				else if(key == 13) //ENTER
+				{
 				}
 				else
 				{
@@ -167,7 +172,7 @@ namespace GraphicsLibrary.Hud
 		{
 			height = size * (numberOfLines + 1);
 			textFields = new TextField[numberOfLines];
-			for (int i = 0; i < numberOfLines; i++)
+			for(int i = 0; i < numberOfLines; i++)
 			{
 				textFields[i] = new TextField("asdf");
 				textFields[i].text = "";
@@ -189,7 +194,7 @@ namespace GraphicsLibrary.Hud
 
 		public void ClearScreen()
 		{
-			foreach (TextField t in textFields)
+			foreach(TextField t in textFields)
 			{
 				t.text = "";
 			}
@@ -197,25 +202,26 @@ namespace GraphicsLibrary.Hud
 
 		public void AddLine(string s)
 		{
-			for (int i = 0; i < numberOfLines - 1; i++)
+			for(int i = 0; i < numberOfLines - 1; i++)
 			{
 				textFields[i].text = textFields[i + 1].text;
 			}
-			textFields[numberOfLines-1].text = s;
+			textFields[numberOfLines - 1].text = s;
 		}
 
 		public override void Render()
 		{
-			if (isVisible)
+			if(isVisible)
 			{
 				#region Background
+
 				GL.Disable(EnableCap.Texture2D);
 
 				GL.MatrixMode(MatrixMode.Modelview);
 				GL.PushMatrix();
 				GL.Translate(position.X, position.Y, 0);
 
-				GL.Begin(BeginMode.Quads);
+				GL.Begin(PrimitiveType.Quads);
 				GL.Color4(backgroundColor);
 
 				GL.Vertex2(00, 00);
@@ -223,7 +229,7 @@ namespace GraphicsLibrary.Hud
 				GL.Vertex2(width * derivedScale.X, height * derivedScale.Y);
 				GL.Vertex2(00, height * derivedScale.Y);
 
-				GL.Vertex2(00, (height * derivedScale.Y)-size);
+				GL.Vertex2(00, (height * derivedScale.Y) - size);
 				GL.Vertex2(width * derivedScale.X, (height * derivedScale.Y) - size);
 				GL.Vertex2(width * derivedScale.X, height * derivedScale.Y);
 				GL.Vertex2(00, height * derivedScale.Y);
@@ -233,18 +239,21 @@ namespace GraphicsLibrary.Hud
 				GL.PopMatrix();
 
 				GL.Enable(EnableCap.Texture2D);
+
 				#endregion
 				#region Lines
-				for (int i = 0; i < numberOfLines; i++)
+
+				for(int i = 0; i < numberOfLines; i++)
 				{
 					textFields[i].position = derivedPosition + new Vector2(0, i * size);
 					textFields[i].Render();
 				}
+
 				#endregion
 				#region Input line
 
 				inputField.text = inputPrefix + input;
-				inputField.position = derivedPosition + new Vector2(0, numberOfLines*size);
+				inputField.position = derivedPosition + new Vector2(0, numberOfLines * size);
 				inputField.Render();
 
 				#endregion

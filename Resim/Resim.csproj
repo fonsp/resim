@@ -44,8 +44,6 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Logic\Weapon.cs" />
-    <Compile Include="Program\Equipment.cs" />
     <Compile Include="Program\InitGame.cs" />
     <Compile Include="Program\InitNetwork.cs" />
     <Compile Include="Program\LoadResources.cs" />

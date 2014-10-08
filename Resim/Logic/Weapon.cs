@@ -1,29 +1,5 @@
-﻿using GraphicsLibrary.Core;
-
-namespace Resim.Logic
+﻿namespace Resim.Logic
 {
-	/* Projectiles worden nog niet gebruikt
-	 */
-	public class Projectile:Entity
-	{
-		public bool ExplodeOnImpact;
-
-		public Projectile(string name, Mesh mesh, bool explodeOnImpact)
-			: base(name)
-		{
-			ExplodeOnImpact = explodeOnImpact;
-		}
-	}
-	public class ProjectileWeapon:Weapon
-	{
-		public Projectile Projectile;
-
-		public ProjectileWeapon(string name, int price, Projectile projectile, float fireRate)
-			: base(WeaponType.Projectile, name, price, fireRate)
-		{
-			Projectile = projectile;
-		}
-	}
 	public class MeleeWeapon:Weapon
 	{
 		public float Range;
@@ -66,8 +42,7 @@ namespace Resim.Logic
 			BulletsPerMagazine = bulletsPerMagazine;
 		}
 	}
-	/* De basisclass voor een weapon, alle andere weapons overriden deze class
-	 */
+
 	public class Weapon
 	{
 		public float FireRate;

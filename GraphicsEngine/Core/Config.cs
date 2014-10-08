@@ -1,9 +1,4 @@
-﻿// Config.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -12,9 +7,6 @@ using System.Threading;
 
 namespace GraphicsLibrary.Core
 {
-	/* Deze class zet waardes van een config bestand om in bruikbare variablen
-	 * zie het config bestand Game.ini
-	 */
 	public class Config
 	{
 		private readonly string fileName;
@@ -31,7 +23,7 @@ namespace GraphicsLibrary.Core
 
 		public bool GetBool(string name)
 		{
-			if (!bools.ContainsKey(name))
+			if(!bools.ContainsKey(name))
 			{
 				throw new KeyNotFoundException();
 			}
@@ -40,7 +32,7 @@ namespace GraphicsLibrary.Core
 
 		public string GetString(string name)
 		{
-			if (!strings.ContainsKey(name))
+			if(!strings.ContainsKey(name))
 			{
 				throw new KeyNotFoundException();
 			}
@@ -49,7 +41,7 @@ namespace GraphicsLibrary.Core
 
 		public int GetInt(string name)
 		{
-			if (!ints.ContainsKey(name))
+			if(!ints.ContainsKey(name))
 			{
 				throw new KeyNotFoundException();
 			}
@@ -58,7 +50,7 @@ namespace GraphicsLibrary.Core
 
 		public double GetDouble(string name)
 		{
-			if (!doubles.ContainsKey(name))
+			if(!doubles.ContainsKey(name))
 			{
 				throw new KeyNotFoundException();
 			}
@@ -78,11 +70,11 @@ namespace GraphicsLibrary.Core
 
 			string[] fileSplit0 = file.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-			foreach (string line in fileSplit0)
+			foreach(string line in fileSplit0)
 			{
 				string[] fileSplit1 = line.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 				bool error = false;
-				switch (fileSplit1[0])
+				switch(fileSplit1[0])
 				{
 					case ";":
 						//Comment
@@ -93,7 +85,7 @@ namespace GraphicsLibrary.Core
 						{
 							bools.Add(fileSplit1[1], Convert.ToBoolean(fileSplit1[2]));
 						}
-						catch (Exception)
+						catch(Exception)
 						{
 							error = true;
 						}
@@ -104,7 +96,7 @@ namespace GraphicsLibrary.Core
 						{
 							strings.Add(fileSplit1[1], fileSplit1[2]);
 						}
-						catch (Exception)
+						catch(Exception)
 						{
 							error = true;
 						}
@@ -114,7 +106,7 @@ namespace GraphicsLibrary.Core
 						{
 							ints.Add(fileSplit1[1], Convert.ToInt32(fileSplit1[2]));
 						}
-						catch (Exception)
+						catch(Exception)
 						{
 							error = true;
 						}
@@ -124,7 +116,7 @@ namespace GraphicsLibrary.Core
 						{
 							doubles.Add(fileSplit1[1], Convert.ToDouble(fileSplit1[2]));
 						}
-						catch (Exception)
+						catch(Exception)
 						{
 							error = true;
 						}
@@ -133,7 +125,7 @@ namespace GraphicsLibrary.Core
 						error = true;
 						break;
 				}
-				if (error)
+				if(error)
 				{
 					Debug.WriteLine("Error in config file " + fileName + " at line: " + line);
 				}

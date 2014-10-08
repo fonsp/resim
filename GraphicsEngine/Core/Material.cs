@@ -1,22 +1,8 @@
-﻿// Material.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OpenTK.Graphics;
 
 namespace GraphicsLibrary.Core
 {
-	/* Met deze class wordt het kleuren van particles, text en meshes makkelijker
-	 * ook wordt de texture hiering opgeslagen
-	 * 
-	 * Een Material kan ook verschillende kleuren hebben die in elkaar over gaan
-	 * bijvoorbeeld bij vuur, waar de kleur van geel naar rood naar transparant gaat
-	 * 
-	 * Er kunnen ook verschillende textures gebruikt worden, maar deze gaan (nog) niet vloeiend in elkaar over
-	 */
 	public class Material
 	{
 		public string textureName = "default";
@@ -32,7 +18,7 @@ namespace GraphicsLibrary.Core
 
 		public Material()
 		{
-			
+
 		}
 
 		public Material(string textureName, Color4 baseColor)
@@ -71,14 +57,14 @@ namespace GraphicsLibrary.Core
 
 		public string GetCurrentTexture(float fraction)
 		{
-			if (enableTextureTransitions)
+			if(enableTextureTransitions)
 			{
 				string output = textureName;
 				float highestFraction = 0f;
 
-				foreach (TransitionTexture t in transitionTextures)
+				foreach(TransitionTexture t in transitionTextures)
 				{
-					if (t.fraction > highestFraction && t.fraction <= fraction)
+					if(t.fraction > highestFraction && t.fraction <= fraction)
 					{
 						highestFraction = t.fraction;
 						output = t.name;
@@ -96,34 +82,34 @@ namespace GraphicsLibrary.Core
 
 		public Color4 GetCurrentColor(float fraction)
 		{
-			if (enableColorTransitions)
+			if(enableColorTransitions)
 			{
 				TransitionColor low = new TransitionColor(0f, baseColor);
 				TransitionColor high = new TransitionColor(1f, baseColor);
 
-				foreach (TransitionColor t in transitionColors)
+				foreach(TransitionColor t in transitionColors)
 				{
-					if (t.fraction >= low.fraction && t.fraction <= fraction)
+					if(t.fraction >= low.fraction && t.fraction <= fraction)
 					{
 						low.fraction = t.fraction;
 						low = t;
 					}
 
-					if (t.fraction <= high.fraction && t.fraction >= fraction)
+					if(t.fraction <= high.fraction && t.fraction >= fraction)
 					{
 						high.fraction = t.fraction;
 						high = t;
 					}
 				}
-				float highDelta = (fraction - low.fraction)/(high.fraction - low.fraction);
-				float lowDelta = (high.fraction - fraction)/(high.fraction - low.fraction);
+				float highDelta = (fraction - low.fraction) / (high.fraction - low.fraction);
+				float lowDelta = (high.fraction - fraction) / (high.fraction - low.fraction);
 
 				return new Color4(
-					(low.color.R * lowDelta) + (high.color.R * (highDelta)), 
-					(low.color.G * lowDelta) + (high.color.G * (highDelta)), 
-					(low.color.B * lowDelta) + (high.color.B * (highDelta)), 
+					(low.color.R * lowDelta) + (high.color.R * (highDelta)),
+					(low.color.G * lowDelta) + (high.color.G * (highDelta)),
+					(low.color.B * lowDelta) + (high.color.B * (highDelta)),
 					(low.color.A * lowDelta) + (high.color.A * (highDelta)));
-				
+
 			}
 			return baseColor;
 		}

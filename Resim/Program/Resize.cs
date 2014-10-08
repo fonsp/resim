@@ -3,9 +3,6 @@ using OpenTK;
 
 namespace Resim.Program
 {
-	/* Deze functie wordt gebruikt voor het verplaatsen van de HUD-elementen
-	 * Op dit moment is er maar 1 element dat verplaatst moet worden
-	 */
 	public partial class Game
 	{
 		public override void Resize(Rectangle newDimensions)

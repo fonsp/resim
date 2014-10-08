@@ -1,19 +1,9 @@
-﻿// Camera.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-using OpenTK;
+﻿using OpenTK;
 
 namespace GraphicsLibrary.Core
 {
-	/* Deze class is voor de camera
-	 * dit is in principe een Node met wat extra variablen voor OpenGL
-	 */
-	public class Camera : Node
+	public class Camera:Node
 	{
-		/* Omdat er maar 1 camera kan zijn is het een singleton
-		 */
 		#region SingleTon
 		private static Camera instance;
 		public static Camera Instance
@@ -21,7 +11,7 @@ namespace GraphicsLibrary.Core
 			get { return instance ?? (instance = new Camera("MainCamera")); }
 		}
 		#endregion
-		
+
 		public Matrix4 modelview;
 
 		public Matrix4 projection
@@ -75,7 +65,8 @@ namespace GraphicsLibrary.Core
 		public float width;
 		public float height;
 
-		public Camera(string name) : base(name)
+		public Camera(string name)
+			: base(name)
 		{
 
 		}

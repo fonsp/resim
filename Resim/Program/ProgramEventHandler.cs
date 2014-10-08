@@ -7,12 +7,8 @@ using OpenTK;
 
 namespace Resim.Program
 {
-	/* Hier staan alle event handlers
-	 */
 	public partial class Game
 	{
-		/* Deze event wordt opgeroepen als een command in de console wordt getypt
-		 */
 		private void DebugInputReceived(object sender, HudDebugInputEventArgs e)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -91,13 +87,9 @@ namespace Resim.Program
 			}
 		}
 
-		/* Deze event wordt opgeroepen als een letter wordt getypt
-		 * Dit is niet heel handig voor een spel, omdat e.KeyChar afhankelijk is van de taal waarin het toetsenbord is ingesteld
-		 */
 		private void HandleKeyPress(object sender, KeyPressEventArgs e)
 		{
-			//Console.WriteLine("--"+e.KeyChar+"--");
-			if(e.KeyChar == '`' || e.KeyChar == '~' || e.KeyChar == '	') //Tilda werkt niet op europese toetsenborden, daarom werkt tab ook
+			if(e.KeyChar == '`' || e.KeyChar == '~' || e.KeyChar == '	') //Tab to support non-European keyboards
 			{
 				if(hudDebug.enabled)
 				{

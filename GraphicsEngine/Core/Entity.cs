@@ -1,9 +1,4 @@
-﻿// Entity.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-#region References
+﻿#region References
 using GraphicsLibrary.Content;
 
 using OpenTK;
@@ -13,10 +8,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace GraphicsLibrary.Core
 {
-	/* Een Entity is een Node met een mesh
-	 * die naar OpenGL gestuurd wordt tijdens het renderen
-	 */
-	public class Entity : Node
+	public class Entity:Node
 	{
 		public Mesh mesh;
 		public bool isVisible = true;
@@ -26,7 +18,8 @@ namespace GraphicsLibrary.Core
 		public float materialAge = 0;
 		public float materialLifetime = 1;
 
-		public Entity(string name) : base(name)
+		public Entity(string name)
+			: base(name)
 		{
 
 		}
@@ -39,40 +32,38 @@ namespace GraphicsLibrary.Core
 
 		public override void Render(int pass)
 		{
-			if (isVisible && renderPass == pass)
+			if(isVisible && renderPass == pass)
 			{
-				if (!isLit)
+				if(!isLit)
 				{
 					GL.Disable(EnableCap.Lighting);
-					GL.Color4(mesh.material.GetCurrentColor(materialAge/materialLifetime));
+					GL.Color4(mesh.material.GetCurrentColor(materialAge / materialLifetime));
 				}
 
-				if (!writeToDepthBuffer)
+				if(!writeToDepthBuffer)
 				{
 					GL.DepthMask(false);
 				}
 
-				if (derivedScale != new Vector3(1, 1, 1))
+				if(derivedScale != new Vector3(1, 1, 1))
 				{
 					GL.Enable(EnableCap.Normalize);
 				}
 
 				GL.BindTexture(TextureTarget.Texture2D, TextureManager.GetTexture(mesh.material.GetCurrentTexture()));
 
-				GL.PushMatrix(); 
+				GL.PushMatrix();
 
-				//De mesh wordt verplaatst, geschaald en gedraaid
 				Matrix4 mult = Matrix4.Scale(derivedScale) * Matrix4.Rotate(derivedOrientation) * Matrix4.CreateTranslation(derivedPosition);
 				GL.MultMatrix(ref mult);
 
 				GL.Material(MaterialFace.Front, MaterialParameter.Diffuse, mesh.material.GetCurrentColor());
-				// Elke polygon wordt apart naar de GPU gestuurd (immediate mode)
 
-				foreach (Polygon poly in mesh.polygonList)
+				foreach(Polygon poly in mesh.polygonList)
 				{
 					GL.Begin(BeginMode.Polygon);
-					
-					for (int i = 0; i < poly.vertices.Length; i++)
+
+					for(int i = 0; i < poly.vertices.Length; i++)
 					{
 						GL.Normal3(poly.vertices[i].nrm);
 						GL.TexCoord2(poly.vertices[i].tex);
@@ -82,19 +73,18 @@ namespace GraphicsLibrary.Core
 					GL.End();
 				}
 
-				//De draaiing, schaling en verplaatsing wordt teruggezet
 				GL.PopMatrix();
 
-				if (derivedScale != new Vector3(1, 1, 1))
+				if(derivedScale != new Vector3(1, 1, 1))
 				{
 					GL.Disable(EnableCap.Normalize);
 				}
 
-				if (!isLit)
+				if(!isLit)
 				{
 					GL.Enable(EnableCap.Lighting);
 				}
-				if (!writeToDepthBuffer)
+				if(!writeToDepthBuffer)
 				{
 					GL.DepthMask(true);
 				}

@@ -1,24 +1,13 @@
-﻿// TextField.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-using System.Drawing;
+﻿using System.Drawing;
 using System.Text;
-using System.Windows.Forms.VisualStyles;
 using GraphicsLibrary.Content;
 using GraphicsLibrary.Core;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using System;
 
 namespace GraphicsLibrary.Hud
 {
-	/* Een TextField is een HudElement met een reeks HudImages
-	 * voor elke letter in de 'text'-string is een afbeelding
-	 * het lettertype moet met de ASCII-volgorde opgeslagen zijn in een texture
-	 */
-	public class TextField : HudElement
+	public class TextField:HudElement
 	{
 		public string text = "";
 		public Material textMaterial = new Material("default", Color4.White);//TODO: Default font
@@ -27,22 +16,24 @@ namespace GraphicsLibrary.Hud
 		public float age = 0;
 		public float lifeTime = -1;
 
-		public TextField(string name) : base(name)
+		public TextField(string name)
+			: base(name)
 		{
-			
+
 		}
 
 		public override void Update(float timeSinceLastUpdate)
 		{
 			base.Update(timeSinceLastUpdate);
-			if(lifeTime != -1) {
+			if(lifeTime != -1)
+			{
 				age += timeSinceLastUpdate;
 			}
 		}
 
 		public override void Render()
 		{
-			if (isVisible && age < lifeTime)
+			if(isVisible && age < lifeTime)
 			{
 				byte[] stringBytes = Encoding.ASCII.GetBytes(text);
 
@@ -51,15 +42,15 @@ namespace GraphicsLibrary.Hud
 				GL.MatrixMode(MatrixMode.Modelview);
 				GL.PushMatrix();
 				GL.Translate(position.X, position.Y, 0);
-				for (int i = 0; i < stringBytes.Length; i++)
+				for(int i = 0; i < stringBytes.Length; i++)
 				{
 					double y = stringBytes[i] / 16;
 					double x = stringBytes[i] % 16;
 					const double d = 0.0625;
 					x *= d;
 					y *= d;
-					GL.Begin(BeginMode.Quads);
-					GL.Color4(textMaterial.GetCurrentColor(age/lifeTime));
+					GL.Begin(PrimitiveType.Quads);
+					GL.Color4(textMaterial.GetCurrentColor(age / lifeTime));
 					GL.TexCoord2(x, y); GL.Vertex2(00 + (size * i), 00);
 					GL.TexCoord2(d + x, y); GL.Vertex2(size + (size * i), 00);
 					GL.TexCoord2(d + x, d + y); GL.Vertex2(size + (size * i), size);

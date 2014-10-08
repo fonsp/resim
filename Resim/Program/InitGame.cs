@@ -18,8 +18,7 @@ namespace Resim.Program
 		private Random random = new Random();
 
 		private List<CollisionAABB> mapCollision = new List<CollisionAABB>();
-		/* Deze functie wordt opgeroepen als het spel start, na LoadResources()
-		 */
+		
 		public override void InitGame()
 		{
 			#region Entities
@@ -32,11 +31,11 @@ namespace Resim.Program
 			ground.mesh.material.textureName = "map0e";
 
 			//map.scale = new Vector3(2, 2, 2);
-			map0a.mesh.material.textureName = "map0a";
+			//map0a.mesh.material.textureName = "map0a";
 			map0b.mesh.material.textureName = "map0b";
 			map0c.mesh.material.textureName = "map0c";
 			map0d.mesh.material.textureName = "map0d";
-			map0e.mesh.material.textureName = "map0e";
+			//map0e.mesh.material.textureName = "map0e";
 
 			hudDebug.enabled = false;
 			hudDebug.isVisible = false;
@@ -80,14 +79,6 @@ namespace Resim.Program
 			flashB.materialAge = flashA.materialAge;
 			flashB.materialLifetime = flashA.materialLifetime;
 
-			gunBase.mesh.material.textureName = "m16";
-			gunBase.Yaw(3.14159f);
-			gunBase.position = new Vector3(0, -10.1f, 10);
-
-			gunBolt.mesh.material.textureName = "m16";
-
-			gunMag.mesh.material.textureName = "m16";
-
 			monster.mesh.material.textureName = "monsterTexture";
 			monster.scale = new Vector3(1, 1, 1);
 
@@ -121,15 +112,7 @@ namespace Resim.Program
 			map.Add(map0d);
 			map.Add(map0e);
 			Camera.Instance.Add(player0);
-			Camera.Instance.Add(gunBase);
-			gunBase.Add(beam);
-			gunBase.Add(flashB);
-			gunBase.Add(flashA);
-			gunBase.Add(gunMag);
-			gunBase.Add(gunBolt);
 			#endregion
-
-			InitializeWeapons();
 
 			Camera.Instance.position = new Vector3(-10, 1000, 10);
 
@@ -138,7 +121,7 @@ namespace Resim.Program
 			InputManager.CursorLockState = CursorLockState.Centered;
 			InputManager.HideCursor();
 
-			mapCollision.Add(new CollisionAABB(new Vector3(-50, 0, -50), new Vector3(50, 110, 50)));
+			mapCollision.Add(monsterAABB);
 		}
 	}
 }

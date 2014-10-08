@@ -8,10 +8,6 @@ using System;
 
 namespace Resim.Program
 {
-	/* Deze functie wordt opgeroepen als het spel start
-	 * In deze functie worden alle textures, 3d modellen, etc. geladen
-	 * Dit kan lang duren, afhankelijk van de hoeveelheid
-	 */
 	public partial class Game
 	{
 		private Entity skybox = new Entity("skybox");
@@ -24,11 +20,8 @@ namespace Resim.Program
 		private Entity beam = new Entity("gunBeam");
 		private Entity flashA = new Entity("flashA");
 		private Entity flashB = new Entity("flashB");
-		private Entity gunBase = new Entity("gunBase");
-		private Entity gunBolt = new Entity("gunBolt");
-		private Entity gunMag = new Entity("gunMag");
 		private Entity monster = new Entity("monster");
-		private Mesh playerMesh, gunBaseMesh, gunBoltMesh, gunMagMesh;
+		private Mesh playerMesh;
 		private HudDebug hudDebug = new HudDebug("hudDebug", 5);
 		private HudImage crossHair = new HudImage("crosshair", "crosshair0");
 		private HudImage grainImage = new HudImage("grainImage", "grain0");
@@ -52,7 +45,6 @@ namespace Resim.Program
 			TextureManager.AddTexture("grain0", @"Content/textures/grain3200alpha.png");
 			TextureManager.AddTexture("flashA", @"Content/textures/flashA.png");
 			TextureManager.AddTexture("flashB", @"Content/textures/flashB.png");
-			TextureManager.AddTexture("m16", @"Content/textures/m16.png");
 			TextureManager.AddTexture("map0a", @"Content/textures/map0/darkBrick.png", OpenTK.Graphics.OpenGL.TextureMinFilter.Linear, OpenTK.Graphics.OpenGL.TextureMagFilter.Linear);
 			TextureManager.AddTexture("map0b", @"Content/textures/map0/rockWall.png", OpenTK.Graphics.OpenGL.TextureMinFilter.Linear, OpenTK.Graphics.OpenGL.TextureMagFilter.Linear);
 			TextureManager.AddTexture("map0c", @"Content/textures/map0/crate.png", OpenTK.Graphics.OpenGL.TextureMinFilter.Linear, OpenTK.Graphics.OpenGL.TextureMagFilter.Linear);
@@ -67,25 +59,15 @@ namespace Resim.Program
 			beam.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/roundBeam.obj"));
 			flashA.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/flashA.obj"));
 			flashB.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/flashB.obj"));
-			gunBase.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/weapons/m16/m16base.obj"));
-			gunBolt.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/weapons/m16/m16bolt.obj"));
-			gunMag.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/weapons/m16/m16mag.obj"));
-			gunBaseMesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/weapons/m16/m16base.obj"));
-			gunBoltMesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/weapons/m16/m16bolt.obj"));
-			gunMagMesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/weapons/m16/m16mag.obj"));
 			map0a.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0a.obj"));
 			map0b.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0b.obj"));
 			map0c.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0c.obj"));
 			map0d.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0d.obj"));
 			map0e.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0e.obj"));
 
-			CollisionAABB[] mapCollisionAABBarray = ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/map0/collision.obj"));
-			for(int i = 0; i < mapCollisionAABBarray.Length; i++)
-			{
-				mapCollision.Add(mapCollisionAABBarray[i]); //TODO: list?
-			}
+			mapCollision.AddRange(ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/map0/collision.obj")));
+
 			playerAABB = ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/player.obj"))[0];
-			Console.WriteLine(playerAABB.lb + " =-= " + playerAABB.rt);
 		}
 	}
 }

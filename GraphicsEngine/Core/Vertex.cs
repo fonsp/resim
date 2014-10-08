@@ -1,15 +1,7 @@
-﻿// Vertex.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-using OpenTK;
+﻿using OpenTK;
 
 namespace GraphicsLibrary.Core
 {
-	/* Een Vertex is een hoekpunt van een polygon (zie Polygon.cs)
-	 * Hierin worden de gegevens van de vertex opgeslagen voor OpenGL
-	 */
 	public struct Vertex
 	{
 		public Vector3 pos;

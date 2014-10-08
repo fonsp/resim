@@ -1,17 +1,9 @@
-// InputManager.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
 using System.Drawing;
 using OpenTK;
 using OpenTK.Input;
-using System;
 
 namespace GraphicsLibrary.Input
 {
-	/* De InputManager class wordt gebruikt om het toetsenbord en muis in het spel te gebruiken
-	 */
 	public static class InputManager
 	{
 		private static CursorLockState _cursorLockState = CursorLockState.Free;
@@ -27,10 +19,10 @@ namespace GraphicsLibrary.Input
 			set
 			{
 				_cursorLockState = value;
-				if (value == CursorLockState.Centered)
+				if(value == CursorLockState.Centered)
 				{
-					System.Windows.Forms.Cursor.Position = new Point(RenderWindow.Instance.Bounds.Left + (RenderWindow.Instance.Bounds.Width / 2), 
-					                                                 RenderWindow.Instance.Bounds.Top + (RenderWindow.Instance.Bounds.Height / 2));
+					System.Windows.Forms.Cursor.Position = new Point(RenderWindow.Instance.Bounds.Left + (RenderWindow.Instance.Bounds.Width / 2),
+																	 RenderWindow.Instance.Bounds.Top + (RenderWindow.Instance.Bounds.Height / 2));
 				}
 			}
 		}
@@ -46,33 +38,7 @@ namespace GraphicsLibrary.Input
 			set
 			{
 				_enableCursor = value;
-				//TODO:
-				/* Er is momenteel geen command om de muis onzichtbaar te maken dat werkt op Linux, Mac en Windows
-				 * Windows gebruikt System.Windows.Forms.Cursor.Hide(), maar dit is niet ondersteund met Mono
-				 */
-
-				/*if (value)
-				{
-					try
-					{
-						RenderWindow.Instance.CursorVisible = true;
-					} catch (Exception exception){}
-					try
-					{
-						System.Windows.Forms.Cursor.Show();
-					} catch (Exception exception){}
-				}
-				else
-				{
-					try
-					{
-						RenderWindow.Instance.CursorVisible = false;
-					} catch (Exception exception){}
-					try
-					{
-						System.Windows.Forms.Cursor.Hide();
-					} catch (Exception exception){}
-				}*/
+				RenderWindow.Instance.CursorVisible = value;
 			}
 		}
 
@@ -104,9 +70,9 @@ namespace GraphicsLibrary.Input
 		public static bool IsAnyKeyDown(Key key)
 		{
 			bool output = false;
-			for (int i = 0; i < 131; i++)
+			for(int i = 0; i < 131; i++)
 			{
-				if (RenderWindow.Instance.Keyboard[(Key) i])
+				if(RenderWindow.Instance.Keyboard[(Key)i])
 				{
 					output = true;
 				}
@@ -116,7 +82,7 @@ namespace GraphicsLibrary.Input
 
 		public static void UpdateToggleStates()
 		{
-			for (int i = 0; i < 131; i++)
+			for(int i = 0; i < 131; i++)
 			{
 				UpdateToggleState((Key)i);
 			}
@@ -126,12 +92,12 @@ namespace GraphicsLibrary.Input
 		{
 			currentStates[(int)key] = RenderWindow.Instance.Keyboard[key];
 
-			if (currentStates[(int) key] && !previousStates[(int) key])
+			if(currentStates[(int)key] && !previousStates[(int)key])
 			{
-				toggleStates[(int) key] = !toggleStates[(int) key];
+				toggleStates[(int)key] = !toggleStates[(int)key];
 			}
 
-			previousStates[(int) key] = currentStates[(int) key];
+			previousStates[(int)key] = currentStates[(int)key];
 		}
 
 		public static void ClearToggleStates()
@@ -159,16 +125,15 @@ namespace GraphicsLibrary.Input
 
 		public static Vector2 GetMousePosition()
 		{
-			if (CursorLockState == CursorLockState.Free)
+			if(CursorLockState == CursorLockState.Free)
 			{
-				return new Vector2(System.Windows.Forms.Cursor.Position.X - RenderWindow.Instance.Bounds.Left, 
-				                   System.Windows.Forms.Cursor.Position.Y - RenderWindow.Instance.Bounds.Top);
+				return new Vector2(System.Windows.Forms.Cursor.Position.X - RenderWindow.Instance.Bounds.Left,
+								   System.Windows.Forms.Cursor.Position.Y - RenderWindow.Instance.Bounds.Top);
 			}
 
 			Rectangle Bounds = RenderWindow.Instance.Bounds;
 			Vector2 mouseDelta = Vector2.Zero;
-			/* Hiermee blijft de muis altijd in het midden van het scherm
-			 */
+
 			mouseDelta.X = System.Windows.Forms.Cursor.Position.X - (Bounds.Left + (Bounds.Width / 2));
 			mouseDelta.Y = (Bounds.Top + (Bounds.Height / 2)) - System.Windows.Forms.Cursor.Position.Y;
 			System.Windows.Forms.Cursor.Position = new Point(Bounds.Left + (Bounds.Width / 2), Bounds.Top + (Bounds.Height / 2));

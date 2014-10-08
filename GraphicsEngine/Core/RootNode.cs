@@ -1,16 +1,6 @@
-﻿// RootNode.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-namespace GraphicsLibrary.Core
+﻿namespace GraphicsLibrary.Core
 {
-	/* Aan deze node moeten alle andere node verbonden zijn
-	 * anders krijgen ze geen Update() en StartRender()
-	 * 
-	 * De Camera class werkt ook als RootNode (zie RenderWindow.cs)
-	 */
-	public class RootNode : Node
+	public class RootNode:Node
 	{
 		#region SingleTon
 		private static RootNode instance;
@@ -20,9 +10,9 @@ namespace GraphicsLibrary.Core
 		}
 		#endregion
 
-		public RootNode() : base("root")
+		public RootNode()
+			: base("root")
 		{
 		}
 	}
 }
-

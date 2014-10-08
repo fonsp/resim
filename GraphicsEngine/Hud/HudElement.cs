@@ -1,19 +1,10 @@
-﻿// HudElement.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-#region References
+﻿#region References
 using System.Collections.Generic;
 using OpenTK;
-
 #endregion
 
 namespace GraphicsLibrary.Hud
 {
-	/* Dit is hetzelfde als Node, maar dan voor 2D (zie Node.cs)
-	 * Veel code is dus hetzelfde
-	 */
 	public class HudElement
 	{
 		public Vector2 position = Vector2.Zero;
@@ -46,7 +37,7 @@ namespace GraphicsLibrary.Hud
 			velocity += Vector2.Multiply(acceleration, timeSinceLastUpdate);
 			position += Vector2.Multiply(velocity, timeSinceLastUpdate);
 
-			if (parent == null)
+			if(parent == null)
 			{
 				derivedRotation = rotation;
 				derivedPosition = position;
@@ -58,7 +49,7 @@ namespace GraphicsLibrary.Hud
 				derivedPosition = parent.derivedPosition + position;//TODO: *derivedorientation
 				derivedScale = Vector2.Multiply(parent.derivedScale, scale);
 			}
-			foreach (HudElement n in children.Values)
+			foreach(HudElement n in children.Values)
 			{
 				n.Update(timeSinceLastUpdate);
 			}
@@ -66,7 +57,7 @@ namespace GraphicsLibrary.Hud
 
 		public void Update()
 		{
-			if (parent == null)
+			if(parent == null)
 			{
 				derivedRotation = rotation;
 				derivedPosition = position;
@@ -78,7 +69,7 @@ namespace GraphicsLibrary.Hud
 				derivedPosition = parent.derivedPosition + position;
 				derivedScale = Vector2.Multiply(parent.derivedScale, scale);
 			}
-			foreach (HudElement n in children.Values)
+			foreach(HudElement n in children.Values)
 			{
 				n.Update();
 			}
@@ -87,7 +78,7 @@ namespace GraphicsLibrary.Hud
 		public void Add(HudElement hudElement, string newName)
 		{
 			hudElement.name = newName;
-			if (hudElement == this)
+			if(hudElement == this)
 			{
 
 			}
@@ -100,7 +91,7 @@ namespace GraphicsLibrary.Hud
 
 		public void Add(HudElement hudElement)
 		{
-			if (hudElement == this)
+			if(hudElement == this)
 			{
 
 			}
@@ -129,7 +120,7 @@ namespace GraphicsLibrary.Hud
 
 		public void RemoveChild(string childName)
 		{
-			if (children.ContainsKey(childName))
+			if(children.ContainsKey(childName))
 			{
 				children.Remove(childName);
 			}
@@ -142,7 +133,7 @@ namespace GraphicsLibrary.Hud
 
 		public void RemoveChild(HudElement hudElement)
 		{
-			if (children.ContainsValue(hudElement))
+			if(children.ContainsValue(hudElement))
 			{
 				children.Remove(hudElement.name); //TODO: performance
 			}
@@ -166,7 +157,7 @@ namespace GraphicsLibrary.Hud
 		public void StartRender()
 		{
 			Render();
-			foreach (HudElement h in children.Values)
+			foreach(HudElement h in children.Values)
 			{
 				h.StartRender();
 			}
@@ -174,7 +165,7 @@ namespace GraphicsLibrary.Hud
 
 		public virtual void Render()
 		{
-			
+
 		}
 	}
 }

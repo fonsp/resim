@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System;
-using GraphicsLibrary;
-using System.Net;
+﻿using System;
 using GraphicsLibrary.Core;
 using OpenTK;
 

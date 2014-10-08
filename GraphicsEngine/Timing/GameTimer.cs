@@ -1,17 +1,8 @@
-﻿// StopWatch.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-using System.Runtime.InteropServices;
+﻿//using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 namespace GraphicsLibrary.Timing
 {
-	/* Deze class wordt gebruikt om de framerate uit te rekenen
-	 * Op dit moment is er nog geen timer die op Windows, Linux en Mac op microseconden precies is
-	 * kernel32.dll werkt namelijk alleen op Windows en sommige distros van Linux
-	 */
 	public class GameTimer
 	{
 
@@ -39,7 +30,7 @@ namespace GraphicsLibrary.Timing
 			QueryPerformanceCounter(ref startTime);*/
 			stopwatch.Reset();
 			stopwatch.Start();
-			double value = stopwatch.ElapsedMilliseconds / 1000;
+			double value = stopwatch.ElapsedMilliseconds / 1000.0;
 			return value;
 		}
 	}

@@ -1,28 +1,10 @@
-﻿// Particle.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-using System;
+﻿using System;
 using OpenTK;
-using OpenTK.Audio.OpenAL;
 using OpenTK.Graphics.OpenGL;
-
 using GraphicsLibrary.Content;
 
 namespace GraphicsLibrary.Core
 {
-	/* De particleEmitter class is een node die een reeks Particles heeft
-	 * Hiermee kan je explosies, vuur, rook, etc. maken
-	 * 
-	 * Op dit moment zijn deze particles vrij zwaar op de CPU
-	 * en draaien ze mee met de camera
-	 * 
-	 * Met de material-class kan elk particle van kleur en texture veranderen
-	 * 
-	 * Gebaseerd op: http://3dgep.com/?p=1057 door Jeremiah van Oosten
-	 */
-
 	public struct Particle
 	{
 		public Vector3 position;
@@ -42,7 +24,7 @@ namespace GraphicsLibrary.Core
 
 	}
 
-	public class ParticleEmitter : Node
+	public class ParticleEmitter:Node
 	{
 		private readonly Random rnd = new Random();
 		private bool allParticlesAreDead = false;
@@ -60,10 +42,11 @@ namespace GraphicsLibrary.Core
 		public float maxVelocity = 5000;
 		public float minVelocity = 1000;
 
-		public ParticleEmitter(int amountOfParticles, string name, Material baseMaterial) : base(name)
+		public ParticleEmitter(int amountOfParticles, string name, Material baseMaterial)
+			: base(name)
 		{
 			particles = new Particle[amountOfParticles];
-			for (int i = 0; i < amountOfParticles; i++)
+			for(int i = 0; i < amountOfParticles; i++)
 			{
 				particles[i] = new Particle();
 			}
@@ -86,19 +69,19 @@ namespace GraphicsLibrary.Core
 
 		public void RandomizeParticles()
 		{
-			for (int i = 0; i < particles.Length; i++)
+			for(int i = 0; i < particles.Length; i++)
 			{
 				particles[i].age = 0f;
-				particles[i].lifetime = (float) rnd.NextDouble()*(maxLifetime - minLifetime) + minLifetime;//2 PARAM
+				particles[i].lifetime = (float)rnd.NextDouble() * (maxLifetime - minLifetime) + minLifetime;//2 PARAM
 				particles[i].size = (float)rnd.NextDouble() * (maxSize - minSize) + minSize;//PARAM
 				particles[i].material = baseMaterial;
 
-				Vector3 unit = new Vector3((float) rnd.NextDouble() - .5f, (float) rnd.NextDouble() - .5f, (float) rnd.NextDouble() - .5f);//(float)i/particles.Length - .5f);
+				Vector3 unit = new Vector3((float)rnd.NextDouble() - .5f, (float)rnd.NextDouble() - .5f, (float)rnd.NextDouble() - .5f);//(float)i/particles.Length - .5f);
 
 				unit.Normalize();
 
 				particles[i].position = Vector3.Zero;
-				particles[i].velocity = Vector3.Multiply(unit, (float)rnd.NextDouble()*(maxVelocity - minVelocity) + minVelocity);// 2 PARAM
+				particles[i].velocity = Vector3.Multiply(unit, (float)rnd.NextDouble() * (maxVelocity - minVelocity) + minVelocity);// 2 PARAM
 			}
 
 			allParticlesAreDead = false;
@@ -107,13 +90,13 @@ namespace GraphicsLibrary.Core
 		public override void Update(float timeSinceLastUpdate)
 		{
 			base.Update(timeSinceLastUpdate);
-			if (!allParticlesAreDead)
+			if(!allParticlesAreDead)
 			{
 				allParticlesAreDead = true;
-				for (int i = 0; i < particles.Length; i++)
+				for(int i = 0; i < particles.Length; i++)
 				{
 
-					if (particles[i].age > particles[i].lifetime) //TODO: skip some particles
+					if(particles[i].age > particles[i].lifetime) //TODO: skip some particles
 					{
 
 					}
@@ -122,7 +105,7 @@ namespace GraphicsLibrary.Core
 						allParticlesAreDead = false;
 						particles[i].age += timeSinceLastUpdate;
 						//float lifeRatio = particles[i].age/particles[i].lifetime;
-						particles[i].velocity *= (float) Math.Pow(force, timeSinceLastUpdate);
+						particles[i].velocity *= (float)Math.Pow(force, timeSinceLastUpdate);
 						particles[i].position += Vector3.Multiply(particles[i].velocity, timeSinceLastUpdate);
 						//TODO: Rotation
 						//TODO: Scaling
@@ -133,9 +116,9 @@ namespace GraphicsLibrary.Core
 
 		public override void Render(int pass)
 		{
-			if (isVisible && renderPass == pass)
+			if(isVisible && renderPass == pass)
 			{
-				
+
 
 				GL.PushMatrix();
 
@@ -145,19 +128,19 @@ namespace GraphicsLibrary.Core
 				GL.Disable(EnableCap.Lighting);
 
 				double ratio = 1;
-				if (skipNewParticles)
+				if(skipNewParticles)
 				{
-					ratio = Math.Min(5*particles[0].age/particles[0].lifetime, 1);
+					ratio = Math.Min(5 * particles[0].age / particles[0].lifetime, 1);
 				}
-				
 
-				for (int i = 0; i < particles.Length * ratio; i++)
+
+				for(int i = 0; i < particles.Length * ratio; i++)
 				{
-					if (particles[i].age < particles[i].lifetime)
+					if(particles[i].age < particles[i].lifetime)
 					{
 						GL.BindTexture(TextureTarget.Texture2D,
-							TextureManager.GetTexture(particles[i].material.GetCurrentTexture(particles[i].age/particles[i].lifetime)));
-						GL.Color4(particles[i].material.GetCurrentColor(particles[i].age/particles[i].lifetime));
+							TextureManager.GetTexture(particles[i].material.GetCurrentTexture(particles[i].age / particles[i].lifetime)));
+						GL.Color4(particles[i].material.GetCurrentColor(particles[i].age / particles[i].lifetime));
 
 						GL.Begin(BeginMode.Quads);
 

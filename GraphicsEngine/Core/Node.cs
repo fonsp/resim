@@ -1,21 +1,9 @@
-﻿// Node.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using OpenTK;
 
 namespace GraphicsLibrary.Core
 {
-	/* Deze class slaat de positie, rotatie en schaling van een 3D-object op
-	 * 
-	 * Het werkt ongeveer als een MovieClip in Flash, 
-	 * waar elke node als child toegevoegd kan worden aan een andere node.
-	 * 
-	 * Als dan de parent verplaatst of draait, dan gaan alle childs mee
-	 */
 	public class Node
 	{
 		public Vector3 position = Vector3.Zero;
@@ -85,7 +73,7 @@ namespace GraphicsLibrary.Core
 			velocity = Vector3.Multiply(velocity, new Vector3((float)Math.Pow(friction.X, timeSinceLastUpdate), (float)Math.Pow(friction.Y, timeSinceLastUpdate), (float)Math.Pow(friction.Z, timeSinceLastUpdate)));
 			position += Vector3.Multiply(velocity, timeSinceLastUpdate);
 
-			if (parent == null)
+			if(parent == null)
 			{
 				derivedOrientation = orientation;
 				derivedPosition = position;
@@ -93,20 +81,20 @@ namespace GraphicsLibrary.Core
 			}
 			else
 			{
-				if (parent == Camera.Instance)
+				if(parent == Camera.Instance)
 				{
 					derivedOrientation = Quaternion.Conjugate(parent.derivedOrientation) * orientation;
 				}
 				else
 				{
-					derivedOrientation = parent.derivedOrientation*orientation;
+					derivedOrientation = parent.derivedOrientation * orientation;
 				}
 				Vector3 t = 2 * Vector3.Cross(derivedOrientation.Xyz, position);
 				derivedPosition = parent.derivedPosition + (position + derivedOrientation.W * t + Vector3.Cross(derivedOrientation.Xyz, t));
 				derivedScale = Vector3.Multiply(parent.derivedScale, scale);
-				
+
 			}
-			foreach (Node n in children.Values)
+			foreach(Node n in children.Values)
 			{
 				n.Update(timeSinceLastUpdate);
 			}
@@ -114,7 +102,7 @@ namespace GraphicsLibrary.Core
 
 		public void Update()
 		{
-			if (parent == null)
+			if(parent == null)
 			{
 				derivedOrientation = orientation;
 				derivedPosition = position;
@@ -125,19 +113,19 @@ namespace GraphicsLibrary.Core
 				/*derivedOrientation = orientation * parent.derivedOrientation;
 				derivedPosition = parent.derivedPosition + position;
 				derivedScale = Vector3.Multiply(parent.derivedScale, scale);*/
-				if (parent == Camera.Instance)
+				if(parent == Camera.Instance)
 				{
 					derivedOrientation = Quaternion.Conjugate(parent.derivedOrientation) * orientation;
 				}
 				else
 				{
-					derivedOrientation = parent.derivedOrientation*orientation;
+					derivedOrientation = parent.derivedOrientation * orientation;
 				}
 				Vector3 t = 2 * Vector3.Cross(derivedOrientation.Xyz, position);
 				derivedPosition = parent.derivedPosition + (position + derivedOrientation.W * t + Vector3.Cross(derivedOrientation.Xyz, t));
 				derivedScale = Vector3.Multiply(parent.derivedScale, scale);
 			}
-			foreach (Node n in children.Values)
+			foreach(Node n in children.Values)
 			{
 				n.Update();
 			}
@@ -146,7 +134,7 @@ namespace GraphicsLibrary.Core
 		public void Add(Node node, string newName)
 		{
 			node.name = newName;
-			if (node == this)
+			if(node == this)
 			{
 
 			}
@@ -159,7 +147,7 @@ namespace GraphicsLibrary.Core
 
 		public void Add(Node node)
 		{
-			if (node == this)
+			if(node == this)
 			{
 
 			}
@@ -188,7 +176,7 @@ namespace GraphicsLibrary.Core
 
 		public void RemoveChild(string childName)
 		{
-			if (children.ContainsKey(childName))
+			if(children.ContainsKey(childName))
 			{
 				children.Remove(childName);
 			}
@@ -201,7 +189,7 @@ namespace GraphicsLibrary.Core
 
 		public void RemoveChild(Node node)
 		{
-			if (children.ContainsValue(node))
+			if(children.ContainsValue(node))
 			{
 				children.Remove(node.name); //TODO: performance
 			}
@@ -255,7 +243,7 @@ namespace GraphicsLibrary.Core
 		public void StartRender(int pass)
 		{
 			Render(pass);
-			foreach (Node n in children.Values)
+			foreach(Node n in children.Values)
 			{
 				n.StartRender(pass);
 			}
@@ -264,10 +252,5 @@ namespace GraphicsLibrary.Core
 		public virtual void Render(int pass)
 		{
 		}
-
-		/*public Matrix4 GetMatrix()
-		{
-			return Matrix4.CreateRotationX(rotation.X) * Matrix4.CreateRotationY(rotation.Y) * Matrix4.CreateRotationZ(rotation.Z) * Matrix4.CreateTranslation(position);
-		}*/
 	}
 }

@@ -1,18 +1,9 @@
-﻿// HudImage.cs
-//
-// Copyright 2013 Fons van der Plas
-// Fons van der Plas, fonsvdplas@gmail.com
-
-using System;
-using System.Drawing;
-using GraphicsLibrary.Content;
+﻿using GraphicsLibrary.Content;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
 namespace GraphicsLibrary.Hud
 {
-	/* Een HudImage is een HudElement dat een afbeelding (uit de TextureManager) laat zien
-	 */
 	public class HudImage : HudElement
 	{
 		public string imageTextureName = "default";
@@ -42,7 +33,7 @@ namespace GraphicsLibrary.Hud
 				GL.PushMatrix();
 				GL.Translate(position.X, position.Y, 0);
 
-				GL.Begin(BeginMode.Quads);
+				GL.Begin(PrimitiveType.Quads);
 				GL.Color4(color);
 				GL.TexCoord2(0, 0); GL.Vertex2(00, 00);
 				GL.TexCoord2(1, 0); GL.Vertex2(width * derivedScale.X, 00);
