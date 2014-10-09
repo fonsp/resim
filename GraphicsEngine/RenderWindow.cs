@@ -1,20 +1,16 @@
 //#define FULLSCREEN
 
-#region References
 using System;
 using System.Diagnostics;
 using System.Drawing;
-
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
-
 using GraphicsLibrary.Timing;
 using GraphicsLibrary.Content;
 using GraphicsLibrary.Core;
 using GraphicsLibrary.Hud;
-#endregion
 
 namespace GraphicsLibrary
 {
@@ -30,17 +26,14 @@ namespace GraphicsLibrary
 			get { return instance ?? (instance = new RenderWindow()); }
 		}
 		#endregion
-		#region Variables
-		public bool escapeOnEscape = true;
 
+		public bool escapeOnEscape = true;
 		private readonly GameTimer updateSw = new GameTimer();
 		public bool enableVelocity = true;
-
 		protected double timeSinceLastUpdate = 0;
 		public double timeMultiplier = 1;
-
 		public int amountOfRenderPasses = 3;
-		#endregion
+		public Shader defaultShader = new Shader();
 
 		public RenderWindow(string windowName, int width, int height)
 			: base(width, height, GraphicsMode.Default, windowName
@@ -64,8 +57,8 @@ namespace GraphicsLibrary
 		{
 			#region General
 			Debug.WriteLine("Initializing OpenGL..");
-			WindowBorder = WindowBorder.Resizable;
 
+			WindowBorder = WindowBorder.Resizable;
 			try
 			{
 				GL.ClearColor(Color.Black);
@@ -112,7 +105,8 @@ namespace GraphicsLibrary
 			{
 				GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { .4f, .4f, .4f, 0.0f });
 				GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { .95f, .95f, .95f, 0.0f });
-				GL.Light(LightName.Light0, LightParameter.Position, new float[] { .0f, .0f, .0f, 0.0f });
+				//GL.Light(LightName.Light0, LightParameter.Position, new float[] { .8f, .9f, 1.0f, 0.0f });
+				GL.Light(LightName.Light0, LightParameter.Position, Vector4.Normalize(new Vector4(.4f, -.9f, .5f, 0.0f)));
 
 				GL.Enable(EnableCap.Lighting);
 				GL.Enable(EnableCap.Light0);
@@ -120,6 +114,21 @@ namespace GraphicsLibrary
 			catch(Exception exception)
 			{
 				Debug.WriteLine("WARNING: lighting could not be initialized: {0}", exception.Message);
+				Exit();
+			}
+
+			#endregion
+			#region Default shaders init
+			Debug.WriteLine("Initializing default shader..");
+
+			try
+			{
+				defaultShader.GenerateShaders();
+				defaultShader.Enable();
+			}
+			catch(Exception exception)
+			{
+				Debug.WriteLine("WARNING: default shader could not be initialized: {0}", exception.Message);
 				Exit();
 			}
 
@@ -244,12 +253,13 @@ namespace GraphicsLibrary
 			GL.MatrixMode(MatrixMode.Modelview);
 			GL.LoadMatrix(ref modelview);
 
-			GL.Light(LightName.Light0, LightParameter.Position, new float[] { .8f, .9f, 1.0f, 0.0f });
+			//Update shaders
+			int loc = GL.GetUniformLocation(defaultShader.shaderProgram, "time");
+			GL.Uniform1(loc, 0.0f);
 
 			for(int i = 0; i < amountOfRenderPasses; i++)
 			{
 				RootNode.Instance.StartRender(i);
-
 			}
 
 			/*modelview = Matrix4.LookAt(Camera.Instance.position, Camera.Instance.position - Vector3.UnitZ, Vector3.UnitY);

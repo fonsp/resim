@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
 using System.Text;
-using GraphicsLibrary.Content;
-using GraphicsLibrary.Core;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using GraphicsLibrary.Content;
+using GraphicsLibrary.Core;
 
 namespace GraphicsLibrary.Hud
 {

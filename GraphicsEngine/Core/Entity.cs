@@ -1,10 +1,6 @@
-﻿#region References
-using GraphicsLibrary.Content;
-
-using OpenTK;
-using OpenTK.Graphics;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
-#endregion
+using GraphicsLibrary.Content;
 
 namespace GraphicsLibrary.Core
 {

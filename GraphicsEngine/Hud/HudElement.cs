@@ -1,7 +1,5 @@
-﻿#region References
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OpenTK;
-#endregion
 
 namespace GraphicsLibrary.Hud
 {

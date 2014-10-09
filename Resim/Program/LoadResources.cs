@@ -1,10 +1,9 @@
 ﻿using System.IO;
+using OpenTK;
 using GraphicsLibrary.Content;
 using GraphicsLibrary.Core;
 using GraphicsLibrary.Hud;
-using OpenTK;
 using GraphicsLibrary.Collision;
-using System;
 
 namespace Resim.Program
 {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using GraphicsLibrary.Core;
-using OpenTK;
 using System.Threading;
 using System.Globalization;
+using OpenTK;
+using GraphicsLibrary.Core;
 using GraphicsLibrary.Collision;
 
 namespace GraphicsLibrary.Content

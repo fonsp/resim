@@ -91,6 +91,7 @@
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\Face.cs" />
     <Compile Include="Core\Material.cs" />
+    <Compile Include="Core\Shader.cs" />
     <Compile Include="Hud\HudConsole.cs" />
     <Compile Include="Hud\HudElement.cs" />
     <Compile Include="Core\Mesh.cs" />

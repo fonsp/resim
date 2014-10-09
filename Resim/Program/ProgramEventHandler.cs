@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading;
+using OpenTK;
 using GraphicsLibrary;
 using GraphicsLibrary.Hud;
-using OpenTK;
 
 namespace Resim.Program
 {

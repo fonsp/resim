@@ -1,12 +1,9 @@
-#region References
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-
 using OpenTK.Graphics.OpenGL;
-#endregion
 
 namespace GraphicsLibrary.Content
 {

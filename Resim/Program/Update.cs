@@ -1,8 +1,8 @@
 ﻿using System;
 using OpenTK;
 using OpenTK.Input;
-using GraphicsLibrary.Collision;
 using GraphicsLibrary;
+using GraphicsLibrary.Collision;
 using GraphicsLibrary.Core;
 using GraphicsLibrary.Input;
 
@@ -23,10 +23,14 @@ namespace Resim.Program
 		public override void Update(float timeSinceLastUpdate)
 		{
 			skybox.position = Camera.Instance.position;
-
 			Camera.Instance.position -= cameraBobDelta;
 
 			InputManager.UpdateToggleStates();
+
+			if(InputManager.IsKeyDown(Key.R))
+			{
+				Respawn();
+			}
 
 			#region FPS camera
 
@@ -189,12 +193,6 @@ namespace Resim.Program
 				}
 			}
 			#endregion
-
-			if(InputManager.IsKeyDown(Key.R))
-			{
-				Respawn();
-			}
-
 			#region Jumping/Gravity
 			if(grounded)
 			{

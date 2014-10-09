@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using OpenTK;
+using OpenTK.Graphics;
 using GraphicsLibrary;
 using GraphicsLibrary.Core;
 using GraphicsLibrary.Hud;
 using GraphicsLibrary.Input;
-using OpenTK;
-using OpenTK.Graphics;
 using GraphicsLibrary.Collision;
-using System.Collections.Generic;
 
 namespace Resim.Program
 {
@@ -97,7 +97,7 @@ namespace Resim.Program
 				HudBase.Instance.Add(comboTextFields[i]);
 			}
 
-			HudBase.Instance.Add(grainImage);
+			//HudBase.Instance.Add(grainImage);
 			HudBase.Instance.Add(hudDebug);
 			HudBase.Instance.Add(crossHair);
 

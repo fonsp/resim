@@ -1,6 +1,6 @@
-﻿using GraphicsLibrary.Content;
-using OpenTK.Graphics;
+﻿using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using GraphicsLibrary.Content;
 
 namespace GraphicsLibrary.Hud
 {

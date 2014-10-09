@@ -178,26 +178,26 @@ namespace GraphicsLibrary.Core
 		{
 			if(children.ContainsKey(childName))
 			{
+				children[childName] = null;
 				children.Remove(childName);
 			}
 			else
 			{
 				//TODO: Child does not exits
 			}
-			//TODO: Cleanup
 		}
 
 		public void RemoveChild(Node node)
 		{
 			if(children.ContainsValue(node))
 			{
+				node = null;
 				children.Remove(node.name); //TODO: performance
 			}
 			else
 			{
 				//TODO: Child does not exist
 			}
-			//TODO: Cleanup
 		}
 
 		public bool Equals(Node obj)
