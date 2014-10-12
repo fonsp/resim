@@ -29,11 +29,13 @@ namespace GraphicsLibrary
 
 		public bool escapeOnEscape = true;
 		private readonly GameTimer updateSw = new GameTimer();
+		private float _time = 0f;
+		public float time { get { return _time; } }
 		public bool enableVelocity = true;
 		protected double timeSinceLastUpdate = 0;
 		public double timeMultiplier = 1;
 		public int amountOfRenderPasses = 3;
-		public Shader defaultShader = new Shader();
+		public Shader defaultShader = Shader.diffuseShader;
 
 		public RenderWindow(string windowName, int width, int height)
 			: base(width, height, GraphicsMode.Default, windowName
@@ -42,7 +44,7 @@ namespace GraphicsLibrary
 #endif
 )
 		{
-			VSync = VSyncMode.On;
+			VSync = VSyncMode.Off;
 
 		}
 		public RenderWindow(string windowName)
@@ -103,8 +105,8 @@ namespace GraphicsLibrary
 
 			try
 			{
-				GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { .4f, .4f, .4f, 0.0f });
-				GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { .95f, .95f, .95f, 0.0f });
+				GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { .2f, .2f, .2f, 1.0f });
+				GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { .95f, .95f, .95f, 1.0f });
 				//GL.Light(LightName.Light0, LightParameter.Position, new float[] { .8f, .9f, 1.0f, 0.0f });
 				GL.Light(LightName.Light0, LightParameter.Position, Vector4.Normalize(new Vector4(.4f, -.9f, .5f, 0.0f)));
 
@@ -119,12 +121,13 @@ namespace GraphicsLibrary
 
 			#endregion
 			#region Default shaders init
-			Debug.WriteLine("Initializing default shader..");
+			Debug.WriteLine("Initializing default shaders..");
 
 			try
 			{
-				defaultShader.GenerateShaders();
-				defaultShader.Enable();
+				Shader asdf = Shader.diffuseShaderCompiled;
+				asdf = Shader.unlitShaderCompiled;
+				asdf = null;
 			}
 			catch(Exception exception)
 			{
@@ -218,6 +221,7 @@ namespace GraphicsLibrary
 			}
 #endif
 			timeSinceLastUpdate = e.Time * timeMultiplier;
+			_time += (float) timeSinceLastUpdate;
 
 			program.Update((float)timeSinceLastUpdate);
 			if(enableVelocity)
@@ -254,8 +258,8 @@ namespace GraphicsLibrary
 			GL.LoadMatrix(ref modelview);
 
 			//Update shaders
-			int loc = GL.GetUniformLocation(defaultShader.shaderProgram, "time");
-			GL.Uniform1(loc, 0.0f);
+			Shader.diffuseShaderCompiled.SetUniform("time", _time);
+			Shader.unlitShaderCompiled.SetUniform("time", _time);
 
 			for(int i = 0; i < amountOfRenderPasses; i++)
 			{

@@ -6,6 +6,7 @@ namespace GraphicsLibrary.Core
 	{
 		public List<Polygon> polygonList = new List<Polygon>();
 		public Material material = new Material();
+		public Shader shader;
 
 		public override string ToString()
 		{

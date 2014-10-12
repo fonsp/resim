@@ -135,62 +135,102 @@ namespace Resim.Program
 
 			bool grounded = false;
 			playerHeight = config.GetInt(InputManager.IsKeyDown(Key.LControl) ? "crouchHeight" : "walkHeight");
-			Vector3 feetPosHorizontal = Camera.Instance.position;
-			feetPosHorizontal.Y -= playerHeight * 0.75f;
+			Vector3 feetPos = Camera.Instance.position;
+			feetPos.Y -= playerHeight * 0.75f;
 
 			foreach(CollisionAABB collisionBox in mapCollision)
 			{
-				Vector3 feetPosVertical = Camera.Instance.position;
-				feetPosVertical.Y -= playerHeight;
 				// Y
-				if(collisionBox.isInside(feetPosVertical))
+				CollisionRay collisionRay = new CollisionRay(Camera.Instance.position, new Vector3(.00001f, -1, .00001f));
+				float dist = collisionBox.Intersect(collisionRay);
+				if(dist <= playerHeight && dist != -1)
 				{
 					grounded = true;
-					CollisionRay collisionRay = new CollisionRay(Camera.Instance.position, new Vector3(.00001f, -1, .00001f));
-					float height = collisionBox.Intersect(collisionRay);
-					Camera.Instance.position.Y -= height - playerHeight;
+					Camera.Instance.position.Y += Math.Min(500 * timeSinceLastUpdate, playerHeight - dist);
 				}
-				/* Door twee maal de Y-as te testen met een klein hoogteverschil kunnen de spelers trappen/hellingen op lopen
-				 */
-				feetPosVertical.Y += 3;//TODO
-				// Y
-				if(collisionBox.isInside(feetPosVertical))
-				{
-					grounded = true;
-					CollisionRay collisionRay = new CollisionRay(Camera.Instance.position, new Vector3(.00001f, -1, .00001f));
-					float height = collisionBox.Intersect(collisionRay);
-					Camera.Instance.position.Y -= height - playerHeight;
-				}
-				// X
+
+				// X vel
 				if(Camera.Instance.velocity.X > 0)
 				{
-					if(collisionBox.isInside(feetPosHorizontal + new Vector3(Camera.Instance.velocity.X * timeSinceLastUpdate + 30, 0, 0)))
-					{ //30 is de breedte van de speler
+					if(collisionBox.isInside(feetPos + new Vector3(Camera.Instance.velocity.X * timeSinceLastUpdate + 30, 0, 0)))
+					{
 						Camera.Instance.velocity.X = 0;
 					}
 				}
 				else
 				{
-					if(collisionBox.isInside(feetPosHorizontal + new Vector3(Camera.Instance.velocity.X * timeSinceLastUpdate - 30, 0, 0)))
-					{ //TODO
+					if(collisionBox.isInside(feetPos + new Vector3(Camera.Instance.velocity.X * timeSinceLastUpdate - 30, 0, 0)))
+					{
 						Camera.Instance.velocity.X = 0;
 					}
 				}
 				// Z
 				if(Camera.Instance.velocity.Z > 0)
 				{
-					if(collisionBox.isInside(feetPosHorizontal + new Vector3(0, 0, Camera.Instance.velocity.Z * timeSinceLastUpdate + 30)))
+					if(collisionBox.isInside(feetPos + new Vector3(0, 0, Camera.Instance.velocity.Z * timeSinceLastUpdate + 30)))
 					{
 						Camera.Instance.velocity.Z = 0;
 					}
 				}
 				else
 				{
-					if(collisionBox.isInside(feetPosHorizontal + new Vector3(0, 0, Camera.Instance.velocity.Z * timeSinceLastUpdate - 30)))
+					if(collisionBox.isInside(feetPos + new Vector3(0, 0, Camera.Instance.velocity.Z * timeSinceLastUpdate - 30)))
 					{
 						Camera.Instance.velocity.Z = 0;
 					}
 				}
+				Vector3 testPoint;
+
+
+				// X+
+				testPoint = feetPos;
+				testPoint.X += 15;
+				if(collisionBox.isInside(testPoint))
+				{
+					collisionRay = new CollisionRay(feetPos, new Vector3(1f, 0.00001f, 0.00001f));
+					dist = collisionBox.Intersect(collisionRay);
+					if (dist != -1)
+					{
+						Camera.Instance.position.X -= dist;
+					}
+				}
+				// X-
+				testPoint = feetPos;
+				testPoint.X -= 15;
+				if(collisionBox.isInside(testPoint))
+				{
+					collisionRay = new CollisionRay(feetPos, new Vector3(-1f, 0.00001f, 0.00001f));
+					dist = collisionBox.Intersect(collisionRay);
+					if(dist != -1)
+					{
+						Camera.Instance.position.X += dist;
+					}
+				}
+				// Z+
+				testPoint = feetPos;
+				testPoint.Z += 15;
+				if(collisionBox.isInside(testPoint))
+				{
+					collisionRay = new CollisionRay(feetPos, new Vector3(0.00001f, 0.00001f, 1f));
+					dist = collisionBox.Intersect(collisionRay);
+					if(dist != -1)
+					{
+						Camera.Instance.position.Z -= dist;
+					}
+				}
+				// Z-
+				testPoint = feetPos;
+				testPoint.Z -= 15;
+				if(collisionBox.isInside(testPoint))
+				{
+					collisionRay = new CollisionRay(feetPos, new Vector3(0.00001f, 0.00001f, -1f));
+					dist = collisionBox.Intersect(collisionRay);
+					if(dist != -1)
+					{
+						Camera.Instance.position.Z += dist;
+					}
+				}
+				
 			}
 			#endregion
 			#region Jumping/Gravity
@@ -229,6 +269,8 @@ namespace Resim.Program
 				(float)(bobbingFactor * Math.Cos(bobbingTimer * 12)) * bobbingStrength.Y,
 				(float)(Math.Sin(fpsCam.X) * bobbingFactor * Math.Sin(bobbingTimer * 6)) * bobbingStrength.X
 			);
+
+			cameraBobDelta = Vector3.Zero;
 
 			Camera.Instance.position += cameraBobDelta;
 

@@ -12,9 +12,7 @@ namespace Resim.Program
 {
 	public partial class Game
 	{
-		private Node player0 = new Node("player0");
 		private Node map = new Node("map");
-		private Node players = new Node("players");
 		private Random random = new Random();
 
 		private List<CollisionAABB> mapCollision = new List<CollisionAABB>();
@@ -27,8 +25,12 @@ namespace Resim.Program
 			float size = Camera.Instance.ZFar / 1.8f;//Sqrt(3)
 			skybox.scale = new Vector3(size, size, size);
 
-			ground.scale = new Vector3(2, 2, 2);
 			ground.mesh.material.textureName = "map0e";
+			ground.wireFrame = true;
+			ground.mesh.shader = Shader.collisionShaderCompiled;
+			ground.writeDepthBuffer = false;
+			ground.readDepthBuffer = false;
+			ground.renderPass = 1;
 
 			//map.scale = new Vector3(2, 2, 2);
 			//map0a.mesh.material.textureName = "map0a";
@@ -54,7 +56,7 @@ namespace Resim.Program
 			beam.isLit = false;
 			beam.scale = new Vector3(10, 10, 10000);
 			beam.renderPass = 1;
-			beam.writeToDepthBuffer = false;
+			beam.writeDepthBuffer = false;
 			beam.position = new Vector3(0, 5.5f, 50);
 			beam.mesh.material = new Material("beam0", new Color4(1f, 1f, 0f, 1f), true);
 			beam.mesh.material.AddTransitionColor(new Color4(1f, 1f, 0f, 0f), 1f);
@@ -63,7 +65,7 @@ namespace Resim.Program
 
 			flashA.isLit = false;
 			flashA.renderPass = 0;
-			flashA.writeToDepthBuffer = false;
+			flashA.writeDepthBuffer = false;
 			flashA.position = new Vector3(0, 5.5f, 50);
 			flashA.mesh.material = new Material("flashA", new Color4(1f, 1f, 1f, 1f), true);
 			flashA.mesh.material.AddTransitionColor(new Color4(1f, 1f, 1f, 0f), 1f);
@@ -72,7 +74,7 @@ namespace Resim.Program
 
 			flashB.isLit = false;
 			flashB.renderPass = 0;
-			flashB.writeToDepthBuffer = false;
+			flashB.writeDepthBuffer = false;
 			flashB.position = new Vector3(0, 5.5f, 50);
 			flashB.mesh.material = new Material("flashB", new Color4(1f, 1f, 1f, 1f), true);
 			flashB.mesh.material.AddTransitionColor(new Color4(1f, 1f, 1f, 0f), 1f);
@@ -89,7 +91,8 @@ namespace Resim.Program
 				comboTextFields[i] = new TextField("comboField" + i);
 				comboTextFields[i].textMaterial = new Material("font0", new Color4(1f, 1f, 1f, 1f));
 				comboTextFields[i].text = " ";
-				comboTextFields[i].size = 32;
+				comboTextFields[i].sizeX = 24;
+				comboTextFields[i].sizeY = 32;
 				comboTextFields[i].age = 1;
 				comboTextFields[i].lifeTime = 1;
 				comboTextFields[i].textMaterial.AddTransitionColor(new Color4(1f, 1f, 1f, 0f), 1);
@@ -101,17 +104,15 @@ namespace Resim.Program
 			HudBase.Instance.Add(hudDebug);
 			HudBase.Instance.Add(crossHair);
 
-			RootNode.Instance.Add(players);
 			RootNode.Instance.Add(monster);
 			RootNode.Instance.Add(skybox);
-			//RootNode.Instance.Add(ground);
+			RootNode.Instance.Add(ground);
 			RootNode.Instance.Add(map);
 			map.Add(map0a);
 			map.Add(map0b);
 			map.Add(map0c);
 			map.Add(map0d);
 			map.Add(map0e);
-			Camera.Instance.Add(player0);
 			#endregion
 
 			Camera.Instance.position = new Vector3(-10, 1000, 10);

@@ -11,7 +11,8 @@ namespace GraphicsLibrary.Hud
 	{
 		public string text = "";
 		public Material textMaterial = new Material("default", Color4.White);//TODO: Default font
-		public int size = 16;
+		public int sizeX = 12;
+		public int sizeY = 16;
 
 		public float age = 0;
 		public float lifeTime = -1;
@@ -33,8 +34,9 @@ namespace GraphicsLibrary.Hud
 
 		public override void Render()
 		{
-			if(isVisible && age < lifeTime)
+			if(isVisible && (age < lifeTime || lifeTime == -1))
 			{
+				Shader.hudShaderCompiled.Enable();
 				byte[] stringBytes = Encoding.ASCII.GetBytes(text);
 
 				GL.BindTexture(TextureTarget.Texture2D, TextureManager.GetTexture(textMaterial.GetCurrentTexture()));
@@ -51,10 +53,10 @@ namespace GraphicsLibrary.Hud
 					y *= d;
 					GL.Begin(PrimitiveType.Quads);
 					GL.Color4(textMaterial.GetCurrentColor(age / lifeTime));
-					GL.TexCoord2(x, y); GL.Vertex2(00 + (size * i), 00);
-					GL.TexCoord2(d + x, y); GL.Vertex2(size + (size * i), 00);
-					GL.TexCoord2(d + x, d + y); GL.Vertex2(size + (size * i), size);
-					GL.TexCoord2(x, d + y); GL.Vertex2(00 + (size * i), size);
+					GL.TexCoord2(x, y); GL.Vertex2(00 + (sizeX * i), 00);
+					GL.TexCoord2(d + x, y); GL.Vertex2(sizeY + (sizeX * i), 00);
+					GL.TexCoord2(d + x, d + y); GL.Vertex2(sizeY + (sizeX * i), sizeY);
+					GL.TexCoord2(x, d + y); GL.Vertex2(00 + (sizeX * i), sizeY);
 					GL.End();
 					GL.Color4(Color.White);
 				}

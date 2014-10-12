@@ -1,10 +1,11 @@
-﻿using OpenTK.Graphics;
+﻿using GraphicsLibrary.Core;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using GraphicsLibrary.Content;
 
 namespace GraphicsLibrary.Hud
 {
-	public class HudImage : HudElement
+	public class HudImage:HudElement
 	{
 		public string imageTextureName = "default";
 
@@ -13,20 +14,23 @@ namespace GraphicsLibrary.Hud
 
 		public Color4 color = Color4.White;
 
-		public HudImage(string name) : base(name)
+		public HudImage(string name)
+			: base(name)
 		{
-			
+
 		}
 
-		public HudImage(string name, string imageTextureName) : base(name)
+		public HudImage(string name, string imageTextureName)
+			: base(name)
 		{
 			this.imageTextureName = imageTextureName;
 		}
 
 		public override void Render()
 		{
-			if (isVisible)
+			if(isVisible)
 			{
+				Shader.hudShaderCompiled.Enable();
 				GL.BindTexture(TextureTarget.Texture2D, TextureManager.GetTexture(imageTextureName));
 
 				GL.MatrixMode(MatrixMode.Modelview);

@@ -53,7 +53,7 @@ namespace Resim.Program
 
 			playerMesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/player.obj"));
 			monster.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/monsterUVd.obj"), new Vector3(101, -19, 205));
-			ground.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/floor1s.obj"));
+			ground.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/collision.obj"));
 			skybox.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/skybox3.obj"));
 			beam.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/roundBeam.obj"));
 			flashA.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/flashA.obj"));

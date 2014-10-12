@@ -1,4 +1,5 @@
 ﻿using System;
+using GraphicsLibrary.Core;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -97,22 +98,41 @@ namespace GraphicsLibrary.Hud
 		public Color4 backgroundColor = new Color4(0f, 0f, 0f, .5f);
 		public float width = 500;
 		public float height = 300;
-		private int size = 16;
+		private int sizeX = 12;
 
-		public int Size
+		public int SizeX
 		{
 			get
 			{
-				return size;
+				return sizeX;
 			}
 			set
 			{
-				size = value;
+				sizeX = value;
 				foreach(TextField t in textFields)
 				{
-					t.size = value;
+					t.sizeX = value;
 				}
-				inputField.size = size;
+				inputField.sizeX = sizeX;
+			}
+		}
+
+		private int sizeY = 16;
+
+		public int SizeY
+		{
+			get
+			{
+				return sizeY;
+			}
+			set
+			{
+				sizeY = value;
+				foreach(TextField t in textFields)
+				{
+					t.sizeY = value;
+				}
+				inputField.sizeY = sizeY;
 			}
 		}
 
@@ -170,20 +190,22 @@ namespace GraphicsLibrary.Hud
 
 		private void UpdateTextFields()
 		{
-			height = size * (numberOfLines + 1);
+			height = sizeY * (numberOfLines + 1);
 			textFields = new TextField[numberOfLines];
 			for(int i = 0; i < numberOfLines; i++)
 			{
 				textFields[i] = new TextField("asdf");
 				textFields[i].text = "";
 				textFields[i].textMaterial.textureName = fontTextureName;
-				textFields[i].size = size;
+				textFields[i].sizeX = sizeX;
+				textFields[i].sizeY = sizeY;
 				textFields[i].textMaterial.baseColor = textColor;
 			}
 			inputField = new TextField("asfd");
 			inputField.text = inputPrefix + input;
 			inputField.textMaterial.textureName = fontTextureName;
-			inputField.size = size;
+			inputField.sizeX = sizeX;
+			inputField.sizeY = sizeY;
 			inputField.textMaterial.baseColor = textColor;
 		}
 
@@ -202,17 +224,25 @@ namespace GraphicsLibrary.Hud
 
 		public void AddLine(string s)
 		{
+			AddLine(s, Color4.White);
+		}
+
+		public void AddLine(string s, Color4 color)
+		{
 			for(int i = 0; i < numberOfLines - 1; i++)
 			{
 				textFields[i].text = textFields[i + 1].text;
+				textFields[i].textMaterial.baseColor = textFields[i + 1].textMaterial.baseColor;
 			}
 			textFields[numberOfLines - 1].text = s;
+			textFields[numberOfLines - 1].textMaterial.baseColor = color;
 		}
 
 		public override void Render()
 		{
 			if(isVisible)
 			{
+				Shader.hudShaderCompiled.Enable();
 				#region Background
 
 				GL.Disable(EnableCap.Texture2D);
@@ -229,8 +259,8 @@ namespace GraphicsLibrary.Hud
 				GL.Vertex2(width * derivedScale.X, height * derivedScale.Y);
 				GL.Vertex2(00, height * derivedScale.Y);
 
-				GL.Vertex2(00, (height * derivedScale.Y) - size);
-				GL.Vertex2(width * derivedScale.X, (height * derivedScale.Y) - size);
+				GL.Vertex2(00, (height * derivedScale.Y) - sizeY);
+				GL.Vertex2(width * derivedScale.X, (height * derivedScale.Y) - sizeY);
 				GL.Vertex2(width * derivedScale.X, height * derivedScale.Y);
 				GL.Vertex2(00, height * derivedScale.Y);
 
@@ -245,7 +275,7 @@ namespace GraphicsLibrary.Hud
 
 				for(int i = 0; i < numberOfLines; i++)
 				{
-					textFields[i].position = derivedPosition + new Vector2(0, i * size);
+					textFields[i].position = derivedPosition + new Vector2(0, i * sizeY);
 					textFields[i].Render();
 				}
 
@@ -253,7 +283,7 @@ namespace GraphicsLibrary.Hud
 				#region Input line
 
 				inputField.text = inputPrefix + input;
-				inputField.position = derivedPosition + new Vector2(0, numberOfLines * size);
+				inputField.position = derivedPosition + new Vector2(0, numberOfLines * sizeY);
 				inputField.Render();
 
 				#endregion
