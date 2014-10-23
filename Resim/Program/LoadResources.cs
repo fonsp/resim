@@ -11,11 +11,12 @@ namespace Resim.Program
 	{
 		private Entity skybox = new Entity("skybox");
 		private Entity ground = new Entity("ground");
-		private Entity map0a = new Entity("map0a");
+		/*private Entity map0a = new Entity("map0a");
 		private Entity map0b = new Entity("map0b");
 		private Entity map0c = new Entity("map0c");
 		private Entity map0d = new Entity("map0d");
-		private Entity map0e = new Entity("map0e");
+		private Entity map0e = new Entity("map0e");*/
+		private Entity map1 = new Entity("map1");
 		private Entity beam = new Entity("gunBeam");
 		private Entity flashA = new Entity("flashA");
 		private Entity flashB = new Entity("flashB");
@@ -53,18 +54,20 @@ namespace Resim.Program
 
 			playerMesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/player.obj"));
 			monster.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/monsterUVd.obj"), new Vector3(101, -19, 205));
-			ground.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/collision.obj"));
+			ground.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map1/collision.obj"));
 			skybox.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/skybox3.obj"));
 			beam.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/roundBeam.obj"));
 			flashA.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/flashA.obj"));
 			flashB.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/flashB.obj"));
-			map0a.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0a.obj"));
+			/*map0a.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0a.obj"));
 			map0b.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0b.obj"));
 			map0c.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0c.obj"));
 			map0d.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0d.obj"));
-			map0e.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0e.obj"));
+			map0e.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0e.obj"));*/
+			map1.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map1/map1.obj"));
 
-			mapCollision.AddRange(ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/map0/collision.obj")));
+			//mapCollision.AddRange(ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/map0/collision.obj")));
+			mapCollision.AddRange(ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/map1/collision.obj")));
 
 			playerAABB = ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/player.obj"))[0];
 		}

@@ -7,7 +7,7 @@ namespace Resim.Program
 	public partial class Game
 	{
 		private Vector3[] possibleSpawns = new Vector3[] {
-			new Vector3(770, 450, -850),
+			/*new Vector3(770, 450, -850),
 			new Vector3(-1007, 369, -72),
 			new Vector3(-749, 475, 1117),
 			new Vector3(859, 394, 610),
@@ -18,7 +18,8 @@ namespace Resim.Program
 			new Vector3(710, 394, 1249),
 			new Vector3(798, 169, 264),
 			new Vector3(-50, 169, -508),
-			new Vector3(-96, 394, -621)
+			new Vector3(-96, 394, -621)*/
+			new Vector3(2700, 300, -6075) 
 		};
 
 		private void Respawn()

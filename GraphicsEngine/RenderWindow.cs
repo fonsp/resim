@@ -36,6 +36,7 @@ namespace GraphicsLibrary
 		public double timeMultiplier = 1;
 		public int amountOfRenderPasses = 3;
 		public Shader defaultShader = Shader.diffuseShader;
+		public ushort[] elementBase = new ushort[ushort.MaxValue];
 
 		public RenderWindow(string windowName, int width, int height)
 			: base(width, height, GraphicsMode.Default, windowName
@@ -73,6 +74,11 @@ namespace GraphicsLibrary
 				GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 				GL.Enable(EnableCap.CullFace);
 				GL.CullFace(CullFaceMode.Back);
+
+				for(ushort i = 0; i < ushort.MaxValue; i++)
+				{
+					elementBase[i] = i;
+				}
 			}
 			catch(Exception exception)
 			{

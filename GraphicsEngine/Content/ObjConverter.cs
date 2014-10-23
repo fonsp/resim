@@ -160,6 +160,154 @@ namespace GraphicsLibrary.Content
 			return output;
 		}
 
+		public static Mesh ConvertObjToVboMesh(string inputFile, Vector3 offset)
+		{
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+			Mesh output = new Mesh();
+			List<Vertex> vOuput = new List<Vertex>();
+
+			string[] inputElements = inputFile.Split(new string[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
+
+			int vCount = 1;
+			int vnCount = 1;
+			int vtCount = 1;
+
+			int totalVertices = 0;
+			int totalNormals = 0;
+			int totalTextCoordinates = 0;
+
+			foreach(string s in inputElements)
+			{
+				string[] decomposed = s.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+
+				if(decomposed[0] == "v" | decomposed[0] == "V")
+				{
+					totalVertices++;
+				}
+				else if(decomposed[0] == "vt")
+				{
+					totalTextCoordinates++;
+				}
+				else if(decomposed[0] == "vn")
+				{
+					totalNormals++;
+				}
+			}
+
+			//Vertex[] vertices = new Vertex[totalVertices + 1];
+			Vector3[] vertices = new Vector3[totalVertices + 1];
+			Vector3[] normals = new Vector3[totalNormals + 1];
+			Vector2[] textCoords = new Vector2[totalTextCoordinates + 1];
+
+			List<Face> faces = new List<Face>();
+
+			foreach(string s in inputElements)
+			{
+				string[] decomposed = s.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+
+				switch(decomposed[0])
+				{
+					#region Comment
+					case "#":
+
+						break;
+					#endregion
+					#region Geometric vertex
+					case "v":
+					case "V":
+						Vector3 pos = new Vector3((float)Convert.ToDouble(decomposed[1]),
+												  (float)Convert.ToDouble(decomposed[2]),
+												  (float)Convert.ToDouble(decomposed[3]));
+
+						vertices[vCount] = pos - offset;
+
+						vCount++;
+
+
+						break;
+					#endregion
+					#region Texture vertex
+					case "vt":
+
+						Vector2 tex = new Vector2((float)Convert.ToDouble(decomposed[1]),
+												  1f - (float)Convert.ToDouble(decomposed[2]));
+
+						textCoords[vtCount] = tex;
+
+						vtCount++;
+
+						break;
+					#endregion
+					#region Vertex normal
+					case "vn":
+
+						Vector3 nrm = new Vector3((float)Convert.ToDouble(decomposed[1]),
+												  (float)Convert.ToDouble(decomposed[2]),
+												  (float)Convert.ToDouble(decomposed[3]));
+
+						normals[vnCount] = nrm;
+
+						vnCount++;
+
+						break;
+					#endregion
+					#region Face
+					case "f":
+					case "F":
+
+						int length = decomposed.Length - 1;
+						int[] vertexIndices = new int[length];
+						int[] normalIndices = new int[length];
+						int[] textureIndices = new int[length];
+						for (int i = 0; i < decomposed.Length - 1; i++)
+						{
+							string[] vertexString = decomposed[i + 1].Split(new string[] {"/"}, StringSplitOptions.None);
+							vertexIndices[i] = Convert.ToInt32(vertexString[0]);
+							textureIndices[i] = Convert.ToInt32(vertexString[1]);
+							normalIndices[i] = Convert.ToInt32(vertexString[2]);
+						}
+						faces.Add(new Face(vertexIndices, textureIndices, normalIndices));
+
+
+
+						break;
+					#endregion
+					#region Mtl library
+					case "mtllib":
+
+						//TODO: MTLLIB
+
+						break;
+					#endregion
+					#region Mtl library reference
+					case "usemtl":
+
+						//TODO: USEMTL
+
+						break;
+					#endregion
+				}
+			}
+
+			foreach(Face f in faces)
+			{
+				Vertex[] vertexArr = new Vertex[f.vIndices.Length];
+
+				if (f.vIndices.Length == 3)
+				{
+					for (int i = 0; i < f.vIndices.Length; i++)
+					{
+						vertexArr[i] = new Vertex(vertices[f.vIndices[i]], normals[f.vnIndices[i]], textCoords[f.vtIndices[i]]);
+					}
+				}
+				vOuput.AddRange(vertexArr);
+				output.polygonList.Add(new Polygon(vertexArr));
+			}
+			output.vertexArray = vOuput.ToArray();
+			return output;
+		}
+
 		public static CollisionAABB[] ConvertObjToAABBarray(string inputFile)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;

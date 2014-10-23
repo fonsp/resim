@@ -34,10 +34,11 @@ namespace Resim.Program
 
 			//map.scale = new Vector3(2, 2, 2);
 			//map0a.mesh.material.textureName = "map0a";
-			map0b.mesh.material.textureName = "map0b";
-			map0c.mesh.material.textureName = "map0c";
-			map0d.mesh.material.textureName = "map0d";
+			//map0b.mesh.material.textureName = "map0b";
+			//map0c.mesh.material.textureName = "map0c";
+			//map0d.mesh.material.textureName = "map0d";
 			//map0e.mesh.material.textureName = "map0e";
+			map1.mesh.material.textureName = "white";
 
 			hudDebug.enabled = false;
 			hudDebug.isVisible = false;
@@ -106,16 +107,17 @@ namespace Resim.Program
 
 			RootNode.Instance.Add(monster);
 			RootNode.Instance.Add(skybox);
-			RootNode.Instance.Add(ground);
+			//RootNode.Instance.Add(ground);
 			RootNode.Instance.Add(map);
-			map.Add(map0a);
+			/*map.Add(map0a);
 			map.Add(map0b);
 			map.Add(map0c);
 			map.Add(map0d);
-			map.Add(map0e);
+			map.Add(map0e);*/
+			map.Add(map1);
 			#endregion
 
-			Camera.Instance.position = new Vector3(-10, 1000, 10);
+			Camera.Instance.position = new Vector3(2700, 300, -6075);
 
 			RenderWindow.Instance.KeyPress += HandleKeyPress;
 			RenderWindow.Instance.Title = "CSC";
