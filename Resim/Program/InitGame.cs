@@ -39,6 +39,8 @@ namespace Resim.Program
 			//map0d.mesh.material.textureName = "map0d";
 			//map0e.mesh.material.textureName = "map0e";
 			map1.mesh.material.textureName = "white";
+			map1.mesh.useVBO = true;
+			map1.mesh.GenerateVBO();
 
 			hudDebug.enabled = false;
 			hudDebug.isVisible = false;

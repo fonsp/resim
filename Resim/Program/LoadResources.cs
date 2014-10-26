@@ -64,7 +64,7 @@ namespace Resim.Program
 			map0c.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0c.obj"));
 			map0d.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0d.obj"));
 			map0e.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map0/map0e.obj"));*/
-			map1.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/map1/map1.obj"));
+			map1.mesh = ObjConverter.ConvertObjToVboMesh(File.ReadAllText(@"Content/models/map1/map1.obj"));
 
 			//mapCollision.AddRange(ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/map0/collision.obj")));
 			mapCollision.AddRange(ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/map1/collision.obj")));

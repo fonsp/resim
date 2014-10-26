@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -32,10 +33,22 @@ namespace GraphicsLibrary.Core
 
 		public void GenerateVBO()
 		{
-			if(!useVBO || hasVBO)
+			if(!useVBO)
 			{
+				Debug.WriteLine("WARNING: VBO generation failed: Mesh is using immediate mode");
 				return;
 			}
+			if(hasVBO)
+			{
+				Debug.WriteLine("WARNING: VBO generation failed: VBO already exists");
+				return;
+			}
+			if(vertexArray == null)
+			{
+				Debug.WriteLine("WARNING: VBO generation failed: vertexArray is null");
+				return;
+			}
+
 			int stride = BlittableValueType.StrideOf(vertexArray);
 			
 
@@ -45,9 +58,10 @@ namespace GraphicsLibrary.Core
 
 			GL.GenBuffers(1, out VBOids[1]);
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer, VBOids[1]);
-			GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(vertexArray.Length * sizeof(ushort)), IntPtr.Zero, BufferUsageHint.StaticDraw);
-			GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, (IntPtr)(vertexArray.Length * sizeof(ushort)), RenderWindow.Instance.elementBase);
+			GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(vertexArray.Length * sizeof(uint)), IntPtr.Zero, BufferUsageHint.StaticDraw);
+			GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, (IntPtr)(vertexArray.Length * sizeof(uint)), RenderWindow.Instance.elementBase);
 			hasVBO = true;
+			Debug.WriteLine("VBO generation complete");
 		}
 	}
 }

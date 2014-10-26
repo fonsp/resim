@@ -134,7 +134,7 @@ void main()
     gl_Position = gl_ProjectionMatrix * v;*/
 	gl_Position = ftransform();
 	
-	gl_FrontColor = gl_Color;
+	gl_FrontColor = vec4(vec3(1.0 / (gl_Position.w / 2000.0 + 1.0)), 1.0);
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 }",
 					fragmentShader = @"
@@ -146,7 +146,7 @@ varying float intensity;
 void main()
 {
 	float a = sqrt(intensity);
-	gl_FragColor = texture2D(tex, gl_TexCoord[0].xy) * (vec4(a, a, a, 1.0) * gl_LightSource[0].diffuse + vec4(1.0-a, 1.0-a, 1.0-a, 1.0) * gl_LightSource[0].ambient);
+	gl_FragColor = gl_Color * (texture2D(tex, gl_TexCoord[0].xy) * (vec4(a, a, a, 1.0) * gl_LightSource[0].diffuse + vec4(1.0-a, 1.0-a, 1.0-a, 1.0) * gl_LightSource[0].ambient));
 }"
 				};
 			}
