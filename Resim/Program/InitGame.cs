@@ -16,7 +16,7 @@ namespace Resim.Program
 		private Random random = new Random();
 
 		private List<CollisionAABB> mapCollision = new List<CollisionAABB>();
-		
+
 		public override void InitGame()
 		{
 			#region Entities
@@ -109,7 +109,7 @@ namespace Resim.Program
 
 			RootNode.Instance.Add(monster);
 			RootNode.Instance.Add(skybox);
-			//RootNode.Instance.Add(ground);
+			RootNode.Instance.Add(ground);
 			RootNode.Instance.Add(map);
 			/*map.Add(map0a);
 			map.Add(map0b);

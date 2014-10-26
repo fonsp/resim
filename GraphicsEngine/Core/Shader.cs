@@ -134,7 +134,7 @@ void main()
     gl_Position = gl_ProjectionMatrix * v;*/
 	gl_Position = ftransform();
 	
-	gl_FrontColor = vec4(vec3(1.0 / (gl_Position.w / 2000.0 + 1.0)), 1.0);
+	gl_FrontColor = vec4(gl_Color.xyz, 1.0 / (gl_Position.w / 2000.0 + 1.0));
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 }",
 					fragmentShader = @"
@@ -146,7 +146,7 @@ varying float intensity;
 void main()
 {
 	float a = sqrt(intensity);
-	gl_FragColor = gl_Color * (texture2D(tex, gl_TexCoord[0].xy) * (vec4(a, a, a, 1.0) * gl_LightSource[0].diffuse + vec4(1.0-a, 1.0-a, 1.0-a, 1.0) * gl_LightSource[0].ambient));
+	gl_FragColor = vec4(vec3(gl_Color.w), 1.0) * (texture2D(tex, gl_TexCoord[0].xy) * (vec4(a, a, a, 1.0) * gl_LightSource[0].diffuse + vec4(1.0-a, 1.0-a, 1.0-a, 1.0) * gl_LightSource[0].ambient));
 }"
 				};
 			}
@@ -181,9 +181,9 @@ uniform float time;
 
 void main()
 {
-	gl_FrontColor = gl_Color;
     gl_Position = ftransform();
 	gl_TexCoord[0] = gl_MultiTexCoord0;
+	gl_FrontColor = gl_Color;
 }",
 					fragmentShader = @"
 #version 120
@@ -212,6 +212,52 @@ void main()
 					unlitShaderCompiledi.GenerateShaders();
 				}
 				return unlitShaderCompiledi;
+			}
+		}
+
+		public static Shader depthShader
+		{
+			get
+			{
+				return new Shader
+				{
+					vertexShader = @"
+#version 120
+uniform float time;
+
+void main()
+{
+    gl_Position = ftransform();
+	gl_TexCoord[0] = gl_MultiTexCoord0;
+	gl_FrontColor = vec4(gl_Color.xyz, 1.0 / (gl_Position.w / 2000.0 + 1.0));
+}",
+					fragmentShader = @"
+#version 120
+uniform float time;
+uniform sampler2D tex;
+
+void main()
+{
+	gl_FragColor = texture2D(tex, gl_TexCoord[0].xy) * vec4(gl_Color.xyz, 1.0) * vec4(vec3(gl_Color.w), 1.0);
+}"
+				};
+			}
+		}
+
+		private static Shader depthShaderCompiledi;
+		public static Shader depthShaderCompiled
+		{
+			get
+			{
+				if(depthShaderCompiledi == null)
+				{
+					depthShaderCompiledi = depthShader;
+				}
+				if(depthShaderCompiledi.Compiled == false)
+				{
+					depthShaderCompiledi.GenerateShaders();
+				}
+				return depthShaderCompiledi;
 			}
 		}
 

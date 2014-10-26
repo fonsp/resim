@@ -14,7 +14,7 @@ namespace Resim.Program
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			if(!String.IsNullOrEmpty(e.InputArray[0]))
+			if(e.InputArray.Length > 0 && !String.IsNullOrEmpty(e.InputArray[0]))
 			{
 				switch(e.InputArray[0])
 				{
@@ -24,32 +24,32 @@ namespace Resim.Program
 						RenderWindow.Instance.Exit();
 						break;
 					case "set":
-						if (e.InputArray.Length > 1 && !String.IsNullOrEmpty(e.InputArray[1]))
+						if(e.InputArray.Length > 1 && !String.IsNullOrEmpty(e.InputArray[1]))
 						{
-							switch (e.InputArray[1])
+							switch(e.InputArray[1])
 							{
 								case "timeMult":
-									if (!String.IsNullOrEmpty(e.InputArray[2]))
+									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 									{
 										RenderWindow.Instance.timeMultiplier = Convert.ToDouble(e.InputArray[2]);
 										hudDebug.AddLine("timeMult was set to " + RenderWindow.Instance.timeMultiplier);
 									}
 									break;
 								case "walkSpeed":
-									if (!String.IsNullOrEmpty(e.InputArray[2]))
+									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 									{
-										walkSpeed = (int) Convert.ToDouble(e.InputArray[2]);
+										walkSpeed = (int)Convert.ToDouble(e.InputArray[2]);
 										hudDebug.AddLine("walkSpeed was set to " + walkSpeed);
 									}
 									break;
 								case "VSync":
-									if (!String.IsNullOrEmpty(e.InputArray[2]))
+									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 									{
 										try
 										{
-											RenderWindow.Instance.VSync = (VSyncMode) Enum.Parse(typeof (VSyncMode), e.InputArray[2], true);
+											RenderWindow.Instance.VSync = (VSyncMode)Enum.Parse(typeof(VSyncMode), e.InputArray[2], true);
 										}
-										catch (Exception exception)
+										catch(Exception exception)
 										{
 										}
 										hudDebug.AddLine("VSync was set to " + RenderWindow.Instance.VSync);

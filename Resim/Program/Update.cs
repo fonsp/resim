@@ -69,52 +69,6 @@ namespace Resim.Program
 				}
 				crossHair.isVisible = true;
 			}*/
-			Vector3 raydir = Vector3.Zero;
-			raydir.Z = (float)-Math.Cos(fpsCam.X);
-			raydir.X = (float)Math.Sin(fpsCam.X);
-			raydir.Y = (float)Math.Tan(fpsCam.Y);
-			raydir.Normalize();
-
-			if(!InputManager.IsButtonDown(MouseButton.Right))
-			{
-				if(mouseDown)
-				{
-					Camera.Instance.position += 500f * raydir;
-				}
-				mouseDown = false;
-				monster.isVisible = false;
-			}
-			else
-			{
-				mouseDown = true;
-				monster.isVisible = true;
-				monster.position = Camera.Instance.position + 500f * raydir - new Vector3(0, 80, 0);
-			}
-
-			if(InputManager.IsKeyDown(Key.Left))
-			{
-				monster.position.X -= 500f * timeSinceLastUpdate;
-				monsterAABB.Translate(new Vector3(-500f * timeSinceLastUpdate, 0f, 0f));
-			}
-
-			if(InputManager.IsKeyDown(Key.Right))
-			{
-				monster.position.X += 500f * timeSinceLastUpdate;
-				monsterAABB.Translate(new Vector3(500f * timeSinceLastUpdate, 0f, 0f));
-			}
-
-			if(InputManager.IsKeyDown(Key.Up))
-			{
-				monster.position.Y += 500f * timeSinceLastUpdate;
-				monsterAABB.Translate(new Vector3(0f, 500f * timeSinceLastUpdate, 0f));
-			}
-
-			if(InputManager.IsKeyDown(Key.Down))
-			{
-				monster.position.Y -= 500f * timeSinceLastUpdate;
-				monsterAABB.Translate(new Vector3(0f, -500f * timeSinceLastUpdate, 0f));
-			}
-
 			#endregion
 			#region Movement
 
@@ -168,7 +122,7 @@ namespace Resim.Program
 				if(dist <= playerHeight && dist != -1)
 				{
 					grounded = true;
-					Camera.Instance.position.Y += Math.Min(500 * timeSinceLastUpdate, playerHeight - dist);
+					Camera.Instance.position.Y += Math.Min(config.GetInt("riseSpeed") * timeSinceLastUpdate, playerHeight - dist);
 				}
 
 				// X vel
@@ -258,8 +212,8 @@ namespace Resim.Program
 			#region Jumping/Gravity
 			if(grounded)
 			{
-				Camera.Instance.velocity.Y = 0;
-
+				Camera.Instance.velocity.Y = Math.Max(Camera.Instance.velocity.Y, 0);
+				Camera.Instance.position.Y -= (float)config.GetDouble("groundedCorrection") * timeSinceLastUpdate; //roundoff error correction
 				if(InputManager.IsKeyDown(Key.Space))
 				{
 					Camera.Instance.velocity.Y = config.GetInt("jumpForce");
@@ -295,6 +249,57 @@ namespace Resim.Program
 			cameraBobDelta = Vector3.Zero;
 
 			Camera.Instance.position += cameraBobDelta;
+
+			#endregion
+			#region Other
+			Vector3 raydir = Vector3.Zero;
+			raydir.Z = (float)-Math.Cos(fpsCam.X);
+			raydir.X = (float)Math.Sin(fpsCam.X);
+			raydir.Y = (float)Math.Tan(fpsCam.Y);
+			raydir.Normalize();
+
+			if(!InputManager.IsButtonDown(MouseButton.Right))
+			{
+				if(mouseDown)
+				{
+					Camera.Instance.position += 500f * raydir;
+				}
+				mouseDown = false;
+				monster.isVisible = false;
+			}
+			else
+			{
+				mouseDown = true;
+				monster.isVisible = true;
+				monster.position = Camera.Instance.position + 500f * raydir - new Vector3(0, 80, 0);
+			}
+
+			if(InputManager.IsKeyDown(Key.Left))
+			{
+				monster.position.X -= 500f * timeSinceLastUpdate;
+				monsterAABB.Translate(new Vector3(-500f * timeSinceLastUpdate, 0f, 0f));
+			}
+
+			if(InputManager.IsKeyDown(Key.Right))
+			{
+				monster.position.X += 500f * timeSinceLastUpdate;
+				monsterAABB.Translate(new Vector3(500f * timeSinceLastUpdate, 0f, 0f));
+			}
+
+			if(InputManager.IsKeyDown(Key.Up))
+			{
+				monster.position.Y += 500f * timeSinceLastUpdate;
+				monsterAABB.Translate(new Vector3(0f, 500f * timeSinceLastUpdate, 0f));
+			}
+
+			if(InputManager.IsKeyDown(Key.Down))
+			{
+				monster.position.Y -= 500f * timeSinceLastUpdate;
+				monsterAABB.Translate(new Vector3(0f, -500f * timeSinceLastUpdate, 0f));
+			}
+
+			ground.isVisible = InputManager.IsKeyToggled(Key.Number1);
+			map1.mesh.shader = InputManager.IsKeyToggled(Key.Number2) ? Shader.depthShaderCompiled : null;
 
 			#endregion
 			#region HUD

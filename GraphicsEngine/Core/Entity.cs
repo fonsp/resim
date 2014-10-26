@@ -86,7 +86,7 @@ namespace GraphicsLibrary.Core
 					GL.BindBuffer(BufferTarget.ElementArrayBuffer, mesh.VBOids[1]);
 					GL.InterleavedArrays(InterleavedArrayFormat.T2fN3fV3f, 0, IntPtr.Zero);
 					GL.DrawElements(BeginMode.Triangles, mesh.vertexArray.Length, DrawElementsType.UnsignedInt, 0);
-					
+
 					GL.DisableClientState(ArrayCap.TextureCoordArray);
 					GL.DisableClientState(ArrayCap.NormalArray);
 					GL.DisableClientState(ArrayCap.VertexArray);
