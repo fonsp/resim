@@ -79,6 +79,9 @@ namespace GraphicsLibrary.Core
 					case ";":
 						//Comment
 						break;
+					case "":
+						//Empty line
+						break;
 					case "bool":
 						//Boolean
 						try
@@ -127,7 +130,7 @@ namespace GraphicsLibrary.Core
 				}
 				if(error)
 				{
-					Debug.WriteLine("Error in config file " + fileName + " at line: " + line);
+					Debug.Write("Error in config file " + fileName + " at line: " + line);
 				}
 			}
 		}

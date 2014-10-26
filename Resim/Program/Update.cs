@@ -17,6 +17,7 @@ namespace Resim.Program
 		private int playerHeight = 170;
 		private Vector2 mouseSensitivity = new Vector2(200, 200); //TODO: config
 		private Vector3 cameraBobDelta = Vector3.Zero;
+		private bool mouseDown = false;
 		private int comboFieldCounter;
 		private CollisionAABB monsterAABB = new CollisionAABB(new Vector3(-50, 0, -50), new Vector3(50, 110, 50));
 
@@ -52,7 +53,7 @@ namespace Resim.Program
 				InputManager.ShowCursor();
 			}
 
-			if(InputManager.IsButtonDown(MouseButton.Right))
+			/*if(InputManager.IsButtonDown(MouseButton.Right))
 			{
 				if(Camera.Instance.Fov != 50)
 				{
@@ -67,6 +68,27 @@ namespace Resim.Program
 					Camera.Instance.Fov = 90;
 				}
 				crossHair.isVisible = true;
+			}*/
+			Vector3 raydir = Vector3.Zero;
+			raydir.Z = (float)-Math.Cos(fpsCam.X);
+			raydir.X = (float)Math.Sin(fpsCam.X);
+			raydir.Y = (float)Math.Tan(fpsCam.Y);
+			raydir.Normalize();
+
+			if(!InputManager.IsButtonDown(MouseButton.Right))
+			{
+				if(mouseDown)
+				{
+					Camera.Instance.position += 500f * raydir;
+				}
+				mouseDown = false;
+				monster.isVisible = false;
+			}
+			else
+			{
+				mouseDown = true;
+				monster.isVisible = true;
+				monster.position = Camera.Instance.position + 500f * raydir - new Vector3(0, 80, 0);
 			}
 
 			if(InputManager.IsKeyDown(Key.Left))
@@ -189,7 +211,7 @@ namespace Resim.Program
 				{
 					collisionRay = new CollisionRay(feetPos, new Vector3(1f, 0.00001f, 0.00001f));
 					dist = collisionBox.Intersect(collisionRay);
-					if (dist != -1)
+					if(dist != -1)
 					{
 						Camera.Instance.position.X -= dist;
 					}
@@ -230,7 +252,7 @@ namespace Resim.Program
 						Camera.Instance.position.Z += dist;
 					}
 				}
-				
+
 			}
 			#endregion
 			#region Jumping/Gravity

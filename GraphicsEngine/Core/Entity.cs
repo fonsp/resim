@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using System;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using GraphicsLibrary.Content;
 
@@ -34,7 +35,7 @@ namespace GraphicsLibrary.Core
 			{
 				if(mesh.shader == null)
 				{
-					if (isLit)
+					if(isLit)
 					{
 						Shader.diffuseShaderCompiled.Enable();
 					}
@@ -55,7 +56,7 @@ namespace GraphicsLibrary.Core
 					GL.DepthMask(false);
 				}
 
-				if (!readDepthBuffer)
+				if(!readDepthBuffer)
 				{
 					GL.Disable(EnableCap.DepthTest);
 				}
@@ -73,18 +74,38 @@ namespace GraphicsLibrary.Core
 
 				GL.Material(MaterialFace.Front, MaterialParameter.Diffuse, mesh.material.GetCurrentColor());
 
-				foreach(Polygon poly in mesh.polygonList)
+				if(mesh.useVBO && mesh.hasVBO)
 				{
-					GL.Begin(PrimitiveType.Polygon);
+					//Console.WriteLine("Rendering {0} using VBO", this.name);
+					GL.EnableClientState(ArrayCap.TextureCoordArray);
+					GL.EnableClientState(ArrayCap.NormalArray);
+					GL.EnableClientState(ArrayCap.VertexArray);
+					GL.InterleavedArrays(InterleavedArrayFormat.T2fN3fV3f, 0, IntPtr.Zero);
 
-					for(int i = 0; i < poly.vertices.Length; i++)
+					GL.BindBuffer(BufferTarget.ArrayBuffer, mesh.VBOids[0]);
+					GL.BindBuffer(BufferTarget.ElementArrayBuffer, mesh.VBOids[1]);
+					GL.InterleavedArrays(InterleavedArrayFormat.T2fN3fV3f, 0, IntPtr.Zero);
+					GL.DrawElements(BeginMode.Triangles, mesh.vertexArray.Length, DrawElementsType.UnsignedInt, 0);
+					
+					GL.DisableClientState(ArrayCap.TextureCoordArray);
+					GL.DisableClientState(ArrayCap.NormalArray);
+					GL.DisableClientState(ArrayCap.VertexArray);
+				}
+				else
+				{
+					foreach(Polygon poly in mesh.polygonList)
 					{
-						GL.Normal3(poly.vertices[i].nrm);
-						GL.TexCoord2(poly.vertices[i].tex);
-						GL.Vertex3(poly.vertices[i].pos);
-					}
+						GL.Begin(PrimitiveType.Polygon);
 
-					GL.End();
+						for(int i = 0; i < poly.vertices.Length; i++)
+						{
+							GL.Normal3(poly.vertices[i].nrm);
+							GL.TexCoord2(poly.vertices[i].tex);
+							GL.Vertex3(poly.vertices[i].pos);
+						}
+
+						GL.End();
+					}
 				}
 				if(wireFrame)
 				{
