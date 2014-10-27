@@ -123,16 +123,26 @@ namespace GraphicsLibrary.Core
 					vertexShader = @"
 #version 120
 uniform float time;
+uniform float b;
+uniform vec3 vdir;
+uniform vec3 cpos;
+uniform mat4 crot;
+
 varying float intensity;
 
 void main()
 {
 	intensity = (dot(gl_LightSource[0].position.xyz, gl_Normal)+1.0)/2.0;
 	
-	/*vec4 v =  gl_ModelViewMatrix * gl_Vertex;
-	v.z = sin(0.02 * v.x + time) * 20.0 + v.z;
-    gl_Position = gl_ProjectionMatrix * v;*/
-	gl_Position = ftransform();
+	vec4 v = gl_Vertex;
+	v.xyz = v.xyz - cpos;
+	v = gl_ModelViewMatrix * v;
+	if(b > 0)
+	{
+		v.xyz = v.xyz + vdir * b * length(v.xyz);
+	}
+	v = crot * v;
+    gl_Position = gl_ProjectionMatrix * v;
 	
 	gl_FrontColor = vec4(gl_Color.xyz, 1.0 / (gl_Position.w / 2000.0 + 1.0));
 	gl_TexCoord[0] = gl_MultiTexCoord0;
@@ -140,7 +150,12 @@ void main()
 					fragmentShader = @"
 #version 120
 uniform float time;
+uniform float b;
+uniform vec3 vdir;
+uniform vec3 cpos;
+uniform mat4 crot;
 uniform sampler2D tex;
+
 varying float intensity;
 
 void main()
@@ -178,6 +193,10 @@ void main()
 					vertexShader = @"
 #version 120
 uniform float time;
+uniform float b;
+uniform vec3 vdir;
+uniform vec3 cpos;
+uniform mat4 crot;
 
 void main()
 {
@@ -188,6 +207,10 @@ void main()
 					fragmentShader = @"
 #version 120
 uniform float time;
+uniform float b;
+uniform vec3 vdir;
+uniform vec3 cpos;
+uniform mat4 crot;
 uniform sampler2D tex;
 
 void main()
@@ -224,21 +247,46 @@ void main()
 					vertexShader = @"
 #version 120
 uniform float time;
+uniform float b;
+uniform vec3 vdir;
+uniform vec3 cpos;
+uniform mat4 crot;
+varying float dopp;
 
 void main()
 {
-    gl_Position = ftransform();
+	vec4 v = gl_Vertex;
+	v.xyz = v.xyz - cpos;
+	v = gl_ModelViewMatrix * v;
+	dopp = 0.0;
+	if(b > 0)
+	{
+		dopp = dot(v.xyz, vdir) * b / length(v.xyz);
+		v.xyz = v.xyz + vdir * b * length(v.xyz);
+	}
+	v = crot * v;
+    gl_Position = gl_ProjectionMatrix * v;
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 	gl_FrontColor = vec4(gl_Color.xyz, 1.0 / (gl_Position.w / 2000.0 + 1.0));
 }",
 					fragmentShader = @"
 #version 120
 uniform float time;
+uniform float b;
+uniform vec3 vdir;
+uniform vec3 cpos;
+uniform mat4 crot;
 uniform sampler2D tex;
+varying float dopp;
 
 void main()
 {
-	gl_FragColor = texture2D(tex, gl_TexCoord[0].xy) * vec4(gl_Color.xyz, 1.0) * vec4(vec3(gl_Color.w), 1.0);
+	
+	vec4 shift = vec4(1.0);
+	shift.r = 2 * max(0, 0.5 - abs(dopp + 0.0)) + 2 * max(0, 0.5 - abs(dopp + 0.5)) + 2 * max(0, 0.5 - abs(dopp + 1.0));
+	shift.g = 2 * max(0, 0.5 - abs(dopp - 0.5)) + 2 * max(0, 0.5 - abs(dopp + 0.0)) + 2 * max(0, 0.5 - abs(dopp + 0.5));
+	shift.b = 2 * max(0, 0.5 - abs(dopp - 1.0)) + 2 * max(0, 0.5 - abs(dopp - 0.5)) + 2 * max(0, 0.5 - abs(dopp + 0.0));
+	gl_FragColor = texture2D(tex, gl_TexCoord[0].xy) * vec4(vec3(0.5 + dopp / 2.0), 1.0) * vec4(vec3(gl_Color.w), 1.0) * shift;
 }"
 				};
 			}
@@ -270,16 +318,26 @@ void main()
 					vertexShader = @"
 #version 120
 uniform float time;
+uniform float b;
+uniform vec3 vdir;
+uniform vec3 cpos;
+uniform mat4 crot;
 
 void main()
 {
+    vec4 v = gl_Vertex;
+	v.xyz = v.xyz - cpos;
+    gl_Position = gl_ProjectionMatrix * (crot * (gl_ModelViewMatrix * v));
 	gl_FrontColor = gl_Color;
-    gl_Position = ftransform();
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 }",
 					fragmentShader = @"
 #version 120
 uniform float time;
+uniform float b;
+uniform vec3 vdir;
+uniform vec3 cpos;
+uniform mat4 crot;
 uniform sampler2D tex;
 
 void main()
@@ -316,14 +374,24 @@ void main()
 					vertexShader = @"
 #version 120
 uniform float time;
+uniform float b;
+uniform vec3 vdir;
+uniform vec3 cpos;
+uniform mat4 crot;
 
 void main()
 {
-    gl_Position = ftransform();
+	vec4 v = gl_Vertex;
+	v.xyz = v.xyz - cpos;
+	gl_Position = gl_ProjectionMatrix * (crot * (gl_ModelViewMatrix * v));
 }",
 					fragmentShader = @"
 #version 120
 uniform float time;
+uniform float b;
+uniform vec3 vdir;
+uniform vec3 cpos;
+uniform mat4 crot;
 uniform sampler2D tex;
 
 void main()
@@ -495,6 +563,20 @@ void main()
 				uniforms.Add(name, GL.GetUniformLocation(sp, name));
 			}
 			GL.Uniform4(uniforms[name], value);
+		}
+
+		public void SetUniform(string name, Matrix4 value)
+		{
+			if(!compiled)
+			{
+				return;
+			}
+			GL.UseProgram(sp);
+			if(!uniforms.ContainsKey(name))
+			{
+				uniforms.Add(name, GL.GetUniformLocation(sp, name));
+			}
+			GL.UniformMatrix4(uniforms[name], false, ref value);
 		}
 		#endregion
 	}

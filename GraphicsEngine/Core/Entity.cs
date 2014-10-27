@@ -76,7 +76,6 @@ namespace GraphicsLibrary.Core
 
 				if(mesh.useVBO && mesh.hasVBO)
 				{
-					//Console.WriteLine("Rendering {0} using VBO", this.name);
 					GL.EnableClientState(ArrayCap.TextureCoordArray);
 					GL.EnableClientState(ArrayCap.NormalArray);
 					GL.EnableClientState(ArrayCap.VertexArray);

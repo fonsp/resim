@@ -68,7 +68,7 @@ namespace GraphicsLibrary.Core
 
 			string file = File.ReadAllText(fileName);
 
-			string[] fileSplit0 = file.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+			string[] fileSplit0 = file.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			foreach(string line in fileSplit0)
 			{
@@ -80,6 +80,7 @@ namespace GraphicsLibrary.Core
 						//Comment
 						break;
 					case "":
+					case null:
 						//Empty line
 						break;
 					case "bool":

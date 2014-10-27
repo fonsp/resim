@@ -18,6 +18,9 @@ namespace Resim.Program
 		private Vector2 mouseSensitivity = new Vector2(200, 200); //TODO: config
 		private Vector3 cameraBobDelta = Vector3.Zero;
 		private bool mouseDown = false;
+		private bool windowKeyDown = false;
+		private bool freezeKeyDown = false;
+		private double timeMultPreFreeze = 1.0;
 		private int comboFieldCounter;
 		private CollisionAABB monsterAABB = new CollisionAABB(new Vector3(-50, 0, -50), new Vector3(50, 110, 50));
 
@@ -300,6 +303,49 @@ namespace Resim.Program
 
 			ground.isVisible = InputManager.IsKeyToggled(Key.Number1);
 			map1.mesh.shader = InputManager.IsKeyToggled(Key.Number2) ? Shader.depthShaderCompiled : null;
+			if(InputManager.IsKeyDown(Key.P))
+			{
+				if(!freezeKeyDown)
+				{
+					timeMultPreFreeze = RenderWindow.Instance.timeMultiplier;
+					RenderWindow.Instance.timeMultiplier = 0.0;
+				}
+				freezeKeyDown = true;
+			}
+			else
+			{
+				if(freezeKeyDown)
+				{
+					RenderWindow.Instance.timeMultiplier = timeMultPreFreeze;
+				}
+				freezeKeyDown = false;
+			}
+			if(InputManager.IsKeyDown(Key.Number0) || InputManager.IsKeyDown(Key.Number8) || InputManager.IsKeyDown(Key.Number9))
+			{
+				if(!windowKeyDown)
+				{
+					if(InputManager.IsKeyDown(Key.Number8))
+					{
+						RenderWindow.Instance.WindowBorder = WindowBorder.Resizable;
+						RenderWindow.Instance.WindowState = WindowState.Normal;
+					}
+					else if(InputManager.IsKeyDown(Key.Number9))
+					{
+						RenderWindow.Instance.WindowBorder = WindowBorder.Hidden;
+						RenderWindow.Instance.WindowState = WindowState.Maximized;
+					}
+					else if(InputManager.IsKeyDown(Key.Number0))
+					{
+						RenderWindow.Instance.WindowBorder = WindowBorder.Resizable;
+						RenderWindow.Instance.WindowState = WindowState.Fullscreen;
+					}
+				}
+				windowKeyDown = true;
+			}
+			else
+			{
+				windowKeyDown = false;
+			}
 
 			#endregion
 			#region HUD

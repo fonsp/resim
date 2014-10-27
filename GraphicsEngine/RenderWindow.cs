@@ -30,6 +30,10 @@ namespace GraphicsLibrary
 		public bool escapeOnEscape = true;
 		private readonly GameTimer updateSw = new GameTimer();
 		private float _time = 0f;
+		public float c = 2000f;
+		public float v = 0f;
+		public float b = 0f;
+		public float lf = 1f;
 		public float time { get { return _time; } }
 		public bool enableVelocity = true;
 		protected double timeSinceLastUpdate = 0;
@@ -227,7 +231,7 @@ namespace GraphicsLibrary
 			}
 #endif
 			timeSinceLastUpdate = e.Time * timeMultiplier;
-			_time += (float) timeSinceLastUpdate;
+			_time += (float)timeSinceLastUpdate;
 
 			program.Update((float)timeSinceLastUpdate);
 			if(enableVelocity)
@@ -258,14 +262,51 @@ namespace GraphicsLibrary
 			UpdateViewport();
 
 
-			Matrix4 modelview = Matrix4.LookAt(Camera.Instance.position, Camera.Instance.position - Vector3.UnitZ, Vector3.UnitY) * Matrix4.Rotate(Camera.Instance.derivedOrientation);
+			Matrix4 modelview = /*Matrix4.LookAt(Vector3.Zero, Vector3.Zero-Vector3.UnitZ, Vector3.UnitY) * */Matrix4.CreateFromQuaternion(Camera.Instance.derivedOrientation);
 
 			GL.MatrixMode(MatrixMode.Modelview);
-			GL.LoadMatrix(ref modelview);
+
+			//GL.LoadMatrix(ref modelview);
+			GL.LoadIdentity();
 
 			//Update shaders
 			Shader.diffuseShaderCompiled.SetUniform("time", _time);
 			Shader.unlitShaderCompiled.SetUniform("time", _time);
+			Shader.depthShaderCompiled.SetUniform("time", _time);
+			Shader.wireframeShaderCompiled.SetUniform("time", _time);
+			Shader.collisionShaderCompiled.SetUniform("time", _time);
+
+			v = Camera.Instance.velocity.Length;
+			b = v / c;
+			lf = 1f / (float)Math.Sqrt(1.0 - b);
+
+			Shader.diffuseShaderCompiled.SetUniform("b", b);
+			Shader.unlitShaderCompiled.SetUniform("b", b);
+			Shader.depthShaderCompiled.SetUniform("b", b);
+			Shader.wireframeShaderCompiled.SetUniform("b", b);
+			Shader.collisionShaderCompiled.SetUniform("b", b);
+
+			Vector3 vDir = Camera.Instance.velocity.Normalized();
+
+			Shader.diffuseShaderCompiled.SetUniform("vdir", vDir);
+			Shader.unlitShaderCompiled.SetUniform("vdir", vDir);
+			Shader.depthShaderCompiled.SetUniform("vdir", vDir);
+			Shader.wireframeShaderCompiled.SetUniform("vdir", vDir);
+			Shader.collisionShaderCompiled.SetUniform("vdir", vDir);
+
+			Shader.diffuseShaderCompiled.SetUniform("cpos", Camera.Instance.position);
+			Shader.unlitShaderCompiled.SetUniform("cpos", Camera.Instance.position);
+			Shader.depthShaderCompiled.SetUniform("cpos", Camera.Instance.position);
+			Shader.wireframeShaderCompiled.SetUniform("cpos", Camera.Instance.position);
+			Shader.collisionShaderCompiled.SetUniform("cpos", Camera.Instance.position);
+
+			Matrix4 cRot = Matrix4.CreateFromQuaternion(Camera.Instance.derivedOrientation);
+
+			Shader.diffuseShaderCompiled.SetUniform("crot", cRot);
+			Shader.unlitShaderCompiled.SetUniform("crot", cRot);
+			Shader.depthShaderCompiled.SetUniform("crot", cRot);
+			Shader.wireframeShaderCompiled.SetUniform("crot", cRot);
+			Shader.collisionShaderCompiled.SetUniform("crot", cRot);
 
 			for(int i = 0; i < amountOfRenderPasses; i++)
 			{

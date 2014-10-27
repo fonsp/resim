@@ -19,7 +19,13 @@ namespace Resim.Program
 
 		public override void InitGame()
 		{
+			#region Program arguments
+
+			//TODO: Program arguments
+
+			#endregion
 			#region Entities
+
 			skybox.mesh.material.textureName = "skybox";
 			skybox.isLit = false;
 			float size = Camera.Instance.ZFar / 1.8f;//Sqrt(3)
@@ -117,6 +123,7 @@ namespace Resim.Program
 			map.Add(map0d);
 			map.Add(map0e);*/
 			map.Add(map1);
+
 			#endregion
 
 			Camera.Instance.position = new Vector3(2700, 300, -6075);

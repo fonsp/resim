@@ -36,23 +36,34 @@ namespace GraphicsLibrary
 				}
 			}
 			Debug.WriteLine("---------------");
-			Debug.WriteLine("A game by Fons van der Plas");
+			Debug.WriteLine("ReSim - Relativity Simulator");
 			Debug.WriteLine("---------------");
-			Debug.WriteLine("Copyright 2013 Fons van der Plas");
-			Debug.WriteLine("Fons van der Plas, fonsvdplas@gmail.com");
+			Debug.WriteLine("Created by:");
+			Debug.WriteLine("Fons van der Plas (fons-), fonsvdplas@gmail.com");
+			Debug.WriteLine("Just Verlinden (Mhilez), justverlinden@gmail.com");
+			Debug.WriteLine("---------------");
+			Debug.WriteLine("https://github.com/fons-/resim");
 			Debug.WriteLine("---------------");
 			Debug.WriteLine("Program launched at " + DateTime.Now);
 			Debug.Write("Received arguments: ");
-			foreach(string s in programArguments)
+			int i;
+			for(i = 0; i < programArguments.Length - 1; i++)
 			{
-				Debug.Write(s + ", ");
+				Debug.Write(programArguments[i] + ", ");
+			}
+			if(programArguments.Length == 0)
+			{
+				Debug.Write("none");
+			}
+			else
+			{
+				Debug.Write(programArguments[0]);
 			}
 			Debug.WriteLine("");
 		}
 
 		public virtual void LoadResources()
 		{
-
 
 		}
 
