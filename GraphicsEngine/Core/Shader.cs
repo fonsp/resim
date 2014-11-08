@@ -139,7 +139,9 @@ void main()
 	v = gl_ModelViewMatrix * v;
 	if(b > 0)
 	{
+		float oldlength = length(v.xyz);
 		v.xyz = v.xyz + vdir * b * length(v.xyz);
+		v.xyz = v.xyz * (oldlength / length(v.xyz));
 	}
 	v = crot * v;
     gl_Position = gl_ProjectionMatrix * v;
@@ -262,7 +264,9 @@ void main()
 	if(b > 0)
 	{
 		dopp = dot(v.xyz, vdir) * b / length(v.xyz);
+		float oldlength = length(v.xyz);
 		v.xyz = v.xyz + vdir * b * length(v.xyz);
+		v.xyz = v.xyz * (oldlength / length(v.xyz));
 	}
 	v = crot * v;
     gl_Position = gl_ProjectionMatrix * v;

@@ -48,11 +48,11 @@ namespace Resim.Program
 			map1.mesh.useVBO = true;
 			map1.mesh.GenerateVBO();
 
-			hudDebug.enabled = false;
-			hudDebug.isVisible = false;
-			hudDebug.FontTextureName = "font0";
-			hudDebug.NumberOfLines = 30;
-			hudDebug.DebugInput += DebugInputReceived;
+			hudConsole.enabled = false;
+			hudConsole.isVisible = false;
+			hudConsole.FontTextureName = "font0";
+			hudConsole.NumberOfLines = 30;
+			hudConsole.DebugInput += ConsoleInputReceived;
 
 			crossHair.width = crossHair.height = 32;
 
@@ -110,7 +110,7 @@ namespace Resim.Program
 			}
 
 			//HudBase.Instance.Add(grainImage);
-			HudBase.Instance.Add(hudDebug);
+			HudBase.Instance.Add(hudConsole);
 			HudBase.Instance.Add(crossHair);
 
 			RootNode.Instance.Add(monster);

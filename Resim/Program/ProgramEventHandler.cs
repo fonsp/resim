@@ -10,7 +10,7 @@ namespace Resim.Program
 {
 	public partial class Game
 	{
-		private void DebugInputReceived(object sender, HudDebugInputEventArgs e)
+		private void ConsoleInputReceived(object sender, HudConsoleInputEventArgs e)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -32,14 +32,14 @@ namespace Resim.Program
 									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 									{
 										RenderWindow.Instance.timeMultiplier = Convert.ToDouble(e.InputArray[2]);
-										hudDebug.AddLine("timeMult was set to " + RenderWindow.Instance.timeMultiplier);
+										hudConsole.AddText("timeMult was set to " + RenderWindow.Instance.timeMultiplier);
 									}
 									break;
 								case "walkSpeed":
 									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 									{
 										walkSpeed = (int)Convert.ToDouble(e.InputArray[2]);
-										hudDebug.AddLine("walkSpeed was set to " + walkSpeed);
+										hudConsole.AddText("walkSpeed was set to " + walkSpeed);
 									}
 									break;
 								case "VSync":
@@ -52,17 +52,17 @@ namespace Resim.Program
 										catch(Exception exception)
 										{
 										}
-										hudDebug.AddLine("VSync was set to " + RenderWindow.Instance.VSync);
+										hudConsole.AddText("VSync was set to " + RenderWindow.Instance.VSync);
 									}
 									break;
 								default:
-									hudDebug.AddLine("Usage: set [timeMult|walkSpeed|VSync] [value]", Color4.LightBlue);
+									hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync] [value]", Color4.LightBlue);
 									break;
 							}
 						}
 						else
 						{
-							hudDebug.AddLine("Usage: set [timeMult|walkSpeed|VSync] [value]", Color4.LightBlue);
+							hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync] [value]", Color4.LightBlue);
 						}
 						break;
 					case "reset":
@@ -72,24 +72,24 @@ namespace Resim.Program
 							{
 								case "timeMult":
 									RenderWindow.Instance.timeMultiplier = 1;
-									hudDebug.AddLine("timeMult was reset to " + RenderWindow.Instance.timeMultiplier);
+									hudConsole.AddText("timeMult was reset to " + RenderWindow.Instance.timeMultiplier);
 									break;
 								case "walkSpeed":
 									walkSpeed = 400;
-									hudDebug.AddLine("walkSpeed was reset to " + walkSpeed);
+									hudConsole.AddText("walkSpeed was reset to " + walkSpeed);
 									break;
 								case "VSync":
 									RenderWindow.Instance.VSync = VSyncMode.On;
-									hudDebug.AddLine("walkSpeed was reset to " + RenderWindow.Instance.VSync);
+									hudConsole.AddText("walkSpeed was reset to " + RenderWindow.Instance.VSync);
 									break;
 								default:
-									hudDebug.AddLine("Usage: reset [timeMult|walkSpeed|VSync]", Color4.LightBlue);
+									hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync]", Color4.LightBlue);
 									break;
 							}
 						}
 						else
 						{
-							hudDebug.AddLine("Usage: reset [timeMult|walkSpeed|VSync]", Color4.LightBlue);
+							hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync]", Color4.LightBlue);
 						}
 						break;
 					case "get":
@@ -98,26 +98,26 @@ namespace Resim.Program
 							switch(e.InputArray[1])
 							{
 								case "timeMult":
-									hudDebug.AddLine("timeMult = " + RenderWindow.Instance.timeMultiplier);
+									hudConsole.AddText("timeMult = " + RenderWindow.Instance.timeMultiplier);
 									break;
 								case "walkSpeed":
-									hudDebug.AddLine("walkSpeed = " + walkSpeed);
+									hudConsole.AddText("walkSpeed = " + walkSpeed);
 									break;
 								case "VSync":
-									hudDebug.AddLine("VSync = " + RenderWindow.Instance.VSync);
+									hudConsole.AddText("VSync = " + RenderWindow.Instance.VSync);
 									break;
 								default:
-									hudDebug.AddLine("Usage: get [timeMult|walkSpeed|VSync]", Color4.LightBlue);
+									hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync]", Color4.LightBlue);
 									break;
 							}
 						}
 						else
 						{
-							hudDebug.AddLine("Usage: get [timeMult|walkSpeed|VSync]", Color4.LightBlue);
+							hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync]", Color4.LightBlue);
 						}
 						break;
 					case "clear":
-						hudDebug.ClearScreen();
+						hudConsole.ClearScreen();
 						break;
 					case "reload":
 						config.Reload();
@@ -126,7 +126,7 @@ namespace Resim.Program
 
 						break;
 					default:
-						hudDebug.AddLine("Invalid command. Type 'list' for a list of commands", Color4.Red);
+						hudConsole.AddText("Invalid command. Type 'list' for a list of commands", Color4.Red);
 						break;
 
 				}
@@ -135,20 +135,20 @@ namespace Resim.Program
 
 		private void HandleKeyPress(object sender, KeyPressEventArgs e)
 		{
-			if(e.KeyChar == '`' || e.KeyChar == '~' || e.KeyChar == '	') //Tab to support non-European keyboards
+			if(e.KeyChar == '`' || e.KeyChar == '~' || e.KeyChar == '	' || e.KeyChar == '/') //Tab and '/' to support non-European keyboards
 			{
-				if(hudDebug.enabled)
+				if(hudConsole.enabled)
 				{
-					hudDebug.enabled = false;
-					hudDebug.isVisible = false;
+					hudConsole.enabled = false;
+					hudConsole.isVisible = false;
 				}
 				else
 				{
-					hudDebug.enabled = true;
-					hudDebug.isVisible = true;
-					if(hudDebug.input.Length > 0)
+					hudConsole.enabled = true;
+					hudConsole.isVisible = true;
+					if(hudConsole.input.Length > 0)
 					{
-						hudDebug.input = hudDebug.input.Remove(hudDebug.input.Length - 1);
+						hudConsole.input = hudConsole.input.Remove(hudConsole.input.Length - 1);
 					}
 				}
 			}

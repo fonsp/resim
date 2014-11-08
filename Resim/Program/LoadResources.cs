@@ -22,7 +22,7 @@ namespace Resim.Program
 		private Entity flashB = new Entity("flashB");
 		private Entity monster = new Entity("monster");
 		private Mesh playerMesh;
-		private HudDebug hudDebug = new HudDebug("hudDebug", 5);
+		private HudConsole hudConsole = new HudConsole("HudConsole", 5);
 		private HudImage crossHair = new HudImage("crosshair", "crosshair0");
 		private HudImage grainImage = new HudImage("grainImage", "grain0");
 		private TextField[] comboTextFields = new TextField[200];

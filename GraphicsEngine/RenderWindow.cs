@@ -34,6 +34,8 @@ namespace GraphicsLibrary
 		public float v = 0f;
 		public float b = 0f;
 		public float lf = 1f;
+		private Vector3 smoothedVelocity = Vector3.Zero;
+		public float smoothFactor = 4000f;
 		public float time { get { return _time; } }
 		public bool enableVelocity = true;
 		protected double timeSinceLastUpdate = 0;
@@ -257,26 +259,20 @@ namespace GraphicsLibrary
 
 		protected override void OnRenderFrame(FrameEventArgs e)
 		{
-			#region 3D
-			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-			UpdateViewport();
+			#region Shader updates
 
+			float renderTime = (float)e.Time; //TODO e.Time accuracy
 
-			Matrix4 modelview = /*Matrix4.LookAt(Vector3.Zero, Vector3.Zero-Vector3.UnitZ, Vector3.UnitY) * */Matrix4.CreateFromQuaternion(Camera.Instance.derivedOrientation);
-
-			GL.MatrixMode(MatrixMode.Modelview);
-
-			//GL.LoadMatrix(ref modelview);
-			GL.LoadIdentity();
-
-			//Update shaders
 			Shader.diffuseShaderCompiled.SetUniform("time", _time);
 			Shader.unlitShaderCompiled.SetUniform("time", _time);
 			Shader.depthShaderCompiled.SetUniform("time", _time);
 			Shader.wireframeShaderCompiled.SetUniform("time", _time);
 			Shader.collisionShaderCompiled.SetUniform("time", _time);
 
-			v = Camera.Instance.velocity.Length;
+			Vector3 velocityDelta = Camera.Instance.velocity - smoothedVelocity;
+			smoothedVelocity += velocityDelta - Vector3.Divide(velocityDelta, (float) Math.Pow(smoothFactor, renderTime));
+
+			v = smoothedVelocity.Length;
 			b = v / c;
 			lf = 1f / (float)Math.Sqrt(1.0 - b);
 
@@ -286,7 +282,7 @@ namespace GraphicsLibrary
 			Shader.wireframeShaderCompiled.SetUniform("b", b);
 			Shader.collisionShaderCompiled.SetUniform("b", b);
 
-			Vector3 vDir = Camera.Instance.velocity.Normalized();
+			Vector3 vDir = smoothedVelocity.Normalized();
 
 			Shader.diffuseShaderCompiled.SetUniform("vdir", vDir);
 			Shader.unlitShaderCompiled.SetUniform("vdir", vDir);
@@ -307,6 +303,19 @@ namespace GraphicsLibrary
 			Shader.depthShaderCompiled.SetUniform("crot", cRot);
 			Shader.wireframeShaderCompiled.SetUniform("crot", cRot);
 			Shader.collisionShaderCompiled.SetUniform("crot", cRot);
+
+			#endregion
+			#region 3D
+
+			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+			UpdateViewport();
+
+			//Matrix4 modelview = /*Matrix4.LookAt(Vector3.Zero, Vector3.Zero-Vector3.UnitZ, Vector3.UnitY) * */Matrix4.CreateFromQuaternion(Camera.Instance.derivedOrientation);
+
+			GL.MatrixMode(MatrixMode.Modelview);
+
+			//GL.LoadMatrix(ref modelview);
+			GL.LoadIdentity();
 
 			for(int i = 0; i < amountOfRenderPasses; i++)
 			{

@@ -7,12 +7,12 @@ using OpenTK.Input;
 
 namespace GraphicsLibrary.Hud
 {
-	public class HudDebugInputEventArgs:EventArgs
+	public class HudConsoleInputEventArgs:EventArgs
 	{
 		private readonly string input;
 		private readonly string[] inputArray;
 
-		public HudDebugInputEventArgs(string input)
+		public HudConsoleInputEventArgs(string input)
 		{
 			this.input = input;
 			inputArray = input.Split(new char[] { ' ' });
@@ -34,11 +34,11 @@ namespace GraphicsLibrary.Hud
 			}
 		}
 	}
-	public delegate void HudDebugInputHandler(object sender, HudDebugInputEventArgs e);
+	public delegate void HudConsoleInputHandler(object sender, HudConsoleInputEventArgs e);
 
-	public class HudDebug:HudElement
+	public class HudConsole:HudElement
 	{
-		public event HudDebugInputHandler DebugInput;
+		public event HudConsoleInputHandler DebugInput;
 
 		private uint numberOfLines;
 		public uint NumberOfLines
@@ -96,7 +96,7 @@ namespace GraphicsLibrary.Hud
 			}
 		}
 		public Color4 backgroundColor = new Color4(0f, 0f, 0f, .5f);
-		public float width = 500;
+		public float width = 480;
 		public float height = 300;
 		private int sizeX = 12;
 
@@ -139,7 +139,7 @@ namespace GraphicsLibrary.Hud
 		private TextField[] textFields;
 		private TextField inputField = new TextField("asdf");
 
-		public HudDebug(string name, uint numberOfLines)
+		public HudConsole(string name, uint numberOfLines)
 			: base(name)
 		{
 			this.numberOfLines = numberOfLines;
@@ -163,7 +163,7 @@ namespace GraphicsLibrary.Hud
 				{
 					if(DebugInput != null)
 					{
-						DebugInput(this, new HudDebugInputEventArgs(input));
+						DebugInput(this, new HudConsoleInputEventArgs(input));
 					}
 					input = "";
 				}
@@ -238,10 +238,33 @@ namespace GraphicsLibrary.Hud
 			textFields[numberOfLines - 1].textMaterial.baseColor = color;
 		}
 
+		public void AddText(string s, Color4 color)
+		{
+			while (s.Length > width/sizeX)
+			{
+				AddLine(s.Substring(0, (int)width / sizeX), color);
+				s = s.Remove(0, (int) width/sizeX);
+			}
+			AddLine(s, color);
+		}
+
+		public void AddText(string s)
+		{
+			AddText(s, Color4.White);
+		}
+
 		public override void Render()
 		{
 			if(isVisible)
 			{
+				int lineStart;
+				for(lineStart = 0; lineStart < numberOfLines; lineStart++)
+				{
+					if(textFields[lineStart].text != "")
+					{
+						break;
+					}
+				}
 				Shader.hudShaderCompiled.Enable();
 				#region Background
 
@@ -254,8 +277,8 @@ namespace GraphicsLibrary.Hud
 				GL.Begin(PrimitiveType.Quads);
 				GL.Color4(backgroundColor);
 
-				GL.Vertex2(00, 00);
-				GL.Vertex2(width * derivedScale.X, 00);
+				GL.Vertex2(00, lineStart * sizeY);
+				GL.Vertex2(width * derivedScale.X, lineStart * sizeY);
 				GL.Vertex2(width * derivedScale.X, height * derivedScale.Y);
 				GL.Vertex2(00, height * derivedScale.Y);
 
