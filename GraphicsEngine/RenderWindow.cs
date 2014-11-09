@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using GraphicsLibrary.Input;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -43,6 +44,7 @@ namespace GraphicsLibrary
 		public int amountOfRenderPasses = 3;
 		public Shader defaultShader = Shader.diffuseShader;
 		public uint[] elementBase = new uint[1000000];
+		public uint FboHandle, ColorTexture, DepthRenderbuffer;
 
 		public RenderWindow(string windowName, int width, int height)
 			: base(width, height, GraphicsMode.Default, windowName
@@ -119,7 +121,6 @@ namespace GraphicsLibrary
 			{
 				GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { .2f, .2f, .2f, 1.0f });
 				GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { .95f, .95f, .95f, 1.0f });
-				//GL.Light(LightName.Light0, LightParameter.Position, new float[] { .8f, .9f, 1.0f, 0.0f });
 				GL.Light(LightName.Light0, LightParameter.Position, Vector4.Normalize(new Vector4(.4f, -.9f, .5f, 0.0f)));
 
 				GL.Enable(EnableCap.Lighting);
@@ -134,6 +135,7 @@ namespace GraphicsLibrary
 			#endregion
 			#region Default shaders init
 			Debug.WriteLine("Initializing default shaders..");
+			//TODO: useless?
 
 			try
 			{
@@ -146,6 +148,42 @@ namespace GraphicsLibrary
 				Debug.WriteLine("WARNING: default shader could not be initialized: {0}", exception.Message);
 				Exit();
 			}
+
+			#endregion
+			#region FBO init
+			Debug.WriteLine("Initializing FBO..");
+
+			Debug.WriteLine("FBO size: {" + Width + ", " + Height + "}");
+
+			// Create Color Texture
+			GL.GenTextures(1, out ColorTexture);
+			GL.BindTexture(TextureTarget.Texture2D, ColorTexture);
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
+			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
+			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
+
+			// test for GL Error here (might be unsupported format)
+
+			GL.BindTexture(TextureTarget.Texture2D, 0); // prevent feedback, reading and writing to the same image is a bad idea
+
+			// Create Depth Renderbuffer
+			GL.Ext.GenRenderbuffers(1, out DepthRenderbuffer);
+			GL.Ext.BindRenderbuffer(RenderbufferTarget.RenderbufferExt, DepthRenderbuffer);
+			GL.Ext.RenderbufferStorage(RenderbufferTarget.RenderbufferExt, (RenderbufferStorage)All.DepthComponent32, Width, Height);
+			
+			// test for GL Error here (might be unsupported format)
+
+			// Create an FBO and attach the textures
+			GL.Ext.GenFramebuffers(1, out FboHandle);
+			GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, FboHandle);
+			GL.Ext.FramebufferTexture2D(FramebufferTarget.FramebufferExt, FramebufferAttachment.ColorAttachment0Ext, TextureTarget.Texture2D, ColorTexture, 0);
+			GL.Ext.FramebufferRenderbuffer(FramebufferTarget.FramebufferExt, FramebufferAttachment.DepthAttachmentExt, RenderbufferTarget.RenderbufferExt, DepthRenderbuffer);
+
+			// now GL.Ext.CheckFramebufferStatus( FramebufferTarget.FramebufferExt ) can be called, check the end of this page for a snippet.
+
+			
 
 			#endregion
 			#region Camera init
@@ -177,6 +215,7 @@ namespace GraphicsLibrary
 
 			program.InitGame();
 			updateSw.GetElapsedTimeInSeconds();
+
 			#endregion
 
 			Debug.WriteLine("Loading complete");
@@ -207,6 +246,8 @@ namespace GraphicsLibrary
 
 			Camera.Instance.width = Width;
 			Camera.Instance.height = Height;
+
+			//TODO: FBO
 
 			UpdateViewport();
 
@@ -307,7 +348,7 @@ namespace GraphicsLibrary
 			#endregion
 			#region 3D
 
-			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+			
 			UpdateViewport();
 
 			//Matrix4 modelview = /*Matrix4.LookAt(Vector3.Zero, Vector3.Zero-Vector3.UnitZ, Vector3.UnitY) * */Matrix4.CreateFromQuaternion(Camera.Instance.derivedOrientation);
@@ -316,6 +357,16 @@ namespace GraphicsLibrary
 
 			//GL.LoadMatrix(ref modelview);
 			GL.LoadIdentity();
+
+			// since there's only 1 Color buffer attached this is not explicitly required
+			GL.Ext.BindRenderbuffer(RenderbufferTarget.RenderbufferExt, DepthRenderbuffer);
+			GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, FboHandle);
+			GL.DrawBuffer((DrawBufferMode)FramebufferAttachment.ColorAttachment0Ext);
+			GL.PushAttrib(AttribMask.ViewportBit); // stores GL.Viewport() parameters
+			GL.Viewport(0, 0, Width, Height);
+
+			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+			//////////////
 
 			for(int i = 0; i < amountOfRenderPasses; i++)
 			{
@@ -334,6 +385,17 @@ namespace GraphicsLibrary
 				}
 			}
 
+			//////////////
+			GL.PopAttrib(); // restores GL.Viewport() parameters
+			GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, 0); // return to visible framebuffer
+			GL.DrawBuffer(DrawBufferMode.Back);
+
+			GL.Ext.BindRenderbuffer(RenderbufferTarget.RenderbufferExt, 0);
+			GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, 0);
+
+			Shader.hudShaderCompiled.Enable();
+			GL.Color4(Color4.White);
+
 			#endregion
 			#region HUD
 			GL.DepthMask(false);
@@ -347,6 +409,29 @@ namespace GraphicsLibrary
 			GL.MatrixMode(MatrixMode.Modelview);
 			GL.LoadIdentity();
 			//////////////
+
+
+
+
+			if (InputManager.IsKeyToggled(Key.Number3))
+			{
+				Shader.blurShaderCompiled.Enable();
+			}
+			else
+			{
+				Shader.hudShaderCompiled.Enable();
+			}
+			
+
+			GL.BindTexture(TextureTarget.Texture2D, ColorTexture);
+
+			GL.Begin(PrimitiveType.Quads);
+			GL.Color4(Color4.White);
+			GL.TexCoord2(0, 1); GL.Vertex2(0, 0);
+			GL.TexCoord2(0, 0); GL.Vertex2(0, Height);
+			GL.TexCoord2(1, 0); GL.Vertex2(Width, Height);
+			GL.TexCoord2(1, 1); GL.Vertex2(Width, 0);
+			GL.End();
 
 			HudBase.Instance.StartRender();
 

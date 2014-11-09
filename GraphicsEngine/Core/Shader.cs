@@ -112,7 +112,7 @@ namespace GraphicsLibrary.Core
 			}
 		}
 
-		#region Default shaders
+		#region Default geometry shaders
 
 		public static Shader diffuseShader
 		{
@@ -470,7 +470,132 @@ void main()
 		}
 
 		#endregion
+		#region Default gfx shaders
+
+		public static Shader blurShader
+		{
+			get
+			{
+				return new Shader
+				{
+					vertexShader = @"
+#version 120
+uniform float time;
+
+void main()
+{
+	gl_FrontColor = gl_Color;
+    gl_Position = ftransform();
+	gl_TexCoord[0] = gl_MultiTexCoord0;
+}",
+					fragmentShader = @"
+#version 120
+uniform float time;
+uniform sampler2D tex;
+
+void main()
+{
+	float dx = 2.0 / 1280.0;
+	float dy = 2.0 / 0720.0;
+	
+	/*gl_FragColor = (texture2D(tex, gl_TexCoord[0].xy + vec2(-2.0 * dx, 0)) * 1.0 + 
+					texture2D(tex, gl_TexCoord[0].xy + vec2(-1.0 * dx, 0)) * 4.0 + 
+					texture2D(tex, gl_TexCoord[0].xy + vec2(00.0 * dx, 0)) * 6.0 + 
+					texture2D(tex, gl_TexCoord[0].xy + vec2(01.0 * dx, 0)) * 4.0 + 
+					texture2D(tex, gl_TexCoord[0].xy + vec2(02.0 * dx, 0)) * 1.0
+					) / 16.0;*/
+	float[] pascal = float[](1.0, 6.0, 15.0, 20.0, 15.0, 6.0, 1.0);
+	vec4 sum = vec4(0.0);
+	for(int x = 0; x < 7; x++)
+	{
+		for(int y = 0; y < 7; y++)
+		{
+			sum = sum + texture2D(tex, gl_TexCoord[0].xy + vec2((x - 3) * dx, (y - 3) * dy)) * pascal[x] * pascal[y];
+		}
+	}
+	sum = sum / 4096.0;
+	gl_FragColor = sum;
+}"
+				};
+			}
+		}
+
+		private static Shader blurShaderCompiledi;
+		public static Shader blurShaderCompiled
+		{
+			get
+			{
+				if(blurShaderCompiledi == null)
+				{
+					blurShaderCompiledi = blurShader;
+				}
+				if(blurShaderCompiledi.Compiled == false)
+				{
+					blurShaderCompiledi.GenerateShaders();
+				}
+				return blurShaderCompiledi;
+			}
+		}
+
+		public static Shader crtShader
+		{
+			get
+			{
+				return new Shader
+				{
+					vertexShader = @"
+#version 120
+uniform float time;
+
+void main()
+{
+	gl_FrontColor = gl_Color;
+    gl_Position = ftransform();
+	gl_TexCoord[0] = gl_MultiTexCoord0;
+}",
+					fragmentShader = @"
+#version 120
+uniform float time;
+uniform sampler2D tex;
+
+void main()
+{
+	/*vec2 rCoord = (gl_TexCoord[0].xy - vec2(0.5, 0.5)) * 0.995 + vec2(0.5, 0.5);
+
+	float r = texture2D(tex, rCoord).r;
+	float g = texture2D(tex, gl_TexCoord[0].xy).g;
+	float b = texture2D(tex, gl_TexCoord[0].xy).b;
+	gl_FragColor = vec4(r, g, b, 1.0); chromatic aberration*/
+	/*gl_FragColor = vec4(texture2D(tex, gl_TexCoord[0].xy).xyz - texture2D(tex, gl_TexCoord[0].xy + vec2(1.0/1280.0, 1.0/720.0)).xyz, 1.0); diff*/
+	float r = texture2D(tex, (gl_TexCoord[0].xy - vec2(0.5, 0.5)) * 0.992 + vec2(0.5, 0.5)).r;
+	float g = texture2D(tex, gl_TexCoord[0].xy).g;
+	float b = texture2D(tex, (gl_TexCoord[0].xy - vec2(0.5, 0.5)) * 0.998 + vec2(0.5, 0.5)).b;
+	gl_FragColor = vec4(vec3(r, g, b) * (mod(int(gl_FragCoord.y), 2) + 1.0) * 0.5, 1.0);
+}"
+				};
+			}
+		}
+
+		private static Shader crtShaderCompiledi;
+		public static Shader crtShaderCompiled
+		{
+			get
+			{
+				if(crtShaderCompiledi == null)
+				{
+					crtShaderCompiledi = crtShader;
+				}
+				if(crtShaderCompiledi.Compiled == false)
+				{
+					crtShaderCompiledi.GenerateShaders();
+				}
+				return crtShaderCompiledi;
+			}
+		}
+
+		#endregion
 		#region Uniform management
+
 		public void SetUniform(string name, float value)
 		{
 			if(!compiled)
