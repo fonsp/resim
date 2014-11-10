@@ -44,7 +44,8 @@ namespace GraphicsLibrary
 		public int amountOfRenderPasses = 3;
 		public Shader defaultShader = Shader.diffuseShader;
 		public uint[] elementBase = new uint[1000000];
-		public uint FboHandle, ColorTexture, DepthRenderbuffer;
+		public uint fboHandle, colorTexture, depthTexture, depthRenderbuffer;
+		public float focalDistance = 0.3f;
 
 		public RenderWindow(string windowName, int width, int height)
 			: base(width, height, GraphicsMode.Default, windowName
@@ -90,7 +91,7 @@ namespace GraphicsLibrary
 			}
 			catch(Exception exception)
 			{
-				Debug.WriteLine("WARNING: OpenGL could not be initialized: {0}", exception.Message);
+				Debug.WriteLine("WARNING: OpenGL could not be initialized: " + exception.Message + " @ " + exception.Source);
 				Exit();
 			}
 
@@ -109,7 +110,7 @@ namespace GraphicsLibrary
 			}
 			catch(Exception exception)
 			{
-				Debug.WriteLine("WARNING: default textures could not be initialized: {0}", exception.Message);
+				Debug.WriteLine("WARNING: default textures could not be initialized: " + exception.Message + " @ " + exception.Source);
 				Exit();
 			}
 
@@ -128,7 +129,7 @@ namespace GraphicsLibrary
 			}
 			catch(Exception exception)
 			{
-				Debug.WriteLine("WARNING: lighting could not be initialized: {0}", exception.Message);
+				Debug.WriteLine("WARNING: lighting could not be initialized: " + exception.Message + " @ " + exception.Source);
 				Exit();
 			}
 
@@ -145,7 +146,7 @@ namespace GraphicsLibrary
 			}
 			catch(Exception exception)
 			{
-				Debug.WriteLine("WARNING: default shader could not be initialized: {0}", exception.Message);
+				Debug.WriteLine("WARNING: default shader could not be initialized: " + exception.Message + " @ " + exception.Source);
 				Exit();
 			}
 
@@ -153,37 +154,61 @@ namespace GraphicsLibrary
 			#region FBO init
 			Debug.WriteLine("Initializing FBO..");
 
-			Debug.WriteLine("FBO size: {" + Width + ", " + Height + "}");
+			//Debug.WriteLine("FBO size: {" + Width + ", " + Height + "}");
+			try
+			{
 
-			// Create Color Texture
-			GL.GenTextures(1, out ColorTexture);
-			GL.BindTexture(TextureTarget.Texture2D, ColorTexture);
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
-			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
-			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
+				// Create Color Texture
+				GL.ActiveTexture(TextureUnit.Texture0);
+				GL.GenTextures(1, out colorTexture);
+				GL.BindTexture(TextureTarget.Texture2D, colorTexture);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Nearest);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Nearest);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Clamp);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Clamp);
+				GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Width, Height, 0, PixelFormat.Rgba,
+					PixelType.UnsignedByte, IntPtr.Zero);
+				GL.BindTexture(TextureTarget.Texture2D, 0);
 
-			// test for GL Error here (might be unsupported format)
+				// Create depth Texture
+				GL.ActiveTexture(TextureUnit.Texture1);
+				GL.GenTextures(1, out depthTexture);
+				GL.BindTexture(TextureTarget.Texture2D, depthTexture);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Nearest);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Nearest);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Clamp);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Clamp);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode, (int) TextureCompareMode.None);
+				GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent32, Width, Height, 0,
+					PixelFormat.DepthComponent, PixelType.Float, IntPtr.Zero);
+				GL.BindTexture(TextureTarget.Texture2D, 0);
 
-			GL.BindTexture(TextureTarget.Texture2D, 0); // prevent feedback, reading and writing to the same image is a bad idea
+				GL.ActiveTexture(TextureUnit.Texture0);
 
-			// Create Depth Renderbuffer
-			GL.Ext.GenRenderbuffers(1, out DepthRenderbuffer);
-			GL.Ext.BindRenderbuffer(RenderbufferTarget.RenderbufferExt, DepthRenderbuffer);
-			GL.Ext.RenderbufferStorage(RenderbufferTarget.RenderbufferExt, (RenderbufferStorage)All.DepthComponent32, Width, Height);
-			
-			// test for GL Error here (might be unsupported format)
+				//TODO: test for GL Error here (might be unsupported format)
 
-			// Create an FBO and attach the textures
-			GL.Ext.GenFramebuffers(1, out FboHandle);
-			GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, FboHandle);
-			GL.Ext.FramebufferTexture2D(FramebufferTarget.FramebufferExt, FramebufferAttachment.ColorAttachment0Ext, TextureTarget.Texture2D, ColorTexture, 0);
-			GL.Ext.FramebufferRenderbuffer(FramebufferTarget.FramebufferExt, FramebufferAttachment.DepthAttachmentExt, RenderbufferTarget.RenderbufferExt, DepthRenderbuffer);
+				// Create an FBO and attach the textures
+				GL.Ext.GenFramebuffers(1, out fboHandle);
+				GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, fboHandle);
+				GL.ActiveTexture(TextureUnit.Texture0);
+				GL.Ext.FramebufferTexture2D(FramebufferTarget.FramebufferExt, FramebufferAttachment.ColorAttachment0Ext,
+					TextureTarget.Texture2D, colorTexture, 0);
+				GL.ActiveTexture(TextureUnit.Texture1);
+				GL.Ext.FramebufferTexture2D(FramebufferTarget.FramebufferExt, FramebufferAttachment.DepthAttachment,
+					TextureTarget.Texture2D, depthTexture, 0);
+				GL.ActiveTexture(TextureUnit.Texture0);
 
-			// now GL.Ext.CheckFramebufferStatus( FramebufferTarget.FramebufferExt ) can be called, check the end of this page for a snippet.
-
-			
+				if (!CheckFboStatus())
+				{
+					Debug.WriteLine("WARNING: FBO initialization failure");
+					Exit();
+				}
+			}
+			catch (Exception exception)
+			{
+				Debug.WriteLine("WARNING: FBO could not be initialized: " + exception.Message + " @ " + exception.Source);
+				Exit();
+			}
 
 			#endregion
 			#region Camera init
@@ -204,7 +229,7 @@ namespace GraphicsLibrary
 			/*}
 			catch (Exception exception)
 			{
-				Debug.WriteLine("WARNING: custom resources could not be loaded: {0}", exception.Message);
+				Debug.WriteLine("WARNING: custom resources could not be loaded: " + exception.Message + " @ " + exception.Source);
 			}*/
 
 			Debug.WriteLine(TextureManager.numberOfTextures + " textures were loaded");
@@ -231,7 +256,7 @@ namespace GraphicsLibrary
 			}
 			catch(Exception exception)
 			{
-				Debug.WriteLine("WARNING: Failed to unload textures: {0}", exception.Message);
+				Debug.WriteLine("WARNING: Failed to unload textures: " + exception.Message + " @ " + exception.Source);
 				throw;
 			}
 
@@ -247,7 +272,19 @@ namespace GraphicsLibrary
 			Camera.Instance.width = Width;
 			Camera.Instance.height = Height;
 
-			//TODO: FBO
+			GL.ActiveTexture(TextureUnit.Texture0);
+			GL.BindTexture(TextureTarget.Texture2D, colorTexture);
+			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Width, Height, 0, PixelFormat.Rgba,
+				PixelType.UnsignedByte, IntPtr.Zero);
+			GL.BindTexture(TextureTarget.Texture2D, 0);
+
+			GL.ActiveTexture(TextureUnit.Texture1);
+			GL.BindTexture(TextureTarget.Texture2D, depthTexture);
+			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent32, Width, Height, 0,
+				PixelFormat.DepthComponent, PixelType.Float, IntPtr.Zero);
+			GL.BindTexture(TextureTarget.Texture2D, 0);
+
+			GL.ActiveTexture(TextureUnit.Texture0);
 
 			UpdateViewport();
 
@@ -263,12 +300,12 @@ namespace GraphicsLibrary
 
 		protected override void OnUpdateFrame(FrameEventArgs e)
 		{
-			if(Keyboard[Key.Escape] && escapeOnEscape/* && Keyboard[Key.Pause]*/)
+			if(InputManager.IsKeyDown(Key.Escape) && escapeOnEscape/* && InputManager.IsKeyDown(Key.Pause)*/)
 			{
 				Exit();
 			}
 #if DEBUG
-			if(Keyboard[Key.Pause] && !Keyboard[Key.Escape])
+			if(InputManager.IsKeyDown(Key.Pause) && InputManager.IsKeyUp(Key.Escape))
 			{
 				Debugger.Break();
 			}
@@ -311,7 +348,7 @@ namespace GraphicsLibrary
 			Shader.collisionShaderCompiled.SetUniform("time", _time);
 
 			Vector3 velocityDelta = Camera.Instance.velocity - smoothedVelocity;
-			smoothedVelocity += velocityDelta - Vector3.Divide(velocityDelta, (float) Math.Pow(smoothFactor, renderTime));
+			smoothedVelocity += velocityDelta - Vector3.Divide(velocityDelta, (float)Math.Pow(smoothFactor, renderTime)); //TODO: time dilation
 
 			v = smoothedVelocity.Length;
 			b = v / c;
@@ -348,21 +385,15 @@ namespace GraphicsLibrary
 			#endregion
 			#region 3D
 
-			
 			UpdateViewport();
 
-			//Matrix4 modelview = /*Matrix4.LookAt(Vector3.Zero, Vector3.Zero-Vector3.UnitZ, Vector3.UnitY) * */Matrix4.CreateFromQuaternion(Camera.Instance.derivedOrientation);
-
 			GL.MatrixMode(MatrixMode.Modelview);
-
-			//GL.LoadMatrix(ref modelview);
 			GL.LoadIdentity();
 
-			// since there's only 1 Color buffer attached this is not explicitly required
-			GL.Ext.BindRenderbuffer(RenderbufferTarget.RenderbufferExt, DepthRenderbuffer);
-			GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, FboHandle);
+			GL.Ext.BindRenderbuffer(RenderbufferTarget.RenderbufferExt, depthRenderbuffer);
+			GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, fboHandle);
 			GL.DrawBuffer((DrawBufferMode)FramebufferAttachment.ColorAttachment0Ext);
-			GL.PushAttrib(AttribMask.ViewportBit); // stores GL.Viewport() parameters
+			GL.PushAttrib(AttribMask.ViewportBit);
 			GL.Viewport(0, 0, Width, Height);
 
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -386,7 +417,7 @@ namespace GraphicsLibrary
 			}
 
 			//////////////
-			GL.PopAttrib(); // restores GL.Viewport() parameters
+			GL.PopAttrib();
 			GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, 0); // return to visible framebuffer
 			GL.DrawBuffer(DrawBufferMode.Back);
 
@@ -410,20 +441,23 @@ namespace GraphicsLibrary
 			GL.LoadIdentity();
 			//////////////
 
+			GL.ActiveTexture(TextureUnit.Texture1);
+			GL.BindTexture(TextureTarget.Texture2D, depthTexture);
+			GL.ActiveTexture(TextureUnit.Texture0);
+			GL.BindTexture(TextureTarget.Texture2D, colorTexture);
 
-
-
-			if (InputManager.IsKeyToggled(Key.Number3))
+			if(InputManager.IsKeyToggled(Key.Number3))
 			{
 				Shader.blurShaderCompiled.Enable();
+				Shader.blurShaderCompiled.SetUniform("tex", 0);
+				Shader.blurShaderCompiled.SetUniform("depthTex", 1);
+				Shader.blurShaderCompiled.SetUniform("focalDist", focalDistance);
 			}
 			else
 			{
 				Shader.hudShaderCompiled.Enable();
+				Shader.hudShaderCompiled.SetUniform("tex", 0);
 			}
-			
-
-			GL.BindTexture(TextureTarget.Texture2D, ColorTexture);
 
 			GL.Begin(PrimitiveType.Quads);
 			GL.Color4(Color4.White);
@@ -432,6 +466,8 @@ namespace GraphicsLibrary
 			GL.TexCoord2(1, 0); GL.Vertex2(Width, Height);
 			GL.TexCoord2(1, 1); GL.Vertex2(Width, 0);
 			GL.End();
+
+			GL.ActiveTexture(TextureUnit.Texture0);
 
 			HudBase.Instance.StartRender();
 
@@ -444,6 +480,64 @@ namespace GraphicsLibrary
 			#endregion
 
 			SwapBuffers();
+		}
+
+		private bool CheckFboStatus()
+		{
+			switch(GL.Ext.CheckFramebufferStatus(FramebufferTarget.FramebufferExt))
+			{
+				case FramebufferErrorCode.FramebufferCompleteExt:
+					{
+						Debug.WriteLine("FBO: The framebuffer is complete and valid for rendering.");
+						return true;
+					}
+				case FramebufferErrorCode.FramebufferIncompleteAttachmentExt:
+					{
+						Debug.WriteLine("ERROR: failed to create FBO: One or more attachment points are not framebuffer attachment complete. This could mean there’s no texture attached or the format isn’t renderable. For color textures this means the base format must be RGB or RGBA and for depth textures it must be a DEPTH_COMPONENT format. Other causes of this error are that the width or height is zero or the z-offset is out of range in case of render to volume.");
+						break;
+					}
+				case FramebufferErrorCode.FramebufferIncompleteMissingAttachmentExt:
+					{
+						Debug.WriteLine("ERROR: failed to create FBO: There are no attachments.");
+						break;
+					}
+				/* case  FramebufferErrorCode.GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT: 
+					 {
+						 Debug.WriteLine("ERROR: failed to create FBO: An object has been attached to more than one attachment point.");
+						 break;
+					 }*/
+				case FramebufferErrorCode.FramebufferIncompleteDimensionsExt:
+					{
+						Debug.WriteLine("ERROR: failed to create FBO: Attachments are of different size. All attachments must have the same width and height.");
+						break;
+					}
+				case FramebufferErrorCode.FramebufferIncompleteFormatsExt:
+					{
+						Debug.WriteLine("ERROR: failed to create FBO: The color attachments have different format. All color attachments must have the same format.");
+						break;
+					}
+				case FramebufferErrorCode.FramebufferIncompleteDrawBufferExt:
+					{
+						Debug.WriteLine("ERROR: failed to create FBO: An attachment point referenced by GL.DrawBuffers() doesn’t have an attachment.");
+						break;
+					}
+				case FramebufferErrorCode.FramebufferIncompleteReadBufferExt:
+					{
+						Debug.WriteLine("ERROR: failed to create FBO: The attachment point referenced by GL.ReadBuffers() doesn’t have an attachment.");
+						break;
+					}
+				case FramebufferErrorCode.FramebufferUnsupportedExt:
+					{
+						Debug.WriteLine("ERROR: failed to create FBO: This particular FBO configuration is not supported by the implementation.");
+						break;
+					}
+				default:
+					{
+						Debug.WriteLine("ERROR: failed to create FBO: Status unknown. (yes, this is really bad.)");
+						break;
+					}
+			}
+			return false;
 		}
 	}
 }

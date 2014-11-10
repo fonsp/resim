@@ -24,11 +24,11 @@ namespace GraphicsLibrary.Content
 			try
 			{
 				mTexCache = new Dictionary<string, int>();
-				GL.Enable(EnableCap.Texture2D);
+				//GL.Enable(EnableCap.Texture2D);
 			}
 			catch(Exception exception)
 			{
-				Debug.WriteLine("WARNING: TextureManager could not be created: {0}", exception.Message);
+				Debug.WriteLine("WARNING: TextureManager could not be created: " + exception.Message + " @ " + exception.Source);
 			}
 		}
 

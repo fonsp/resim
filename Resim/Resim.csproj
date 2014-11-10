@@ -50,7 +50,6 @@
     <Compile Include="Program\Program.cs" />
     <Compile Include="Program\ProgramEventHandler.cs" />
     <Compile Include="Program\Resize.cs" />
-    <Compile Include="Program\UI.cs" />
     <Compile Include="Program\Update.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

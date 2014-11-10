@@ -32,7 +32,7 @@ namespace GraphicsLibrary
 				}
 				catch(Exception exception)
 				{
-					Debug.WriteLine("Failed to create log file. Make sure you have admin rights and close all processes using this file: {0}", exception.Message);
+					Debug.WriteLine("WARNING: Failed to create log file. Make sure you have admin rights and close all processes using this file: " + exception.Message + " @ " + exception.Source);
 				}
 			}
 			Debug.WriteLine("---------------");

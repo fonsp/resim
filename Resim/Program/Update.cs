@@ -301,7 +301,7 @@ namespace Resim.Program
 				monsterAABB.Translate(new Vector3(0f, -500f * timeSinceLastUpdate, 0f));
 			}
 
-			ground.isVisible = InputManager.IsKeyToggled(Key.Number1);
+			collisionVisuals.isVisible = InputManager.IsKeyToggled(Key.Number1);
 			map1.mesh.shader = InputManager.IsKeyToggled(Key.Number2) ? Shader.depthShaderCompiled : null;
 			if(InputManager.IsKeyDown(Key.P))
 			{
@@ -350,9 +350,7 @@ namespace Resim.Program
 			#endregion
 			#region HUD
 
-			// Grain
-			grainImage.position.X = -random.Next(0, (int)Math.Max(0, grainImage.width - RenderWindow.Instance.ClientRectangle.Width));
-			grainImage.position.Y = -random.Next(0, (int)Math.Max(0, grainImage.height - RenderWindow.Instance.ClientRectangle.Height));
+
 
 			#endregion
 		}

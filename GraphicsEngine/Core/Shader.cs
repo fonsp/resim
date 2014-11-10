@@ -492,6 +492,10 @@ void main()
 #version 120
 uniform float time;
 uniform sampler2D tex;
+uniform sampler2D depthTex;
+uniform float focalDist;
+
+float asdf = 0.0;
 
 void main()
 {
@@ -504,7 +508,7 @@ void main()
 					texture2D(tex, gl_TexCoord[0].xy + vec2(01.0 * dx, 0)) * 4.0 + 
 					texture2D(tex, gl_TexCoord[0].xy + vec2(02.0 * dx, 0)) * 1.0
 					) / 16.0;*/
-	float[] pascal = float[](1.0, 6.0, 15.0, 20.0, 15.0, 6.0, 1.0);
+	float[] pascal = float[7](1.0, 6.0, 15.0, 20.0, 15.0, 6.0, 1.0);
 	vec4 sum = vec4(0.0);
 	for(int x = 0; x < 7; x++)
 	{
@@ -515,6 +519,18 @@ void main()
 	}
 	sum = sum / 4096.0;
 	gl_FragColor = sum;
+	float depth = texture2D(depthTex, gl_TexCoord[0].xy).x;
+	float n = 1.0; // camera z near
+	float f = 100000.0; // camera z far
+	depth = 60.0 * (2.0 * n) / (f + n - depth * (f - n));
+
+	float focalDist2 = texture2D(depthTex, vec2(0.5, 0.5)).x;
+	focalDist2 = 60.0 * (2.0 * n) / (f + n - focalDist2 * (f - n));
+
+	depth = abs(1.0 - depth / focalDist2);
+	depth = clamp(depth, 0.0, 1.0);
+	gl_FragColor = sum * depth + texture2D(tex, gl_TexCoord[0].xy) * (1.0 - depth);
+	//gl_FragColor = vec4(vec3(depth), 1.0);
 }"
 				};
 			}
