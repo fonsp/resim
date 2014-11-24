@@ -52,7 +52,6 @@ namespace Resim.Program
 			Camera.Instance.friction = new Vector3((float)config.GetDouble("playerFriction"), 1, (float)config.GetDouble("playerFriction"));
 
 			monster.mesh.material.textureName = "monsterTexture";
-			monster.scale = new Vector3(1, 1, 1);
 
 			playerMesh.material.textureName = "playerTexture";
 

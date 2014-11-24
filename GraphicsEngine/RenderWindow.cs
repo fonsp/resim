@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using GraphicsLibrary.Input;
 using OpenTK;
 using OpenTK.Graphics;
@@ -12,6 +13,7 @@ using GraphicsLibrary.Timing;
 using GraphicsLibrary.Content;
 using GraphicsLibrary.Core;
 using GraphicsLibrary.Hud;
+using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace GraphicsLibrary
 {
@@ -44,8 +46,8 @@ namespace GraphicsLibrary
 		public int amountOfRenderPasses = 3;
 		public Shader defaultShader = Shader.diffuseShader;
 		public uint[] elementBase = new uint[1000000];
-		public uint fboHandle, colorTexture, depthTexture, depthRenderbuffer;
-		public float focalDistance = 0.3f;
+		public uint fboHandle, colorTexture, depthTexture, depthRenderbuffer, ditherTexture;
+		private float focalDistance;
 
 		public RenderWindow(string windowName, int width, int height)
 			: base(width, height, GraphicsMode.Default, windowName
@@ -162,10 +164,10 @@ namespace GraphicsLibrary
 				GL.ActiveTexture(TextureUnit.Texture0);
 				GL.GenTextures(1, out colorTexture);
 				GL.BindTexture(TextureTarget.Texture2D, colorTexture);
-				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Nearest);
-				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Nearest);
-				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Clamp);
-				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Clamp);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
 				GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Width, Height, 0, PixelFormat.Rgba,
 					PixelType.UnsignedByte, IntPtr.Zero);
 				GL.BindTexture(TextureTarget.Texture2D, 0);
@@ -174,11 +176,11 @@ namespace GraphicsLibrary
 				GL.ActiveTexture(TextureUnit.Texture1);
 				GL.GenTextures(1, out depthTexture);
 				GL.BindTexture(TextureTarget.Texture2D, depthTexture);
-				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Nearest);
-				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Nearest);
-				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Clamp);
-				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Clamp);
-				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode, (int) TextureCompareMode.None);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode, (int)TextureCompareMode.None);
 				GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent32, Width, Height, 0,
 					PixelFormat.DepthComponent, PixelType.Float, IntPtr.Zero);
 				GL.BindTexture(TextureTarget.Texture2D, 0);
@@ -198,13 +200,26 @@ namespace GraphicsLibrary
 					TextureTarget.Texture2D, depthTexture, 0);
 				GL.ActiveTexture(TextureUnit.Texture0);
 
-				if (!CheckFboStatus())
+				// Dither texture sample
+				GL.ActiveTexture(TextureUnit.Texture1);
+				GL.GenTextures(1, out ditherTexture);
+				GL.BindTexture(TextureTarget.Texture2D, ditherTexture);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+				byte[] imageData = new byte[] { 208, 112, 240, 80, 48, 176, 16, 144, 224, 64, 192, 96, 0, 128, 32, 160 };
+				GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R8, 4, 4, 0, PixelFormat.Red, PixelType.UnsignedByte, imageData);
+
+				GL.ActiveTexture(TextureUnit.Texture0);
+
+				if(!CheckFboStatus())
 				{
 					Debug.WriteLine("WARNING: FBO initialization failure");
 					Exit();
 				}
 			}
-			catch (Exception exception)
+			catch(Exception exception)
 			{
 				Debug.WriteLine("WARNING: FBO could not be initialized: " + exception.Message + " @ " + exception.Source);
 				Exit();
@@ -384,29 +399,27 @@ namespace GraphicsLibrary
 
 			#endregion
 			#region 3D
-
+			#region First FBO pass
 			UpdateViewport();
 
 			GL.MatrixMode(MatrixMode.Modelview);
 			GL.LoadIdentity();
 
+			// Enable rendering to FBO
 			GL.Ext.BindRenderbuffer(RenderbufferTarget.RenderbufferExt, depthRenderbuffer);
 			GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, fboHandle);
 			GL.DrawBuffer((DrawBufferMode)FramebufferAttachment.ColorAttachment0Ext);
 			GL.PushAttrib(AttribMask.ViewportBit);
 			GL.Viewport(0, 0, Width, Height);
 
+			// Clear previous frame
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-			//////////////
 
+			// Geometry render passes
 			for(int i = 0; i < amountOfRenderPasses; i++)
 			{
 				RootNode.Instance.StartRender(i);
 			}
-
-			/*modelview = Matrix4.LookAt(Camera.Instance.position, Camera.Instance.position - Vector3.UnitZ, Vector3.UnitY);
-			GL.MatrixMode(MatrixMode.Modelview);
-			GL.LoadMatrix(ref modelview);*/
 
 			for(int i = 0; i < amountOfRenderPasses; i++)
 			{
@@ -416,19 +429,23 @@ namespace GraphicsLibrary
 				}
 			}
 
-			//////////////
+			// Focal depth
+			float[] pixelData = new float[1];
+			GL.ReadPixels(Width / 2, Height / 2, 1, 1, PixelFormat.DepthComponent, PixelType.Float, pixelData);
+			focalDistance = pixelData[0];
+
+			// Restore render settings
 			GL.PopAttrib();
 			GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, 0); // return to visible framebuffer
 			GL.DrawBuffer(DrawBufferMode.Back);
-
 			GL.Ext.BindRenderbuffer(RenderbufferTarget.RenderbufferExt, 0);
 			GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, 0);
 
-			Shader.hudShaderCompiled.Enable();
+			#endregion
+			#region FBO render to back buffer & HUD
 			GL.Color4(Color4.White);
 
-			#endregion
-			#region HUD
+			// 2D rendering settings
 			GL.DepthMask(false);
 			GL.Disable(EnableCap.DepthTest);
 			GL.Disable(EnableCap.Lighting);
@@ -439,25 +456,39 @@ namespace GraphicsLibrary
 			GL.Ortho(0, ClientRectangle.Width, ClientRectangle.Height, 0, -1, 10);
 			GL.MatrixMode(MatrixMode.Modelview);
 			GL.LoadIdentity();
-			//////////////
 
-			GL.ActiveTexture(TextureUnit.Texture1);
-			GL.BindTexture(TextureTarget.Texture2D, depthTexture);
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(TextureTarget.Texture2D, colorTexture);
-
+			// GFX sader selection
 			if(InputManager.IsKeyToggled(Key.Number3))
 			{
 				Shader.blurShaderCompiled.Enable();
 				Shader.blurShaderCompiled.SetUniform("tex", 0);
 				Shader.blurShaderCompiled.SetUniform("depthTex", 1);
 				Shader.blurShaderCompiled.SetUniform("focalDist", focalDistance);
+
+				GL.ActiveTexture(TextureUnit.Texture1);
+				GL.BindTexture(TextureTarget.Texture2D, depthTexture);
 			}
 			else
 			{
-				Shader.hudShaderCompiled.Enable();
-				Shader.hudShaderCompiled.SetUniform("tex", 0);
+				if(InputManager.IsKeyToggled(Key.Number4))
+				{
+					GL.ActiveTexture(TextureUnit.Texture1);
+					GL.BindTexture(TextureTarget.Texture2D, ditherTexture);
+
+					Shader.ditherShaderCompiled.Enable();
+					Shader.ditherShaderCompiled.SetUniform("tex", 0);
+					Shader.ditherShaderCompiled.SetUniform("ditherTex", 1);
+				}
+				else
+				{
+					Shader.hudShaderCompiled.Enable();
+					Shader.hudShaderCompiled.SetUniform("tex", 0);
+				}
 			}
+
+			// Render FBO quad
+			GL.ActiveTexture(TextureUnit.Texture0);
+			GL.BindTexture(TextureTarget.Texture2D, colorTexture);
 
 			GL.Begin(PrimitiveType.Quads);
 			GL.Color4(Color4.White);
@@ -467,23 +498,25 @@ namespace GraphicsLibrary
 			GL.TexCoord2(1, 1); GL.Vertex2(Width, 0);
 			GL.End();
 
-			GL.ActiveTexture(TextureUnit.Texture0);
-
+			// HUD render pass
 			HudBase.Instance.StartRender();
 
-			//////////////
+			// Return to 3D rendering settings
 			GL.Color3(Color.White);
 			GL.DepthMask(true);
 			GL.Enable(EnableCap.DepthTest);
 			GL.Enable(EnableCap.Lighting);
 			GL.Enable(EnableCap.CullFace);
 			#endregion
+			#endregion
 
+			// Display the back buffer
 			SwapBuffers();
 		}
 
 		private bool CheckFboStatus()
 		{
+			// Taken from the OpenTK documentation
 			switch(GL.Ext.CheckFramebufferStatus(FramebufferTarget.FramebufferExt))
 			{
 				case FramebufferErrorCode.FramebufferCompleteExt:
@@ -501,11 +534,6 @@ namespace GraphicsLibrary
 						Debug.WriteLine("ERROR: failed to create FBO: There are no attachments.");
 						break;
 					}
-				/* case  FramebufferErrorCode.GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT: 
-					 {
-						 Debug.WriteLine("ERROR: failed to create FBO: An object has been attached to more than one attachment point.");
-						 break;
-					 }*/
 				case FramebufferErrorCode.FramebufferIncompleteDimensionsExt:
 					{
 						Debug.WriteLine("ERROR: failed to create FBO: Attachments are of different size. All attachments must have the same width and height.");
