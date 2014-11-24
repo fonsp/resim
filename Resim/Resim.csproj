@@ -44,6 +44,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicClock.cs" />
     <Compile Include="Program\InitGame.cs" />
     <Compile Include="Program\InitNetwork.cs" />
     <Compile Include="Program\LoadResources.cs" />

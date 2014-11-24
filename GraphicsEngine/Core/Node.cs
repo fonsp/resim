@@ -8,6 +8,7 @@ namespace GraphicsLibrary.Core
 	{
 		public Vector3 position = Vector3.Zero;
 		public Vector3 derivedPosition = Vector3.Zero;
+		public Vector3 prevRelativeToCam = Vector3.Zero;
 
 		public Vector3 velocity = Vector3.Zero;
 		public Vector3 acceleration = Vector3.Zero;
@@ -67,7 +68,7 @@ namespace GraphicsLibrary.Core
 			this.name = name;
 		}
 
-		public virtual void Update(float timeSinceLastUpdate)
+		public virtual void UpdateNode(float timeSinceLastUpdate)
 		{
 			velocity += Vector3.Multiply(acceleration, timeSinceLastUpdate);
 			velocity = Vector3.Multiply(velocity, new Vector3((float)Math.Pow(friction.X, timeSinceLastUpdate), (float)Math.Pow(friction.Y, timeSinceLastUpdate), (float)Math.Pow(friction.Z, timeSinceLastUpdate)));
@@ -96,11 +97,24 @@ namespace GraphicsLibrary.Core
 			}
 			foreach(Node n in children.Values)
 			{
-				n.Update(timeSinceLastUpdate);
+				n.UpdateNode(timeSinceLastUpdate);
 			}
+
+			// Relativity of time and space:
+			Vector3 relativeToCam = derivedPosition - Camera.Instance.position;
+
+			float tau = (prevRelativeToCam.Length - relativeToCam.Length) / RenderWindow.Instance.c;
+			Update(timeSinceLastUpdate + tau);
+
+			prevRelativeToCam = relativeToCam;
 		}
 
-		public void Update()
+		public virtual void Update(float timeSinceLastUpdate)
+		{
+
+		}
+
+		public void UpdateNode()
 		{
 			if(parent == null)
 			{
@@ -127,7 +141,7 @@ namespace GraphicsLibrary.Core
 			}
 			foreach(Node n in children.Values)
 			{
-				n.Update();
+				n.UpdateNode();
 			}
 		}
 
@@ -235,6 +249,12 @@ namespace GraphicsLibrary.Core
 		public void ResetOrientation()
 		{
 			orientation = Quaternion.Identity;
+		}
+
+		public void Teleport(Vector3 newPos)
+		{
+			prevRelativeToCam += newPos - position;
+			position = newPos;
 		}
 
 		/// <summary>

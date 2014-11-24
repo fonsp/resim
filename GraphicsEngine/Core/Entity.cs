@@ -23,15 +23,15 @@ namespace GraphicsLibrary.Core
 
 		}
 
-		public override void Update(float timeSinceLastUpdate)
+		public override void UpdateNode(float timeSinceLastUpdate)
 		{
-			base.Update(timeSinceLastUpdate);
+			base.UpdateNode(timeSinceLastUpdate);
 			materialAge += timeSinceLastUpdate;
 		}
 
 		public override void Render(int pass)
 		{
-			if(isVisible && renderPass == pass)
+			if(isVisible && renderPass == pass && mesh != null)
 			{
 				if(mesh.shader == null)
 				{

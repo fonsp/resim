@@ -3,7 +3,6 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using GraphicsLibrary.Input;
 using OpenTK;
 using OpenTK.Graphics;
@@ -13,7 +12,6 @@ using GraphicsLibrary.Timing;
 using GraphicsLibrary.Content;
 using GraphicsLibrary.Core;
 using GraphicsLibrary.Hud;
-using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace GraphicsLibrary
 {
@@ -159,7 +157,6 @@ namespace GraphicsLibrary
 			//Debug.WriteLine("FBO size: {" + Width + ", " + Height + "}");
 			try
 			{
-
 				// Create Color Texture
 				GL.ActiveTexture(TextureUnit.Texture0);
 				GL.GenTextures(1, out colorTexture);
@@ -168,8 +165,7 @@ namespace GraphicsLibrary
 				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
 				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
-				GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Width, Height, 0, PixelFormat.Rgba,
-					PixelType.UnsignedByte, IntPtr.Zero);
+				GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 				GL.BindTexture(TextureTarget.Texture2D, 0);
 
 				// Create depth Texture
@@ -181,8 +177,7 @@ namespace GraphicsLibrary
 				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
 				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
 				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode, (int)TextureCompareMode.None);
-				GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent32, Width, Height, 0,
-					PixelFormat.DepthComponent, PixelType.Float, IntPtr.Zero);
+				GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent32, Width, Height, 0, PixelFormat.DepthComponent, PixelType.Float, IntPtr.Zero);
 				GL.BindTexture(TextureTarget.Texture2D, 0);
 
 				GL.ActiveTexture(TextureUnit.Texture0);
@@ -193,11 +188,9 @@ namespace GraphicsLibrary
 				GL.Ext.GenFramebuffers(1, out fboHandle);
 				GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, fboHandle);
 				GL.ActiveTexture(TextureUnit.Texture0);
-				GL.Ext.FramebufferTexture2D(FramebufferTarget.FramebufferExt, FramebufferAttachment.ColorAttachment0Ext,
-					TextureTarget.Texture2D, colorTexture, 0);
+				GL.Ext.FramebufferTexture2D(FramebufferTarget.FramebufferExt, FramebufferAttachment.ColorAttachment0Ext, TextureTarget.Texture2D, colorTexture, 0);
 				GL.ActiveTexture(TextureUnit.Texture1);
-				GL.Ext.FramebufferTexture2D(FramebufferTarget.FramebufferExt, FramebufferAttachment.DepthAttachment,
-					TextureTarget.Texture2D, depthTexture, 0);
+				GL.Ext.FramebufferTexture2D(FramebufferTarget.FramebufferExt, FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, depthTexture, 0);
 				GL.ActiveTexture(TextureUnit.Texture0);
 
 				// Dither texture sample
@@ -280,8 +273,6 @@ namespace GraphicsLibrary
 
 		protected override void OnResize(EventArgs e)
 		{
-			Debug.WriteLine("Window resized to " + ClientRectangle);
-
 			GL.Viewport(ClientRectangle.X, ClientRectangle.Y, ClientSize.Width, ClientSize.Height);
 
 			Camera.Instance.width = Width;
@@ -289,14 +280,12 @@ namespace GraphicsLibrary
 
 			GL.ActiveTexture(TextureUnit.Texture0);
 			GL.BindTexture(TextureTarget.Texture2D, colorTexture);
-			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Width, Height, 0, PixelFormat.Rgba,
-				PixelType.UnsignedByte, IntPtr.Zero);
+			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, Width, Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 			GL.BindTexture(TextureTarget.Texture2D, 0);
 
 			GL.ActiveTexture(TextureUnit.Texture1);
 			GL.BindTexture(TextureTarget.Texture2D, depthTexture);
-			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent32, Width, Height, 0,
-				PixelFormat.DepthComponent, PixelType.Float, IntPtr.Zero);
+			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent32, Width, Height, 0, PixelFormat.DepthComponent, PixelType.Float, IntPtr.Zero);
 			GL.BindTexture(TextureTarget.Texture2D, 0);
 
 			GL.ActiveTexture(TextureUnit.Texture0);
@@ -304,6 +293,7 @@ namespace GraphicsLibrary
 			UpdateViewport();
 
 			program.Resize(ClientRectangle);
+			Debug.WriteLine("Window and FBO resized to " + ClientRectangle);
 		}
 
 		public void UpdateViewport()
@@ -325,26 +315,32 @@ namespace GraphicsLibrary
 				Debugger.Break();
 			}
 #endif
+
+			b = Camera.Instance.velocity.Length / c;
+			lf = 1f / (float)Math.Sqrt(1.0 - b * b);
+
 			timeSinceLastUpdate = e.Time * timeMultiplier;
 			_time += (float)timeSinceLastUpdate;
+			timeSinceLastUpdate *= lf;
+
 
 			program.Update((float)timeSinceLastUpdate);
 			if(enableVelocity)
 			{
 
-				RootNode.Instance.Update((float)timeSinceLastUpdate);
+				RootNode.Instance.UpdateNode((float)timeSinceLastUpdate);
 				if(Camera.Instance.parent == null)
 				{
-					Camera.Instance.Update((float)timeSinceLastUpdate);
+					Camera.Instance.UpdateNode((float)timeSinceLastUpdate);
 				}
 				HudBase.Instance.Update((float)timeSinceLastUpdate);
 			}
 			else
 			{
-				RootNode.Instance.Update();
+				RootNode.Instance.UpdateNode();
 				if(Camera.Instance.parent == null)
 				{
-					Camera.Instance.Update();
+					Camera.Instance.UpdateNode();
 				}
 				HudBase.Instance.Update();
 			}
@@ -367,7 +363,7 @@ namespace GraphicsLibrary
 
 			v = smoothedVelocity.Length;
 			b = v / c;
-			lf = 1f / (float)Math.Sqrt(1.0 - b);
+			lf = 1f / (float)Math.Sqrt(1.0 - b * b);
 
 			Shader.diffuseShaderCompiled.SetUniform("b", b);
 			Shader.unlitShaderCompiled.SetUniform("b", b);

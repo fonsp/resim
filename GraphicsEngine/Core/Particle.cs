@@ -87,9 +87,9 @@ namespace GraphicsLibrary.Core
 			allParticlesAreDead = false;
 		}
 
-		public override void Update(float timeSinceLastUpdate)
+		public override void UpdateNode(float timeSinceLastUpdate)
 		{
-			base.Update(timeSinceLastUpdate);
+			base.UpdateNode(timeSinceLastUpdate);
 			if(!allParticlesAreDead)
 			{
 				allParticlesAreDead = true;

@@ -16,6 +16,7 @@ namespace Resim.Program
 		private Mesh playerMesh;
 		private HudConsole hudConsole = new HudConsole("HudConsole", 5);
 		private HudImage crossHair = new HudImage("crosshair", "crosshair0");
+		private HudImage crossHair1 = new HudImage("crosshair1", "crosshair0");
 		private CollisionAABB playerAABB;
 
 		public override void LoadResources()
@@ -43,6 +44,9 @@ namespace Resim.Program
 
 			mapCollision.AddRange(ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/map1/collision.obj")));
 			playerAABB = ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/player.obj"))[0];
+
+			BasicClock.clockMesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/player.obj"));
+			BasicClock.clockMesh.material.textureName = "playerTexture";
 		}
 	}
 }

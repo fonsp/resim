@@ -13,6 +13,7 @@ namespace Resim.Program
 	{
 		private Node map = new Node("map");
 		private Random random = new Random();
+		private BasicClock clock1 = new BasicClock("clock1");
 
 		private List<CollisionAABB> mapCollision = new List<CollisionAABB>();
 
@@ -48,6 +49,7 @@ namespace Resim.Program
 			hudConsole.DebugInput += ConsoleInputReceived;
 
 			crossHair.width = crossHair.height = 32;
+			crossHair1.width = crossHair1.height = 32;
 
 			Camera.Instance.friction = new Vector3((float)config.GetDouble("playerFriction"), 1, (float)config.GetDouble("playerFriction"));
 
@@ -58,6 +60,7 @@ namespace Resim.Program
 			//HudBase.Instance.Add(grainImage);
 			HudBase.Instance.Add(hudConsole);
 			HudBase.Instance.Add(crossHair);
+			HudBase.Instance.Add(crossHair1);
 
 			RootNode.Instance.Add(monster);
 			RootNode.Instance.Add(skybox);
@@ -69,6 +72,9 @@ namespace Resim.Program
 			map.Add(map0d);
 			map.Add(map0e);*/
 			map.Add(map1);
+
+			clock1.position = new Vector3(2700, 350, -6075);
+			RootNode.Instance.Add(clock1);
 
 			#endregion
 

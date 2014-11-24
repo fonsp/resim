@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using OpenTK;
 using OpenTK.Input;
 using GraphicsLibrary;
@@ -224,7 +225,7 @@ namespace Resim.Program
 			}
 			else
 			{
-				Camera.Instance.velocity.Y -= config.GetInt("gravity") * timeSinceLastUpdate;
+				Camera.Instance.velocity.Y -= config.GetInt("gravity") * timeSinceLastUpdate / RenderWindow.Instance.lf;
 			}
 
 			#endregion
@@ -350,8 +351,10 @@ namespace Resim.Program
 			#endregion
 			#region HUD
 
-
-
+			crossHair.position.X = 640 + (int)(200 * Math.Cos(clock1.time * 0.2 * 3.14159265358979));
+			crossHair.position.Y = 360 + (int)(200 * Math.Sin(clock1.time * 0.2 * 3.14159265358979));
+			crossHair1.position.X = 640 + (int)(200 * Math.Cos(RenderWindow.Instance.time * 0.2 * 3.14159265358979));
+			crossHair1.position.Y = 360 + (int)(200 * Math.Sin(RenderWindow.Instance.time * 0.2 * 3.14159265358979));
 			#endregion
 		}
 	}
