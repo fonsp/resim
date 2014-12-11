@@ -93,6 +93,8 @@
     <Compile Include="Core\Material.cs" />
     <Compile Include="Core\Shader.cs" />
     <Compile Include="Hud\HudConsole.cs" />
+    <Compile Include="Hud\HudDebug.cs" />
+    <Compile Include="Hud\HudDebugField.cs" />
     <Compile Include="Hud\HudElement.cs" />
     <Compile Include="Core\Mesh.cs" />
     <Compile Include="Core\Node.cs" />

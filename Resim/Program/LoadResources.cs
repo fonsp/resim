@@ -14,7 +14,8 @@ namespace Resim.Program
 		private Entity map1 = new Entity("map1");
 		private Entity monster = new Entity("monster");
 		private Mesh playerMesh;
-		private HudConsole hudConsole = new HudConsole("HudConsole", 5);
+		private HudConsole hudConsole = new HudConsole("hudConsole", 5);
+		private HudDebug hudDebug = new HudDebug("hudDebug");
 		private HudImage crossHair = new HudImage("crosshair", "crosshair0");
 		private HudImage crossHair1 = new HudImage("crosshair1", "crosshair0");
 		private CollisionAABB playerAABB;

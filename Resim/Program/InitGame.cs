@@ -58,6 +58,7 @@ namespace Resim.Program
 			playerMesh.material.textureName = "playerTexture";
 
 			//HudBase.Instance.Add(grainImage);
+			HudBase.Instance.Add(hudDebug);
 			HudBase.Instance.Add(hudConsole);
 			HudBase.Instance.Add(crossHair);
 			HudBase.Instance.Add(crossHair1);

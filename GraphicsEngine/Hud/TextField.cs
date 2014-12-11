@@ -10,7 +10,7 @@ namespace GraphicsLibrary.Hud
 	public class TextField:HudElement
 	{
 		public string text = "";
-		public Material textMaterial = new Material("default", Color4.White);//TODO: Default font
+		public Material textMaterial = new Material("font0", Color4.White);//TODO: Default font
 		public int sizeX = 12;
 		public int sizeY = 16;
 

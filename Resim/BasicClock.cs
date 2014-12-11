@@ -18,7 +18,7 @@ namespace Resim
 		public override void Update(float timeSinceLastUpdate)
 		{
 			time += timeSinceLastUpdate;
-			Debug.WriteLine(timeSinceLastUpdate);
+			//Debug.WriteLine(timeSinceLastUpdate);
 			base.Update(timeSinceLastUpdate);
 		}
 
