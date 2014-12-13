@@ -123,7 +123,8 @@ namespace Resim.Program
 						config.Reload();
 						break;
 					case "list":
-
+					case "help":
+						hudConsole.AddText("Available commands: stop set get reset reload list clear", Color4.LightBlue);
 						break;
 					default:
 						hudConsole.AddText("Invalid command. Type 'list' for a list of commands", Color4.Red);

@@ -48,7 +48,7 @@ namespace GraphicsLibrary.Core
 				RenderWindow.Instance.UpdateViewport();
 			}
 		}
-		private float fov = 170f;
+		private float fov = 90f;
 		public float Fov
 		{
 			get

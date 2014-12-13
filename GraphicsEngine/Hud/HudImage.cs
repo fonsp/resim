@@ -35,7 +35,7 @@ namespace GraphicsLibrary.Hud
 
 				GL.MatrixMode(MatrixMode.Modelview);
 				GL.PushMatrix();
-				GL.Translate(position.X, position.Y, 0);
+				GL.Translate(derivedPosition.X, derivedPosition.Y, 0);
 
 				GL.Begin(PrimitiveType.Quads);
 				GL.Color4(color);

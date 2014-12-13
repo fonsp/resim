@@ -122,7 +122,7 @@ namespace GraphicsLibrary.Core
 				{
 					vertexShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform float b;
 uniform vec3 vdir;
 uniform vec3 cpos;
@@ -151,7 +151,7 @@ void main()
 }",
 					fragmentShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform float b;
 uniform vec3 vdir;
 uniform vec3 cpos;
@@ -194,7 +194,7 @@ void main()
 				{
 					vertexShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform float b;
 uniform vec3 vdir;
 uniform vec3 cpos;
@@ -208,7 +208,7 @@ void main()
 }",
 					fragmentShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform float b;
 uniform vec3 vdir;
 uniform vec3 cpos;
@@ -248,7 +248,7 @@ void main()
 				{
 					vertexShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform float b;
 uniform vec3 vdir;
 uniform vec3 cpos;
@@ -275,7 +275,7 @@ void main()
 }",
 					fragmentShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform float b;
 uniform vec3 vdir;
 uniform vec3 cpos;
@@ -321,7 +321,7 @@ void main()
 				{
 					vertexShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform float b;
 uniform vec3 vdir;
 uniform vec3 cpos;
@@ -337,7 +337,7 @@ void main()
 }",
 					fragmentShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform float b;
 uniform vec3 vdir;
 uniform vec3 cpos;
@@ -377,7 +377,7 @@ void main()
 				{
 					vertexShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform float b;
 uniform vec3 vdir;
 uniform vec3 cpos;
@@ -391,7 +391,7 @@ void main()
 }",
 					fragmentShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform float b;
 uniform vec3 vdir;
 uniform vec3 cpos;
@@ -431,7 +431,7 @@ void main()
 				{
 					vertexShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 
 void main()
 {
@@ -441,7 +441,7 @@ void main()
 }",
 					fragmentShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform sampler2D tex;
 
 void main()
@@ -480,7 +480,7 @@ void main()
 				{
 					vertexShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 
 void main()
 {
@@ -490,7 +490,7 @@ void main()
 }",
 					fragmentShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform sampler2D tex;
 uniform sampler2D depthTex;
 
@@ -576,7 +576,7 @@ void main()
 				{
 					vertexShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 
 void main()
 {
@@ -586,7 +586,7 @@ void main()
 }",
 					fragmentShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform sampler2D tex;
 
 void main()
@@ -632,7 +632,7 @@ void main()
 				{
 					vertexShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 
 void main()
 {
@@ -642,7 +642,7 @@ void main()
 }",
 					fragmentShader = @"
 #version 120
-uniform float time;
+uniform float worldTime;
 uniform sampler2D tex;
 uniform sampler2D ditherTex;
 

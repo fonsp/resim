@@ -6,6 +6,7 @@ using GraphicsLibrary.Core;
 using GraphicsLibrary.Hud;
 using GraphicsLibrary.Input;
 using GraphicsLibrary.Collision;
+using OpenTK.Graphics;
 
 namespace Resim.Program
 {
@@ -44,12 +45,14 @@ namespace Resim.Program
 
 			hudConsole.enabled = false;
 			hudConsole.isVisible = false;
-			hudConsole.FontTextureName = "font0";
+			hudConsole.FontTextureName = "font2";
 			hudConsole.NumberOfLines = 30;
 			hudConsole.DebugInput += ConsoleInputReceived;
 
 			crossHair.width = crossHair.height = 32;
+			crossHair.color = Color4.LightBlue;
 			crossHair1.width = crossHair1.height = 32;
+			crossHair1.color = Color4.Orange;
 
 			Camera.Instance.friction = new Vector3((float)config.GetDouble("playerFriction"), 1, (float)config.GetDouble("playerFriction"));
 
@@ -58,6 +61,7 @@ namespace Resim.Program
 			playerMesh.material.textureName = "playerTexture";
 
 			//HudBase.Instance.Add(grainImage);
+			HudBase.Instance.Add(hudDebug);
 			HudBase.Instance.Add(hudConsole);
 			HudBase.Instance.Add(crossHair);
 			HudBase.Instance.Add(crossHair1);

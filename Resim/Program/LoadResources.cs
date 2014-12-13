@@ -14,7 +14,8 @@ namespace Resim.Program
 		private Entity map1 = new Entity("map1");
 		private Entity monster = new Entity("monster");
 		private Mesh playerMesh;
-		private HudConsole hudConsole = new HudConsole("HudConsole", 5);
+		private HudConsole hudConsole = new HudConsole("hudConsole", 5);
+		private HudDebug hudDebug = new HudDebug("hudDebug");
 		private HudImage crossHair = new HudImage("crosshair", "crosshair0");
 		private HudImage crossHair1 = new HudImage("crosshair1", "crosshair0");
 		private CollisionAABB playerAABB;
@@ -27,6 +28,7 @@ namespace Resim.Program
 			TextureManager.AddTexture("skybox", @"Content/textures/skybox.png");
 			TextureManager.AddTexture("font0", @"Content/textures/font0.png");
 			TextureManager.AddTexture("font1", @"Content/textures/font1.png");
+			TextureManager.AddTexture("font2", @"Content/textures/font2.png");
 			TextureManager.AddTexture("crosshair0", @"Content/textures/crosshair0.png");
 			TextureManager.AddTexture("white", @"Content/textures/white.png");
 			TextureManager.AddTexture("map0a", @"Content/textures/map0/darkBrick.png", OpenTK.Graphics.OpenGL.TextureMinFilter.Linear, OpenTK.Graphics.OpenGL.TextureMagFilter.Linear);

@@ -10,9 +10,10 @@ namespace GraphicsLibrary.Hud
 	public class TextField:HudElement
 	{
 		public string text = "";
-		public Material textMaterial = new Material("default", Color4.White);//TODO: Default font
-		public int sizeX = 12;
-		public int sizeY = 16;
+		public Material textMaterial = new Material("font2", Color4.White);//TODO: Default font
+		public bool squareChar = false;
+		public int sizeX = 8;
+		public int sizeY = 12;
 
 		public float age = 0;
 		public float lifeTime = -1;
@@ -54,8 +55,8 @@ namespace GraphicsLibrary.Hud
 					GL.Begin(PrimitiveType.Quads);
 					GL.Color4(textMaterial.GetCurrentColor(age / lifeTime));
 					GL.TexCoord2(x, y); GL.Vertex2(00 + (sizeX * i), 00);
-					GL.TexCoord2(d + x, y); GL.Vertex2(sizeY + (sizeX * i), 00);
-					GL.TexCoord2(d + x, d + y); GL.Vertex2(sizeY + (sizeX * i), sizeY);
+					GL.TexCoord2(d + x, y); GL.Vertex2(sizeX + (sizeX * i), 00);
+					GL.TexCoord2(d + x, d + y); GL.Vertex2(sizeX + (sizeX * i), sizeY);
 					GL.TexCoord2(x, d + y); GL.Vertex2(00 + (sizeX * i), sizeY);
 					GL.End();
 					GL.Color4(Color.White);

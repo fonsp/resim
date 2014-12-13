@@ -98,7 +98,7 @@ namespace GraphicsLibrary.Hud
 		public Color4 backgroundColor = new Color4(0f, 0f, 0f, .5f);
 		public float width = 480;
 		public float height = 300;
-		private int sizeX = 12;
+		private int sizeX = 8;
 
 		public int SizeX
 		{
@@ -117,7 +117,7 @@ namespace GraphicsLibrary.Hud
 			}
 		}
 
-		private int sizeY = 16;
+		private int sizeY = 12;
 
 		public int SizeY
 		{
@@ -138,6 +138,7 @@ namespace GraphicsLibrary.Hud
 
 		private TextField[] textFields;
 		private TextField inputField = new TextField("asdf");
+		private HudImage back = new HudImage("back");
 
 		public HudConsole(string name, uint numberOfLines)
 			: base(name)
@@ -240,10 +241,10 @@ namespace GraphicsLibrary.Hud
 
 		public void AddText(string s, Color4 color)
 		{
-			while (s.Length > width/sizeX)
+			while(s.Length > width / sizeX)
 			{
 				AddLine(s.Substring(0, (int)width / sizeX), color);
-				s = s.Remove(0, (int) width/sizeX);
+				s = s.Remove(0, (int)width / sizeX);
 			}
 			AddLine(s, color);
 		}
@@ -268,7 +269,7 @@ namespace GraphicsLibrary.Hud
 				Shader.hudShaderCompiled.Enable();
 				#region Background
 
-				GL.Disable(EnableCap.Texture2D);
+				/*GL.Disable(EnableCap.Texture2D);
 
 				GL.MatrixMode(MatrixMode.Modelview);
 				GL.PushMatrix();
@@ -289,9 +290,24 @@ namespace GraphicsLibrary.Hud
 
 				GL.Color4(Color4.White);
 				GL.End();
+
 				GL.PopMatrix();
 
-				GL.Enable(EnableCap.Texture2D);
+				GL.Enable(EnableCap.Texture2D);*/
+
+				back.color = backgroundColor;
+				back.width = width;
+				back.imageTextureName = "white";
+
+				back.derivedPosition = position;
+				back.derivedPosition.Y += lineStart * sizeY;
+				back.height = height - (lineStart * sizeY);
+				back.Render();
+
+				back.derivedPosition = position;
+				back.derivedPosition.Y += height - sizeY;
+				back.height = sizeY;
+				back.Render();
 
 				#endregion
 				#region Lines
