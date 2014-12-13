@@ -6,6 +6,7 @@ namespace GraphicsLibrary.Hud
 	public class HudDebugField:TextField
 	{
 		public string prefix = "";
+		public string suffix = "";
 		public string value = "";
 		public int width = 122;
 		public AlignMode align = AlignMode.Left;
@@ -19,7 +20,7 @@ namespace GraphicsLibrary.Hud
 			this.align = align;
 			this.lineOffset = lineOffset;
 			back.color = new Color4(0f, 0f, 0f, 0.3f);
-			back.height = 18;
+			back.height = 14;
 			back.width = 128;
 		}
 
@@ -27,11 +28,10 @@ namespace GraphicsLibrary.Hud
 		{
 			base.Update(timeSinceLastUpdate);
 
-			text = prefix + value;
+			text = prefix + value + suffix;
+			width = 8 * text.Length;
 
-			// TODO: Update width?
-
-			position.Y = 18 * lineOffset;
+			position.Y = 14 * lineOffset;
 			if(align == AlignMode.Left)
 			{
 				position.X = 0;
@@ -40,7 +40,7 @@ namespace GraphicsLibrary.Hud
 			{
 				position.X = RenderWindow.Instance.Width - width;
 			}
-			back.position = position;
+			back.derivedPosition = position;
 			back.width = width;
 		}
 

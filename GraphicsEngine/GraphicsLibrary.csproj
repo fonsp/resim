@@ -104,6 +104,7 @@
     <Compile Include="Core\Vertex.cs" />
     <Compile Include="GraphicsProgram.cs" />
     <Compile Include="Hud\HudBase.cs" />
+    <Compile Include="Hud\HudGraph.cs" />
     <Compile Include="Hud\HudImage.cs" />
     <Compile Include="Hud\TextField.cs" />
     <Compile Include="Input\InputManager.cs" />

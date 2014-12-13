@@ -154,10 +154,13 @@ namespace GraphicsLibrary.Hud
 
 		public void StartRender()
 		{
-			Render();
-			foreach(HudElement h in children.Values)
+			if(isVisible)
 			{
-				h.StartRender();
+				Render();
+				foreach(HudElement h in children.Values)
+				{
+					h.StartRender();
+				}
 			}
 		}
 

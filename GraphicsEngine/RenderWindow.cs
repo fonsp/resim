@@ -30,14 +30,14 @@ namespace GraphicsLibrary
 
 		public bool escapeOnEscape = true;
 		private readonly GameTimer updateSw = new GameTimer();
-		private float _time = 0f;
+		public float worldTime = 0f;
+		public float localTime = 0f;
 		public float c = 2000f;
 		public float v = 0f;
 		public float b = 0f;
 		public float lf = 1f;
 		private Vector3 smoothedVelocity = Vector3.Zero;
 		public float smoothFactor = 4000f;
-		public float time { get { return _time; } }
 		public bool enableVelocity = true;
 		protected double timeSinceLastUpdate = 0;
 		public double timeMultiplier = 1;
@@ -320,11 +320,12 @@ namespace GraphicsLibrary
 			lf = 1f / (float)Math.Sqrt(1.0 - b * b);
 
 			timeSinceLastUpdate = e.Time * timeMultiplier;
-			_time += (float)timeSinceLastUpdate;
-			timeSinceLastUpdate *= lf;
-
-
+			localTime += (float)timeSinceLastUpdate;
 			program.Update((float)timeSinceLastUpdate);
+			timeSinceLastUpdate *= lf;
+			worldTime += (float)timeSinceLastUpdate;
+
+
 			if(enableVelocity)
 			{
 
@@ -352,11 +353,11 @@ namespace GraphicsLibrary
 
 			float renderTime = (float)e.Time; //TODO e.Time accuracy
 
-			Shader.diffuseShaderCompiled.SetUniform("time", _time);
-			Shader.unlitShaderCompiled.SetUniform("time", _time);
-			Shader.depthShaderCompiled.SetUniform("time", _time);
-			Shader.wireframeShaderCompiled.SetUniform("time", _time);
-			Shader.collisionShaderCompiled.SetUniform("time", _time);
+			Shader.diffuseShaderCompiled.SetUniform("worldTime", worldTime);
+			Shader.unlitShaderCompiled.SetUniform("worldTime", worldTime);
+			Shader.depthShaderCompiled.SetUniform("worldTime", worldTime);
+			Shader.wireframeShaderCompiled.SetUniform("worldTime", worldTime);
+			Shader.collisionShaderCompiled.SetUniform("worldTime", worldTime);
 
 			Vector3 velocityDelta = Camera.Instance.velocity - smoothedVelocity;
 			smoothedVelocity += velocityDelta - Vector3.Divide(velocityDelta, (float)Math.Pow(smoothFactor, renderTime)); //TODO: time dilation

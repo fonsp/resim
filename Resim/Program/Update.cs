@@ -210,10 +210,16 @@ namespace Resim.Program
 						Camera.Instance.position.Z += dist;
 					}
 				}
+			}
 
+			if(Camera.Instance.position.Y <= playerHeight)
+			{
+				grounded = true;
+				Camera.Instance.position.Y += Math.Min(config.GetInt("riseSpeed") * timeSinceLastUpdate, playerHeight - Camera.Instance.position.Y);
 			}
 			#endregion
 			#region Jumping/Gravity
+
 			if(grounded)
 			{
 				Camera.Instance.velocity.Y = Math.Max(Camera.Instance.velocity.Y, 0);
@@ -225,7 +231,7 @@ namespace Resim.Program
 			}
 			else
 			{
-				Camera.Instance.velocity.Y -= config.GetInt("gravity") * timeSinceLastUpdate / RenderWindow.Instance.lf;
+				Camera.Instance.velocity.Y -= config.GetInt("gravity") * timeSinceLastUpdate;
 			}
 
 			#endregion
@@ -350,11 +356,12 @@ namespace Resim.Program
 
 			#endregion
 			#region HUD
-
 			crossHair.position.X = 640 + (int)(200 * Math.Cos(clock1.time * 0.2 * 3.14159265358979));
 			crossHair.position.Y = 360 + (int)(200 * Math.Sin(clock1.time * 0.2 * 3.14159265358979));
-			crossHair1.position.X = 640 + (int)(200 * Math.Cos(RenderWindow.Instance.time * 0.2 * 3.14159265358979));
-			crossHair1.position.Y = 360 + (int)(200 * Math.Sin(RenderWindow.Instance.time * 0.2 * 3.14159265358979));
+			crossHair1.position.X = 640 + (int)(200 * Math.Cos(RenderWindow.Instance.worldTime * 0.2 * 3.14159265358979));
+			crossHair1.position.Y = 360 + (int)(200 * Math.Sin(RenderWindow.Instance.worldTime * 0.2 * 3.14159265358979));
+
+			hudDebug.isVisible = InputManager.IsKeyToggled(Key.Minus);
 			#endregion
 		}
 	}
