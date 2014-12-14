@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms.VisualStyles;
 using OpenTK;
 
 namespace GraphicsLibrary.Core
@@ -11,6 +12,7 @@ namespace GraphicsLibrary.Core
 		public Vector3 prevRelativeToCam = Vector3.Zero;
 
 		public Vector3 velocity = Vector3.Zero;
+		public Vector3 derivedVelocity = Vector3.Zero;
 		public Vector3 acceleration = Vector3.Zero;
 		public Vector3 friction = new Vector3(1, 1, 1);
 
@@ -68,6 +70,13 @@ namespace GraphicsLibrary.Core
 			this.name = name;
 		}
 
+		private List<QueueItem> eventQueue = new List<QueueItem>();
+
+		public void QueueMethod(QueueEvent method)
+		{
+			eventQueue.Add(new QueueItem(method));
+		}
+
 		public virtual void UpdateNode(float timeSinceLastUpdate)
 		{
 			velocity += Vector3.Multiply(acceleration, timeSinceLastUpdate);
@@ -79,6 +88,7 @@ namespace GraphicsLibrary.Core
 				derivedOrientation = orientation;
 				derivedPosition = position;
 				derivedScale = scale;
+				derivedVelocity = velocity;
 			}
 			else
 			{
@@ -93,19 +103,33 @@ namespace GraphicsLibrary.Core
 				Vector3 t = 2 * Vector3.Cross(derivedOrientation.Xyz, position);
 				derivedPosition = parent.derivedPosition + (position + derivedOrientation.W * t + Vector3.Cross(derivedOrientation.Xyz, t));
 				derivedScale = Vector3.Multiply(parent.derivedScale, scale);
+				derivedVelocity = parent.derivedVelocity + velocity;
 
 			}
 			foreach(Node n in children.Values)
 			{
 				n.UpdateNode(timeSinceLastUpdate);
 			}
+			
+			Vector3 relativeToCam = derivedPosition - Camera.Instance.position;
+
+			
+
+			for (int i = 0; i < eventQueue.Count; i++)
+			{
+				if(eventQueue[i].Update(timeSinceLastUpdate / RenderWindow.Instance.lf, relativeToCam.Length))
+				{
+					eventQueue[i].method(this);
+					eventQueue.RemoveAt(i);
+					i--;
+				}
+			}
 
 			// Relativity of time and space:
-			Vector3 relativeToCam = derivedPosition - Camera.Instance.position;
+			// TODO: mult by tau?
 
 			float tau = (prevRelativeToCam.Length - relativeToCam.Length) / RenderWindow.Instance.c;
 			Update(timeSinceLastUpdate + tau);
-
 			prevRelativeToCam = relativeToCam;
 		}
 
@@ -121,12 +145,10 @@ namespace GraphicsLibrary.Core
 				derivedOrientation = orientation;
 				derivedPosition = position;
 				derivedScale = scale;
+				derivedVelocity = velocity;
 			}
 			else
 			{
-				/*derivedOrientation = orientation * parent.derivedOrientation;
-				derivedPosition = parent.derivedPosition + position;
-				derivedScale = Vector3.Multiply(parent.derivedScale, scale);*/
 				if(parent == Camera.Instance)
 				{
 					derivedOrientation = Quaternion.Conjugate(parent.derivedOrientation) * orientation;
@@ -138,6 +160,8 @@ namespace GraphicsLibrary.Core
 				Vector3 t = 2 * Vector3.Cross(derivedOrientation.Xyz, position);
 				derivedPosition = parent.derivedPosition + (position + derivedOrientation.W * t + Vector3.Cross(derivedOrientation.Xyz, t));
 				derivedScale = Vector3.Multiply(parent.derivedScale, scale);
+				derivedVelocity = parent.derivedVelocity + velocity;
+
 			}
 			foreach(Node n in children.Values)
 			{
@@ -271,6 +295,25 @@ namespace GraphicsLibrary.Core
 
 		public virtual void Render(int pass)
 		{
+		}
+	}
+
+	public delegate void QueueEvent(Node node);
+
+	public class QueueItem
+	{
+		public QueueEvent method;
+		public float age = 0f;
+
+		public QueueItem(QueueEvent method)
+		{
+			this.method = method;
+		}
+
+		public bool Update(float localTimeSinceLastUpdate, float currentDistance)
+		{
+			age += localTimeSinceLastUpdate;
+			return age * RenderWindow.Instance.c >= currentDistance;
 		}
 	}
 }

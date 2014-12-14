@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -120,51 +121,8 @@ namespace GraphicsLibrary.Core
 			{
 				return new Shader
 				{
-					vertexShader = @"
-#version 120
-uniform float worldTime;
-uniform float b;
-uniform vec3 vdir;
-uniform vec3 cpos;
-uniform mat4 crot;
-
-varying float intensity;
-
-void main()
-{
-	intensity = (dot(gl_LightSource[0].position.xyz, gl_Normal)+1.0)/2.0;
-	
-	vec4 v = gl_Vertex;
-	v.xyz = v.xyz - cpos;
-	v = gl_ModelViewMatrix * v;
-	if(b > 0)
-	{
-		float oldlength = length(v.xyz);
-		v.xyz = v.xyz + vdir * b * length(v.xyz);
-		v.xyz = v.xyz * (oldlength / length(v.xyz));
-	}
-	v = crot * v;
-    gl_Position = gl_ProjectionMatrix * v;
-	
-	gl_FrontColor = vec4(gl_Color.xyz, 1.0 / (gl_Position.w / 2000.0 + 1.0));
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-}",
-					fragmentShader = @"
-#version 120
-uniform float worldTime;
-uniform float b;
-uniform vec3 vdir;
-uniform vec3 cpos;
-uniform mat4 crot;
-uniform sampler2D tex;
-
-varying float intensity;
-
-void main()
-{
-	float a = sqrt(intensity);
-	gl_FragColor = vec4(vec3(gl_Color.w), 1.0) * (texture2D(tex, gl_TexCoord[0].xy) * (vec4(a, a, a, 1.0) * gl_LightSource[0].diffuse + vec4(1.0-a, 1.0-a, 1.0-a, 1.0) * gl_LightSource[0].ambient));
-}"
+					vertexShader = File.ReadAllText(@"Content/shaders/diffuse.vsh"),
+					fragmentShader = File.ReadAllText(@"Content/shaders/diffuse.fsh")
 				};
 			}
 		}
@@ -192,33 +150,8 @@ void main()
 			{
 				return new Shader
 				{
-					vertexShader = @"
-#version 120
-uniform float worldTime;
-uniform float b;
-uniform vec3 vdir;
-uniform vec3 cpos;
-uniform mat4 crot;
-
-void main()
-{
-    gl_Position = ftransform();
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-	gl_FrontColor = gl_Color;
-}",
-					fragmentShader = @"
-#version 120
-uniform float worldTime;
-uniform float b;
-uniform vec3 vdir;
-uniform vec3 cpos;
-uniform mat4 crot;
-uniform sampler2D tex;
-
-void main()
-{
-	gl_FragColor = texture2D(tex, gl_TexCoord[0].xy) * gl_Color;
-}"
+					vertexShader = File.ReadAllText(@"Content/shaders/unlit.vsh"),
+					fragmentShader = File.ReadAllText(@"Content/shaders/unlit.fsh")
 				};
 			}
 		}
@@ -246,52 +179,8 @@ void main()
 			{
 				return new Shader
 				{
-					vertexShader = @"
-#version 120
-uniform float worldTime;
-uniform float b;
-uniform vec3 vdir;
-uniform vec3 cpos;
-uniform mat4 crot;
-varying float dopp;
-
-void main()
-{
-	vec4 v = gl_Vertex;
-	v.xyz = v.xyz - cpos;
-	v = gl_ModelViewMatrix * v;
-	dopp = 0.0;
-	if(b > 0)
-	{
-		dopp = dot(v.xyz, vdir) * b / length(v.xyz);
-		float oldlength = length(v.xyz);
-		v.xyz = v.xyz + vdir * b * length(v.xyz);
-		v.xyz = v.xyz * (oldlength / length(v.xyz));
-	}
-	v = crot * v;
-    gl_Position = gl_ProjectionMatrix * v;
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-	gl_FrontColor = vec4(gl_Color.xyz, 1.0 / (gl_Position.w / 2000.0 + 1.0));
-}",
-					fragmentShader = @"
-#version 120
-uniform float worldTime;
-uniform float b;
-uniform vec3 vdir;
-uniform vec3 cpos;
-uniform mat4 crot;
-uniform sampler2D tex;
-varying float dopp;
-
-void main()
-{
-	
-	vec4 shift = vec4(1.0);
-	shift.r = 2 * max(0, 0.5 - abs(dopp + 0.0)) + 2 * max(0, 0.5 - abs(dopp + 0.5)) + 2 * max(0, 0.5 - abs(dopp + 1.0));
-	shift.g = 2 * max(0, 0.5 - abs(dopp - 0.5)) + 2 * max(0, 0.5 - abs(dopp + 0.0)) + 2 * max(0, 0.5 - abs(dopp + 0.5));
-	shift.b = 2 * max(0, 0.5 - abs(dopp - 1.0)) + 2 * max(0, 0.5 - abs(dopp - 0.5)) + 2 * max(0, 0.5 - abs(dopp + 0.0));
-	gl_FragColor = texture2D(tex, gl_TexCoord[0].xy) * vec4(vec3(0.5 + dopp / 2.0), 1.0) * vec4(vec3(gl_Color.w), 1.0) * shift;
-}"
+					vertexShader = File.ReadAllText(@"Content/shaders/depth.vsh"),
+					fragmentShader = File.ReadAllText(@"Content/shaders/depth.fsh")
 				};
 			}
 		}
@@ -305,7 +194,7 @@ void main()
 				{
 					depthShaderCompiledi = depthShader;
 				}
-				if(depthShaderCompiledi.Compiled == false)
+				if(depthShaderCompiledi.Compiled == false && RenderWindow.Instance.initialized)
 				{
 					depthShaderCompiledi.GenerateShaders();
 				}
@@ -319,35 +208,8 @@ void main()
 			{
 				return new Shader
 				{
-					vertexShader = @"
-#version 120
-uniform float worldTime;
-uniform float b;
-uniform vec3 vdir;
-uniform vec3 cpos;
-uniform mat4 crot;
-
-void main()
-{
-    vec4 v = gl_Vertex;
-	v.xyz = v.xyz - cpos;
-    gl_Position = gl_ProjectionMatrix * (crot * (gl_ModelViewMatrix * v));
-	gl_FrontColor = gl_Color;
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-}",
-					fragmentShader = @"
-#version 120
-uniform float worldTime;
-uniform float b;
-uniform vec3 vdir;
-uniform vec3 cpos;
-uniform mat4 crot;
-uniform sampler2D tex;
-
-void main()
-{
-	gl_FragColor = texture2D(tex, gl_TexCoord[0].xy) * gl_Color * 0.5 + vec4(0.5, 0.0, 0.0, 0.5);
-}"
+					vertexShader = File.ReadAllText(@"Content/shaders/wireframe.vsh"),
+					fragmentShader = File.ReadAllText(@"Content/shaders/wireframe.fsh")
 				};
 			}
 		}
@@ -375,33 +237,8 @@ void main()
 			{
 				return new Shader
 				{
-					vertexShader = @"
-#version 120
-uniform float worldTime;
-uniform float b;
-uniform vec3 vdir;
-uniform vec3 cpos;
-uniform mat4 crot;
-
-void main()
-{
-	vec4 v = gl_Vertex;
-	v.xyz = v.xyz - cpos;
-	gl_Position = gl_ProjectionMatrix * (crot * (gl_ModelViewMatrix * v));
-}",
-					fragmentShader = @"
-#version 120
-uniform float worldTime;
-uniform float b;
-uniform vec3 vdir;
-uniform vec3 cpos;
-uniform mat4 crot;
-uniform sampler2D tex;
-
-void main()
-{
-	gl_FragColor = vec4(0.5, 0.0, 0.0, 0.05);
-}"
+					vertexShader = File.ReadAllText(@"Content/shaders/collision.vsh"),
+					fragmentShader = File.ReadAllText(@"Content/shaders/collision.fsh")
 				};
 			}
 		}
@@ -429,25 +266,8 @@ void main()
 			{
 				return new Shader
 				{
-					vertexShader = @"
-#version 120
-uniform float worldTime;
-
-void main()
-{
-	gl_FrontColor = gl_Color;
-    gl_Position = ftransform();
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-}",
-					fragmentShader = @"
-#version 120
-uniform float worldTime;
-uniform sampler2D tex;
-
-void main()
-{
-	gl_FragColor = texture2D(tex, gl_TexCoord[0].xy) * gl_Color;
-}"
+					vertexShader = File.ReadAllText(@"Content/shaders/hud.vsh"),
+					fragmentShader = File.ReadAllText(@"Content/shaders/hud.fsh")
 				};
 			}
 		}
@@ -478,75 +298,8 @@ void main()
 			{
 				return new Shader
 				{
-					vertexShader = @"
-#version 120
-uniform float worldTime;
-
-void main()
-{
-	gl_FrontColor = gl_Color;
-    gl_Position = ftransform();
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-}",
-					fragmentShader = @"
-#version 120
-uniform float worldTime;
-uniform sampler2D tex;
-uniform sampler2D depthTex;
-
-uniform float focalDist;
-
-float asdf = 0.0;
-
-void main()
-{
-	float dx = 2.0 / 1280.0;
-	float dy = 2.0 / 0720.0;
-	
-	float depth = texture2D(depthTex, gl_TexCoord[0].xy).x;
-	float n = 1.0; // camera z near
-	float f = 100000.0; // camera z far
-	depth = 2000.0 * (2.0 * n) / (f + n - depth * (f - n));
-
-	
-	float focalDist2 = 2000.0 * (2.0 * n) / (f + n - focalDist * (f - n));
-
-	depth = abs(1.0 - sqrt(depth / focalDist2));
-	depth = clamp(depth, 0.0, 1.0);
-	vec4 sum = vec4(0.0);
-	if(depth >= 0.5)
-	{
-		float[] pascal = float[7](1.0, 6.0, 15.0, 20.0, 15.0, 6.0, 1.0);
-		
-		for(int x = 0; x < 7; x++)
-		{
-			for(int y = 0; y < 7; y++)
-			{
-				sum = sum + texture2D(tex, gl_TexCoord[0].xy + vec2((x - 3) * dx, (y - 3) * dy)) * pascal[x] * pascal[y];
-			}
-		}
-		sum = sum / 4096.0;
-		//sum.r = 1.0;
-		depth = 1.0;
-	} else {
-		float[] pascal = float[5](1.0, 4.0, 6.0, 4.0, 1.0);
-		
-		for(int x = 0; x < 5; x++)
-		{
-			for(int y = 0; y < 5; y++)
-			{
-				sum = sum + texture2D(tex, gl_TexCoord[0].xy + vec2((x - 2) * dx, (y - 2) * dy)) * pascal[x] * pascal[y];
-			}
-		}
-		sum = sum / 256.0;
-		//sum.g = 1.0;
-		depth = depth * 2;
-	}
-	
-	vec4 diff = texture2D(tex, gl_TexCoord[0].xy);
-	//diff.b = 1.0;
-	gl_FragColor = sum * depth + diff * (1.0 - depth);
-}"
+					vertexShader = File.ReadAllText(@"Content/shaders/blur.vsh"),
+					fragmentShader = File.ReadAllText(@"Content/shaders/blur.fsh")
 				};
 			}
 		}
@@ -568,41 +321,43 @@ void main()
 			}
 		}
 
+		public static Shader ssaoShader
+		{
+			get
+			{
+				return new Shader
+				{
+					vertexShader = File.ReadAllText(@"Content/shaders/ssao.vsh"),
+					fragmentShader = File.ReadAllText(@"Content/shaders/ssao.fsh")
+				};
+			}
+		}
+
+		private static Shader ssaoShaderCompiledi;
+		public static Shader ssaoShaderCompiled
+		{
+			get
+			{
+				if(ssaoShaderCompiledi == null)
+				{
+					ssaoShaderCompiledi = ssaoShader;
+				}
+				if(ssaoShaderCompiledi.Compiled == false)
+				{
+					ssaoShaderCompiledi.GenerateShaders();
+				}
+				return ssaoShaderCompiledi;
+			}
+		}
+
 		public static Shader crtShader
 		{
 			get
 			{
 				return new Shader
 				{
-					vertexShader = @"
-#version 120
-uniform float worldTime;
-
-void main()
-{
-	gl_FrontColor = gl_Color;
-    gl_Position = ftransform();
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-}",
-					fragmentShader = @"
-#version 120
-uniform float worldTime;
-uniform sampler2D tex;
-
-void main()
-{
-	/*vec2 rCoord = (gl_TexCoord[0].xy - vec2(0.5, 0.5)) * 0.995 + vec2(0.5, 0.5);
-
-	float r = texture2D(tex, rCoord).r;
-	float g = texture2D(tex, gl_TexCoord[0].xy).g;
-	float b = texture2D(tex, gl_TexCoord[0].xy).b;
-	gl_FragColor = vec4(r, g, b, 1.0); chromatic aberration*/
-	/*gl_FragColor = vec4(texture2D(tex, gl_TexCoord[0].xy).xyz - texture2D(tex, gl_TexCoord[0].xy + vec2(1.0/1280.0, 1.0/720.0)).xyz, 1.0); diff*/
-	float r = texture2D(tex, (gl_TexCoord[0].xy - vec2(0.5, 0.5)) * 0.992 + vec2(0.5, 0.5)).r;
-	float g = texture2D(tex, gl_TexCoord[0].xy).g;
-	float b = texture2D(tex, (gl_TexCoord[0].xy - vec2(0.5, 0.5)) * 0.998 + vec2(0.5, 0.5)).b;
-	gl_FragColor = vec4(vec3(r, g, b) * (mod(int(gl_FragCoord.y), 2) + 1.0) * 0.5, 1.0);
-}"
+					vertexShader = File.ReadAllText(@"Content/shaders/crt.vsh"),
+					fragmentShader = File.ReadAllText(@"Content/shaders/crt.fsh")
 				};
 			}
 		}
@@ -630,30 +385,8 @@ void main()
 			{
 				return new Shader
 				{
-					vertexShader = @"
-#version 120
-uniform float worldTime;
-
-void main()
-{
-	gl_FrontColor = gl_Color;
-    gl_Position = ftransform();
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-}",
-					fragmentShader = @"
-#version 120
-uniform float worldTime;
-uniform sampler2D tex;
-uniform sampler2D ditherTex;
-
-void main()
-{
-	float r = int(texture2D(ditherTex, gl_FragCoord.xy / 4).r < texture2D(tex, gl_TexCoord[0].xy).r);
-	float g = int(texture2D(ditherTex, gl_FragCoord.xy / 4).r < texture2D(tex, gl_TexCoord[0].xy).g);
-	float b = int(texture2D(ditherTex, gl_FragCoord.xy / 4).r < texture2D(tex, gl_TexCoord[0].xy).b);
-	
-	gl_FragColor = vec4(r, g, b, 1.0);
-}"
+					vertexShader = File.ReadAllText(@"Content/shaders/dither.vsh"),
+					fragmentShader = File.ReadAllText(@"Content/shaders/dither.fsh")
 				};
 			}
 		}
@@ -678,7 +411,7 @@ void main()
 		#endregion
 		#region Uniform management
 
-		public void SetUniform(string name, float value)
+		public void SetUniform(string name, bool value)
 		{
 			if(!compiled)
 			{
@@ -689,10 +422,11 @@ void main()
 			{
 				uniforms.Add(name, GL.GetUniformLocation(sp, name));
 			}
-			GL.Uniform1(uniforms[name], value);
+			int intValue = value ? 1 : 0;
+			GL.Uniform1(uniforms[name], intValue);
 		}
 
-		public void SetUniform(string name, double value)
+		public void SetUniform(string name, bool doppler, bool relBrightness, bool relAberration)
 		{
 			if(!compiled)
 			{
@@ -703,7 +437,20 @@ void main()
 			{
 				uniforms.Add(name, GL.GetUniformLocation(sp, name));
 			}
-			GL.Uniform1(uniforms[name], value);
+			int intValue = 0;
+			if(relAberration)
+			{
+				intValue += 1;
+			}
+			if(relBrightness)
+			{
+				intValue += 2;
+			}
+			if(doppler)
+			{
+				intValue += 4;
+			}
+			GL.Uniform1(uniforms[name], intValue);
 		}
 
 		public void SetUniform(string name, int value)
@@ -721,6 +468,34 @@ void main()
 		}
 
 		public void SetUniform(string name, uint value)
+		{
+			if(!compiled)
+			{
+				return;
+			}
+			GL.UseProgram(sp);
+			if(!uniforms.ContainsKey(name))
+			{
+				uniforms.Add(name, GL.GetUniformLocation(sp, name));
+			}
+			GL.Uniform1(uniforms[name], value);
+		}
+
+		public void SetUniform(string name, float value)
+		{
+			if(!compiled)
+			{
+				return;
+			}
+			GL.UseProgram(sp);
+			if(!uniforms.ContainsKey(name))
+			{
+				uniforms.Add(name, GL.GetUniformLocation(sp, name));
+			}
+			GL.Uniform1(uniforms[name], value);
+		}
+
+		public void SetUniform(string name, double value)
 		{
 			if(!compiled)
 			{

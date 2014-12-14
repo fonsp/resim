@@ -38,15 +38,39 @@ namespace GraphicsLibrary.Core
 					if(isLit)
 					{
 						Shader.diffuseShaderCompiled.Enable();
+
+						float v = (RenderWindow.Instance.smoothedVelocity - derivedVelocity).Length;
+						float b = v / RenderWindow.Instance.c;
+						float lf = 1f / (float)Math.Sqrt(1.0 - b * b);
+						Vector3 vDir = (RenderWindow.Instance.smoothedVelocity - derivedVelocity).Normalized();
+						Shader.diffuseShaderCompiled.SetUniform("bL", b);
+						Shader.diffuseShaderCompiled.SetUniform("vdirL", vDir);
+						Shader.diffuseShaderCompiled.SetUniform("lfL", lf);
 					}
 					else
 					{
 						Shader.unlitShaderCompiled.Enable();
+
+						float v = (RenderWindow.Instance.smoothedVelocity - derivedVelocity).Length;
+						float b = v / RenderWindow.Instance.c;
+						float lf = 1f / (float)Math.Sqrt(1.0 - b * b);
+						Vector3 vDir = (RenderWindow.Instance.smoothedVelocity - derivedVelocity).Normalized();
+						Shader.unlitShaderCompiled.SetUniform("bL", b);
+						Shader.unlitShaderCompiled.SetUniform("vdirL", vDir);
+						Shader.unlitShaderCompiled.SetUniform("lfL", lf);
 					}
 				}
 				else
 				{
 					mesh.shader.Enable();
+
+					float v = (RenderWindow.Instance.smoothedVelocity - derivedVelocity).Length;
+					float b = v / RenderWindow.Instance.c;
+					float lf = 1f / (float)Math.Sqrt(1.0 - b * b);
+					Vector3 vDir = (RenderWindow.Instance.smoothedVelocity - derivedVelocity).Normalized();
+					mesh.shader.SetUniform("bL", b);
+					mesh.shader.SetUniform("vdirL", vDir);
+					mesh.shader.SetUniform("lfL", lf);
 				}
 
 				GL.Color4(mesh.material.GetCurrentColor(materialAge / materialLifetime));

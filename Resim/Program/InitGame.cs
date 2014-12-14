@@ -13,8 +13,7 @@ namespace Resim.Program
 	public partial class Game
 	{
 		private Node map = new Node("map");
-		private Random random = new Random();
-		private BasicClock clock1 = new BasicClock("clock1");
+		private Node clocks = new Node("clocks");
 
 		private List<CollisionAABB> mapCollision = new List<CollisionAABB>();
 
@@ -43,6 +42,21 @@ namespace Resim.Program
 			map1.mesh.useVBO = true;
 			map1.mesh.GenerateVBO();
 
+			BasicClock.clockMesh.useVBO = true;
+			BasicClock.clockMesh.GenerateVBO();
+
+			for(float x = 2000; x <= 4000; x += 500)
+			{
+				for(float z = -7000; z <= -5000; z += 500)
+				{
+					BasicClock clock = new BasicClock("Clock" + x.ToString("F0") + z.ToString("F0"));
+					clock.position.X = x;
+					clock.position.Z = z;
+					clock.position.Y = 100;
+					clocks.Add(clock);
+				}
+			}
+
 			hudConsole.enabled = false;
 			hudConsole.isVisible = false;
 			hudConsole.FontTextureName = "font2";
@@ -56,11 +70,13 @@ namespace Resim.Program
 
 			Camera.Instance.friction = new Vector3((float)config.GetDouble("playerFriction"), 1, (float)config.GetDouble("playerFriction"));
 
-			monster.mesh.material.textureName = "monsterTexture";
+			monster.mesh.material.textureName = "huescale";//"monsterTexture";
 
-			playerMesh.material.textureName = "playerTexture";
+			testHueScale.mesh.material.textureName = "huescale";
+			testHueScale.position = new Vector3(3000, 100, -6000);
 
-			//HudBase.Instance.Add(grainImage);
+			map.Add(map1);
+
 			HudBase.Instance.Add(hudDebug);
 			HudBase.Instance.Add(hudConsole);
 			HudBase.Instance.Add(crossHair);
@@ -70,15 +86,8 @@ namespace Resim.Program
 			RootNode.Instance.Add(skybox);
 			RootNode.Instance.Add(collisionVisuals);
 			RootNode.Instance.Add(map);
-			/*map.Add(map0a);
-			map.Add(map0b);
-			map.Add(map0c);
-			map.Add(map0d);
-			map.Add(map0e);*/
-			map.Add(map1);
-
-			clock1.position = new Vector3(2700, 350, -6075);
-			RootNode.Instance.Add(clock1);
+			RootNode.Instance.Add(clocks);
+			RootNode.Instance.Add(testHueScale);
 
 			#endregion
 

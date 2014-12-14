@@ -36,7 +36,8 @@ namespace GraphicsLibrary
 		public float v = 0f;
 		public float b = 0f;
 		public float lf = 1f;
-		private Vector3 smoothedVelocity = Vector3.Zero;
+		public bool enableDoppler = true, enableRelBrightness = true, enableRelAberration = true;
+		public Vector3 smoothedVelocity = Vector3.Zero;
 		public float smoothFactor = 4000f;
 		public bool enableVelocity = true;
 		protected double timeSinceLastUpdate = 0;
@@ -45,6 +46,7 @@ namespace GraphicsLibrary
 		public Shader defaultShader = Shader.diffuseShader;
 		public uint[] elementBase = new uint[1000000];
 		public uint fboHandle, colorTexture, depthTexture, depthRenderbuffer, ditherTexture;
+		public bool initialized = false;
 		private float focalDistance;
 
 		public RenderWindow(string windowName, int width, int height)
@@ -251,6 +253,8 @@ namespace GraphicsLibrary
 
 			#endregion
 
+			initialized = true;
+
 			Debug.WriteLine("Loading complete");
 		}
 
@@ -328,13 +332,12 @@ namespace GraphicsLibrary
 
 			if(enableVelocity)
 			{
-
 				RootNode.Instance.UpdateNode((float)timeSinceLastUpdate);
 				if(Camera.Instance.parent == null)
 				{
 					Camera.Instance.UpdateNode((float)timeSinceLastUpdate);
 				}
-				HudBase.Instance.Update((float)timeSinceLastUpdate);
+				HudBase.Instance.Update((float)(e.Time * timeMultiplier));
 			}
 			else
 			{
@@ -358,6 +361,16 @@ namespace GraphicsLibrary
 			Shader.depthShaderCompiled.SetUniform("worldTime", worldTime);
 			Shader.wireframeShaderCompiled.SetUniform("worldTime", worldTime);
 			Shader.collisionShaderCompiled.SetUniform("worldTime", worldTime);
+			Shader.hudShaderCompiled.SetUniform("worldTime", worldTime);
+			Shader.blurShaderCompiled.SetUniform("worldTime", worldTime);
+			Shader.crtShaderCompiled.SetUniform("worldTime", worldTime);
+			Shader.ditherShaderCompiled.SetUniform("worldTime", worldTime);
+
+			Shader.diffuseShaderCompiled.SetUniform("effects", enableDoppler, enableRelBrightness, enableRelAberration);
+			Shader.unlitShaderCompiled.SetUniform("effects", enableDoppler, enableRelBrightness, enableRelAberration);
+			Shader.depthShaderCompiled.SetUniform("effects", enableDoppler, enableRelBrightness, enableRelAberration);
+			Shader.wireframeShaderCompiled.SetUniform("effects", enableDoppler, enableRelBrightness, enableRelAberration);
+			Shader.collisionShaderCompiled.SetUniform("effects", enableDoppler, enableRelBrightness, enableRelAberration);
 
 			Vector3 velocityDelta = Camera.Instance.velocity - smoothedVelocity;
 			smoothedVelocity += velocityDelta - Vector3.Divide(velocityDelta, (float)Math.Pow(smoothFactor, renderTime)); //TODO: time dilation
@@ -366,19 +379,19 @@ namespace GraphicsLibrary
 			b = v / c;
 			lf = 1f / (float)Math.Sqrt(1.0 - b * b);
 
-			Shader.diffuseShaderCompiled.SetUniform("b", b);
-			Shader.unlitShaderCompiled.SetUniform("b", b);
-			Shader.depthShaderCompiled.SetUniform("b", b);
-			Shader.wireframeShaderCompiled.SetUniform("b", b);
-			Shader.collisionShaderCompiled.SetUniform("b", b);
+			Shader.diffuseShaderCompiled.SetUniform("bW", b);
+			Shader.unlitShaderCompiled.SetUniform("bW", b);
+			Shader.depthShaderCompiled.SetUniform("bW", b);
+			Shader.wireframeShaderCompiled.SetUniform("bW", b);
+			Shader.collisionShaderCompiled.SetUniform("bW", b);
 
 			Vector3 vDir = smoothedVelocity.Normalized();
 
-			Shader.diffuseShaderCompiled.SetUniform("vdir", vDir);
-			Shader.unlitShaderCompiled.SetUniform("vdir", vDir);
-			Shader.depthShaderCompiled.SetUniform("vdir", vDir);
-			Shader.wireframeShaderCompiled.SetUniform("vdir", vDir);
-			Shader.collisionShaderCompiled.SetUniform("vdir", vDir);
+			Shader.diffuseShaderCompiled.SetUniform("vdirW", vDir);
+			Shader.unlitShaderCompiled.SetUniform("vdirW", vDir);
+			Shader.depthShaderCompiled.SetUniform("vdirW", vDir);
+			Shader.wireframeShaderCompiled.SetUniform("vdirW", vDir);
+			Shader.collisionShaderCompiled.SetUniform("vdirW", vDir);
 
 			Shader.diffuseShaderCompiled.SetUniform("cpos", Camera.Instance.position);
 			Shader.unlitShaderCompiled.SetUniform("cpos", Camera.Instance.position);
@@ -457,11 +470,20 @@ namespace GraphicsLibrary
 			// GFX sader selection
 			if(InputManager.IsKeyToggled(Key.Number3))
 			{
-				Shader.blurShaderCompiled.Enable();
-				Shader.blurShaderCompiled.SetUniform("tex", 0);
-				Shader.blurShaderCompiled.SetUniform("depthTex", 1);
-				Shader.blurShaderCompiled.SetUniform("focalDist", focalDistance);
-
+				if(InputManager.IsKeyToggled(Key.BackSpace))
+				{
+					Shader.ssaoShaderCompiled.Enable();
+					Shader.ssaoShaderCompiled.SetUniform("tex", 0);
+					Shader.ssaoShaderCompiled.SetUniform("depthTex", 1);
+					Shader.ssaoShaderCompiled.SetUniform("focalDist", focalDistance);
+				}
+				else
+				{
+					Shader.blurShaderCompiled.Enable();
+					Shader.blurShaderCompiled.SetUniform("tex", 0);
+					Shader.blurShaderCompiled.SetUniform("depthTex", 1);
+					Shader.blurShaderCompiled.SetUniform("focalDist", focalDistance);
+				}
 				GL.ActiveTexture(TextureUnit.Texture1);
 				GL.BindTexture(TextureTarget.Texture2D, depthTexture);
 			}

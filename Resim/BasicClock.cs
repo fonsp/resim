@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using GraphicsLibrary;
 using GraphicsLibrary.Core;
 
 namespace Resim
@@ -8,6 +6,7 @@ namespace Resim
 	public class BasicClock:Entity
 	{
 		public float time = 0f;
+		public float rotateVelocity = 2f;
 
 		public BasicClock(string name)
 			: base(name)
@@ -17,9 +16,14 @@ namespace Resim
 
 		public override void Update(float timeSinceLastUpdate)
 		{
-			time += timeSinceLastUpdate;
-			//Debug.WriteLine(timeSinceLastUpdate);
 			base.Update(timeSinceLastUpdate);
+
+			time += timeSinceLastUpdate;
+		}
+
+		public static void Jump(Node clock)
+		{
+			clock.position.Y += 100;
 		}
 
 		public override void Render(int pass)

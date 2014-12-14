@@ -281,31 +281,9 @@ namespace Resim.Program
 			{
 				mouseDown = true;
 				monster.isVisible = true;
-				monster.position = Camera.Instance.position + 500f * raydir - new Vector3(0, 80, 0);
-			}
-
-			if(InputManager.IsKeyDown(Key.Left))
-			{
-				monster.position.X -= 500f * timeSinceLastUpdate;
-				monsterAABB.Translate(new Vector3(-500f * timeSinceLastUpdate, 0f, 0f));
-			}
-
-			if(InputManager.IsKeyDown(Key.Right))
-			{
-				monster.position.X += 500f * timeSinceLastUpdate;
-				monsterAABB.Translate(new Vector3(500f * timeSinceLastUpdate, 0f, 0f));
-			}
-
-			if(InputManager.IsKeyDown(Key.Up))
-			{
-				monster.position.Y += 500f * timeSinceLastUpdate;
-				monsterAABB.Translate(new Vector3(0f, 500f * timeSinceLastUpdate, 0f));
-			}
-
-			if(InputManager.IsKeyDown(Key.Down))
-			{
-				monster.position.Y -= 500f * timeSinceLastUpdate;
-				monsterAABB.Translate(new Vector3(0f, -500f * timeSinceLastUpdate, 0f));
+				monster.position = 500f * raydir + Camera.Instance.derivedPosition;
+				monster.velocity = RenderWindow.Instance.smoothedVelocity;
+				//monster.position = new Vector3(500, 0, 0);
 			}
 
 			collisionVisuals.isVisible = InputManager.IsKeyToggled(Key.Number1);
@@ -324,6 +302,11 @@ namespace Resim.Program
 				if(freezeKeyDown)
 				{
 					RenderWindow.Instance.timeMultiplier = timeMultPreFreeze;
+
+					foreach(BasicClock clock in clocks.children.Values)
+					{
+						clock.QueueMethod(new QueueEvent(BasicClock.Jump));
+					}
 				}
 				freezeKeyDown = false;
 			}
@@ -354,14 +337,22 @@ namespace Resim.Program
 				windowKeyDown = false;
 			}
 
+			RenderWindow.Instance.enableRelAberration = !InputManager.IsKeyToggled(Key.Number5);
+			RenderWindow.Instance.enableRelBrightness = !InputManager.IsKeyToggled(Key.Number6);
+			RenderWindow.Instance.enableDoppler = !InputManager.IsKeyToggled(Key.Number7);
+
 			#endregion
 			#region HUD
-			crossHair.position.X = 640 + (int)(200 * Math.Cos(clock1.time * 0.2 * 3.14159265358979));
-			crossHair.position.Y = 360 + (int)(200 * Math.Sin(clock1.time * 0.2 * 3.14159265358979));
-			crossHair1.position.X = 640 + (int)(200 * Math.Cos(RenderWindow.Instance.worldTime * 0.2 * 3.14159265358979));
-			crossHair1.position.Y = 360 + (int)(200 * Math.Sin(RenderWindow.Instance.worldTime * 0.2 * 3.14159265358979));
+			crossHair.position.X = 640 + (int)(200 * Math.Cos(RenderWindow.Instance.worldTime * 0.2 * 3.14159265358979));
+			crossHair.position.Y = 360 + (int)(200 * Math.Sin(RenderWindow.Instance.worldTime * 0.2 * 3.14159265358979));
+			crossHair1.position.X = 640 + (int)(200 * Math.Cos(RenderWindow.Instance.localTime * 0.2 * 3.14159265358979));
+			crossHair1.position.Y = 360 + (int)(200 * Math.Sin(RenderWindow.Instance.localTime * 0.2 * 3.14159265358979));
 
-			hudDebug.isVisible = InputManager.IsKeyToggled(Key.Minus);
+			hudDebug.isVisible = 
+#if DEBUG
+				!
+#endif
+				InputManager.IsKeyToggled(Key.Minus);
 			#endregion
 		}
 	}
