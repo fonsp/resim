@@ -11,10 +11,10 @@ varying float dopp;
 
 void main()
 {
-	vec4 output = texture2D(tex, gl_TexCoord[0].xy) * vec4(vec3(gl_Color.w), 1.0);
+	vec4 fragout = texture2D(tex, gl_TexCoord[0].xy) * vec4(vec3(gl_Color.w), 1.0);
 	if((effects / 2) % 2 == 1)
 	{
-		output = output * vec4(vec3(0.5 + dopp / 2.0), 1.0);
+		fragout = fragout * vec4(vec3(0.5 + dopp / 2.0), 1.0);
 	}
 	if((effects / 4) % 2 == 1)
 	{
@@ -22,7 +22,7 @@ void main()
 		shift.r = 2 * max(0, 0.5 - abs(dopp + 0.0)) + 2 * max(0, 0.5 - abs(dopp + 0.5)) + 2 * max(0, 0.5 - abs(dopp + 1.0));
 		shift.g = 2 * max(0, 0.5 - abs(dopp - 0.5)) + 2 * max(0, 0.5 - abs(dopp + 0.0)) + 2 * max(0, 0.5 - abs(dopp + 0.5));
 		shift.b = 2 * max(0, 0.5 - abs(dopp - 1.0)) + 2 * max(0, 0.5 - abs(dopp - 0.5)) + 2 * max(0, 0.5 - abs(dopp + 0.0));
-		output = output * shift;
+		fragout = fragout * shift;
 	}
-	gl_FragColor = output;
+	gl_FragColor = fragout;
 }
