@@ -321,7 +321,7 @@ namespace GraphicsLibrary
 #endif
 
 			b = Camera.Instance.velocity.Length / c;
-			lf = 1f / (float)Math.Sqrt(1.0 - b * b);
+			lf = 1f / (float)Math.Sqrt(1.001 - b * b);
 
 			timeSinceLastUpdate = e.Time * timeMultiplier;
 			localTime += (float)timeSinceLastUpdate;
@@ -358,7 +358,6 @@ namespace GraphicsLibrary
 
 			Shader.diffuseShaderCompiled.SetUniform("worldTime", worldTime);
 			Shader.unlitShaderCompiled.SetUniform("worldTime", worldTime);
-			Shader.depthShaderCompiled.SetUniform("worldTime", worldTime);
 			Shader.wireframeShaderCompiled.SetUniform("worldTime", worldTime);
 			Shader.collisionShaderCompiled.SetUniform("worldTime", worldTime);
 			Shader.hudShaderCompiled.SetUniform("worldTime", worldTime);
@@ -368,7 +367,6 @@ namespace GraphicsLibrary
 
 			Shader.diffuseShaderCompiled.SetUniform("effects", enableDoppler, enableRelBrightness, enableRelAberration);
 			Shader.unlitShaderCompiled.SetUniform("effects", enableDoppler, enableRelBrightness, enableRelAberration);
-			Shader.depthShaderCompiled.SetUniform("effects", enableDoppler, enableRelBrightness, enableRelAberration);
 			Shader.wireframeShaderCompiled.SetUniform("effects", enableDoppler, enableRelBrightness, enableRelAberration);
 			Shader.collisionShaderCompiled.SetUniform("effects", enableDoppler, enableRelBrightness, enableRelAberration);
 
@@ -381,7 +379,6 @@ namespace GraphicsLibrary
 
 			Shader.diffuseShaderCompiled.SetUniform("bW", b);
 			Shader.unlitShaderCompiled.SetUniform("bW", b);
-			Shader.depthShaderCompiled.SetUniform("bW", b);
 			Shader.wireframeShaderCompiled.SetUniform("bW", b);
 			Shader.collisionShaderCompiled.SetUniform("bW", b);
 
@@ -389,13 +386,11 @@ namespace GraphicsLibrary
 
 			Shader.diffuseShaderCompiled.SetUniform("vdirW", vDir);
 			Shader.unlitShaderCompiled.SetUniform("vdirW", vDir);
-			Shader.depthShaderCompiled.SetUniform("vdirW", vDir);
 			Shader.wireframeShaderCompiled.SetUniform("vdirW", vDir);
 			Shader.collisionShaderCompiled.SetUniform("vdirW", vDir);
 
 			Shader.diffuseShaderCompiled.SetUniform("cpos", Camera.Instance.position);
 			Shader.unlitShaderCompiled.SetUniform("cpos", Camera.Instance.position);
-			Shader.depthShaderCompiled.SetUniform("cpos", Camera.Instance.position);
 			Shader.wireframeShaderCompiled.SetUniform("cpos", Camera.Instance.position);
 			Shader.collisionShaderCompiled.SetUniform("cpos", Camera.Instance.position);
 
@@ -403,7 +398,6 @@ namespace GraphicsLibrary
 
 			Shader.diffuseShaderCompiled.SetUniform("crot", cRot);
 			Shader.unlitShaderCompiled.SetUniform("crot", cRot);
-			Shader.depthShaderCompiled.SetUniform("crot", cRot);
 			Shader.wireframeShaderCompiled.SetUniform("crot", cRot);
 			Shader.collisionShaderCompiled.SetUniform("crot", cRot);
 

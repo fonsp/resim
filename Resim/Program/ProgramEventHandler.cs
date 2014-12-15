@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading;
+using GraphicsLibrary.Core;
 using OpenTK;
 using GraphicsLibrary;
 using GraphicsLibrary.Hud;
@@ -16,7 +17,7 @@ namespace Resim.Program
 
 			if(e.InputArray.Length > 0 && !String.IsNullOrEmpty(e.InputArray[0]))
 			{
-				switch(e.InputArray[0])
+				switch(e.InputArray[0].ToLower())
 				{
 					case "exit":
 					case "stop":
@@ -26,23 +27,30 @@ namespace Resim.Program
 					case "set":
 						if(e.InputArray.Length > 1 && !String.IsNullOrEmpty(e.InputArray[1]))
 						{
-							switch(e.InputArray[1])
+							switch(e.InputArray[1].ToLower())
 							{
-								case "timeMult":
+								case "timemult":
 									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 									{
 										RenderWindow.Instance.timeMultiplier = Convert.ToDouble(e.InputArray[2]);
 										hudConsole.AddText("timeMult was set to " + RenderWindow.Instance.timeMultiplier);
 									}
 									break;
-								case "walkSpeed":
+								case "c":
+									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
+									{
+										RenderWindow.Instance.c = (float)Convert.ToDouble(e.InputArray[2]);
+										hudConsole.AddText("c was set to " + RenderWindow.Instance.c);
+									}
+									break;
+								case "walkspeed":
 									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 									{
 										walkSpeed = (int)Convert.ToDouble(e.InputArray[2]);
 										hudConsole.AddText("walkSpeed was set to " + walkSpeed);
 									}
 									break;
-								case "VSync":
+								case "vsync":
 									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 									{
 										try
@@ -56,64 +64,117 @@ namespace Resim.Program
 									}
 									break;
 								default:
-									hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync] [value]", Color4.LightBlue);
+									hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync|c] [value]", Color4.LightBlue);
 									break;
 							}
 						}
 						else
 						{
-							hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync] [value]", Color4.LightBlue);
+							hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync|c] [value]", Color4.LightBlue);
 						}
 						break;
 					case "reset":
 						if(e.InputArray.Length > 1 && !String.IsNullOrEmpty(e.InputArray[1]))
 						{
-							switch(e.InputArray[1])
+							switch(e.InputArray[1].ToLower())
 							{
-								case "timeMult":
+								case "timemult":
 									RenderWindow.Instance.timeMultiplier = 1;
 									hudConsole.AddText("timeMult was reset to " + RenderWindow.Instance.timeMultiplier);
 									break;
-								case "walkSpeed":
+								case "c":
+									RenderWindow.Instance.c = 2000;
+									hudConsole.AddText("c was reset to " + RenderWindow.Instance.timeMultiplier);
+									break;
+								case "walkspeed":
 									walkSpeed = 400;
 									hudConsole.AddText("walkSpeed was reset to " + walkSpeed);
 									break;
-								case "VSync":
+								case "vsync":
 									RenderWindow.Instance.VSync = VSyncMode.On;
 									hudConsole.AddText("walkSpeed was reset to " + RenderWindow.Instance.VSync);
 									break;
 								default:
-									hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync]", Color4.LightBlue);
+									hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync|c]", Color4.LightBlue);
 									break;
 							}
 						}
 						else
 						{
-							hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync]", Color4.LightBlue);
+							hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync|c]", Color4.LightBlue);
 						}
 						break;
 					case "get":
 						if(e.InputArray.Length > 1 && !String.IsNullOrEmpty(e.InputArray[1]))
 						{
-							switch(e.InputArray[1])
+							switch(e.InputArray[1].ToLower())
 							{
-								case "timeMult":
+								case "timemult":
 									hudConsole.AddText("timeMult = " + RenderWindow.Instance.timeMultiplier);
 									break;
-								case "walkSpeed":
+								case "c":
+									hudConsole.AddText("c = " + RenderWindow.Instance.c);
+									break;
+								case "walkspeed":
 									hudConsole.AddText("walkSpeed = " + walkSpeed);
 									break;
-								case "VSync":
+								case "vsync":
 									hudConsole.AddText("VSync = " + RenderWindow.Instance.VSync);
 									break;
 								default:
-									hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync]", Color4.LightBlue);
+									hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync|c]", Color4.LightBlue);
 									break;
 							}
 						}
 						else
 						{
-							hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync]", Color4.LightBlue);
+							hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync|c]", Color4.LightBlue);
+						}
+						break;
+					case "tp":
+						if(e.InputArray.Length > 3 && !String.IsNullOrEmpty(e.InputArray[1]) && !String.IsNullOrEmpty(e.InputArray[2]) &&
+							!String.IsNullOrEmpty(e.InputArray[3]))
+						{
+							if (e.InputArray[1][0] == '#')
+							{
+								if (e.InputArray[1].Length > 1)
+								{
+									Camera.Instance.position.X +=
+										(float) Convert.ToDouble(e.InputArray[1].Substring(1, e.InputArray[1].Length - 1));
+								}
+							}
+							else
+							{
+								Camera.Instance.position.X = (float)Convert.ToDouble(e.InputArray[1]);
+							}
+							if(e.InputArray[2][0] == '#')
+							{
+								if(e.InputArray[2].Length > 1)
+								{
+									Camera.Instance.position.Y +=
+										(float)Convert.ToDouble(e.InputArray[2].Substring(1, e.InputArray[2].Length - 1));
+								}
+							}
+							else
+							{
+								Camera.Instance.position.Y = (float)Convert.ToDouble(e.InputArray[2]);
+							}
+							if(e.InputArray[3][0] == '#')
+							{
+								if(e.InputArray[3].Length > 1)
+								{
+									Camera.Instance.position.Z +=
+										(float)Convert.ToDouble(e.InputArray[3].Substring(1, e.InputArray[3].Length - 1));
+								}
+							}
+							else
+							{
+								Camera.Instance.position.Z = (float)Convert.ToDouble(e.InputArray[3]);
+							}
+						}
+						else
+						{
+							hudConsole.AddText("Usage: tp [x] [y] [z]", Color4.LightBlue);
 						}
 						break;
 					case "clear":

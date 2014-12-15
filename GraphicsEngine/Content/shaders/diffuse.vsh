@@ -21,7 +21,7 @@ void main()
 	v.xyz = v.xyz - cpos;
 	v = gl_ModelViewMatrix * v;
 	dopp = dot(v.xyz, vdirL) * bL / length(v.xyz);;
-	if(bW > 0)
+	if(bW > 0.0)
 	{
 		if((effects / 1) % 2 == 1)
 		{

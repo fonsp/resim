@@ -22,7 +22,6 @@ namespace Resim.Program
 		private bool windowKeyDown = false;
 		private bool freezeKeyDown = false;
 		private double timeMultPreFreeze = 1.0;
-		private int comboFieldCounter;
 		private CollisionAABB monsterAABB = new CollisionAABB(new Vector3(-50, 0, -50), new Vector3(50, 110, 50));
 
 		public override void Update(float timeSinceLastUpdate)
@@ -30,6 +29,7 @@ namespace Resim.Program
 			skybox.position = Camera.Instance.position;
 			Camera.Instance.position -= cameraBobDelta;
 
+			InputManager.enabled = !hudConsole.enabled;
 			InputManager.UpdateToggleStates();
 
 			if(InputManager.IsKeyDown(Key.R))
@@ -231,7 +231,7 @@ namespace Resim.Program
 			}
 			else
 			{
-				Camera.Instance.velocity.Y -= config.GetInt("gravity") * timeSinceLastUpdate;
+				Camera.Instance.velocity.Y -= config.GetInt("gravity") * timeSinceLastUpdate / RenderWindow.Instance.lf;
 			}
 
 			#endregion
@@ -287,7 +287,7 @@ namespace Resim.Program
 			}
 
 			collisionVisuals.isVisible = InputManager.IsKeyToggled(Key.Number1);
-			map1.mesh.shader = InputManager.IsKeyToggled(Key.Number2) ? Shader.depthShaderCompiled : null;
+
 			if(InputManager.IsKeyDown(Key.P))
 			{
 				if(!freezeKeyDown)
@@ -305,11 +305,12 @@ namespace Resim.Program
 
 					foreach(BasicClock clock in clocks.children.Values)
 					{
-						clock.QueueMethod(new QueueEvent(BasicClock.Jump));
+						clock.QueueMethod(BasicClock.Jump);
 					}
 				}
 				freezeKeyDown = false;
 			}
+
 			if(InputManager.IsKeyDown(Key.Number0) || InputManager.IsKeyDown(Key.Number8) || InputManager.IsKeyDown(Key.Number9))
 			{
 				if(!windowKeyDown)
@@ -348,11 +349,11 @@ namespace Resim.Program
 			crossHair1.position.X = 640 + (int)(200 * Math.Cos(RenderWindow.Instance.localTime * 0.2 * 3.14159265358979));
 			crossHair1.position.Y = 360 + (int)(200 * Math.Sin(RenderWindow.Instance.localTime * 0.2 * 3.14159265358979));
 
-			hudDebug.isVisible = 
+			hudDebug.isVisible =
 #if DEBUG
-				!
+ !
 #endif
-				InputManager.IsKeyToggled(Key.Minus);
+InputManager.IsKeyToggled(Key.Minus);
 			#endregion
 		}
 	}

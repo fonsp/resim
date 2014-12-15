@@ -6,6 +6,7 @@ namespace GraphicsLibrary.Input
 {
 	public static class InputManager
 	{
+		public static bool enabled = true;
 		private static CursorLockState _cursorLockState = CursorLockState.Free;
 		private static bool[] currentStates = new bool[132];
 		private static bool[] previousStates = new bool[132];
@@ -54,12 +55,12 @@ namespace GraphicsLibrary.Input
 
 		public static bool IsKeyDown(Key key)
 		{
-			return RenderWindow.Instance.Keyboard[key];
+			return enabled && RenderWindow.Instance.Keyboard[key];
 		}
 
 		public static bool IsKeyUp(Key key)
 		{
-			return !RenderWindow.Instance.Keyboard[key];
+			return enabled && !RenderWindow.Instance.Keyboard[key];
 		}
 
 		public static bool IsKeyToggled(Key key)
@@ -69,6 +70,10 @@ namespace GraphicsLibrary.Input
 
 		public static bool IsAnyKeyDown(Key key)
 		{
+			if(!enabled)
+			{
+				return false;
+			}
 			bool output = false;
 			for(int i = 0; i < 131; i++)
 			{
@@ -82,9 +87,12 @@ namespace GraphicsLibrary.Input
 
 		public static void UpdateToggleStates()
 		{
-			for(int i = 0; i < 131; i++)
+			if(enabled)
 			{
-				UpdateToggleState((Key)i);
+				for(int i = 0; i < 131; i++)
+				{
+					UpdateToggleState((Key)i);
+				}
 			}
 		}
 
@@ -109,12 +117,12 @@ namespace GraphicsLibrary.Input
 
 		public static bool IsButtonDown(MouseButton mouseButton)
 		{
-			return RenderWindow.Instance.Mouse[mouseButton];
+			return enabled && RenderWindow.Instance.Mouse[mouseButton];
 		}
 
 		public static bool IsButtonUp(MouseButton mouseButton)
 		{
-			return !RenderWindow.Instance.Mouse[mouseButton];
+			return enabled && !RenderWindow.Instance.Mouse[mouseButton];
 		}
 
 		public static Vector2 GetMousePosition(CursorLockState cursorLockState)

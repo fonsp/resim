@@ -173,35 +173,6 @@ namespace GraphicsLibrary.Core
 			}
 		}
 
-		public static Shader depthShader
-		{
-			get
-			{
-				return new Shader
-				{
-					vertexShader = File.ReadAllText(@"Content/shaders/depth.vsh"),
-					fragmentShader = File.ReadAllText(@"Content/shaders/depth.fsh")
-				};
-			}
-		}
-
-		private static Shader depthShaderCompiledi;
-		public static Shader depthShaderCompiled
-		{
-			get
-			{
-				if(depthShaderCompiledi == null)
-				{
-					depthShaderCompiledi = depthShader;
-				}
-				if(depthShaderCompiledi.Compiled == false && RenderWindow.Instance.initialized)
-				{
-					depthShaderCompiledi.GenerateShaders();
-				}
-				return depthShaderCompiledi;
-			}
-		}
-
 		public static Shader wireframeShader
 		{
 			get
