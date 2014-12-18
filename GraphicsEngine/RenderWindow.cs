@@ -60,7 +60,7 @@ namespace GraphicsLibrary
 
 		}
 		public RenderWindow(string windowName)
-			: this(windowName, 1280, 720)
+			: this(windowName, 800, 600)
 		{ }
 
 		public RenderWindow()

@@ -20,8 +20,13 @@ void main()
 	vec4 v = gl_Vertex;
 	v.xyz = v.xyz - cpos;
 	v = gl_ModelViewMatrix * v;
-	dopp = dot(v.xyz, vdirL) * bL / length(v.xyz);;
-	if(bW > 0.0)
+	if(bL > 0.001)
+	{
+		dopp = dot(v.xyz, vdirL) * bL / length(v.xyz);;
+	} else {
+		dopp = 0.0;
+	}
+	if(bW > 0.001)
 	{
 		if((effects / 1) % 2 == 1)
 		{

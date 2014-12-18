@@ -79,8 +79,8 @@ namespace Resim.Program
 
 			HudBase.Instance.Add(hudDebug);
 			HudBase.Instance.Add(hudConsole);
-			HudBase.Instance.Add(crossHair);
-			HudBase.Instance.Add(crossHair1);
+			//HudBase.Instance.Add(crossHair);
+			//HudBase.Instance.Add(crossHair1);
 
 			RootNode.Instance.Add(monster);
 			RootNode.Instance.Add(skybox);
