@@ -9,6 +9,9 @@ namespace GraphicsLibrary.Hud
 {
 	public class TextField:HudElement
 	{
+		/// <summary>
+		/// Text to draw
+		/// </summary>
 		public string text = "";
 		public Material textMaterial = new Material("font2", Color4.White);//TODO: Default font
 		public bool squareChar = false;

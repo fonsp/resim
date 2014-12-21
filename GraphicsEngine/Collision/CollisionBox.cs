@@ -3,19 +3,34 @@ using OpenTK;
 
 namespace GraphicsLibrary.Collision
 {
+	/// <summary>
+	/// A collision AABB, as defined by two corners.
+	/// </summary>
 	public class CollisionAABB
 	{
-		public Vector3 lb, rt;
+		/// <summary>
+		/// The left, bottom, back corner
+		/// </summary>
+		public Vector3 lb;
+		/// <summary>
+		/// The right, top, front corner
+		/// </summary>
+		public Vector3 rt;
 
 		public CollisionAABB(Vector3 lb, Vector3 rt)
 		{
-			this.lb = lb; //min
-			this.rt = rt; //max
+			this.lb = lb; // min
+			this.rt = rt; // max
 		}
 
+		/// <summary>
+		/// Intersect with the specified ray
+		/// </summary>
+		/// <param name="ray"></param>
+		/// <returns>Hit distance</returns>
 		public float Intersect(CollisionRay ray)
 		{
-			// Algorithm: http://i.stack.imgur.com/tfvSJ.png
+			// Algorithm illustration: http://i.stack.imgur.com/tfvSJ.png
 			Vector3 t = new Vector3();
 
 			if(ray.dir == Vector3.Zero)
@@ -27,8 +42,7 @@ namespace GraphicsLibrary.Collision
 			Vector3 _lb = ray.eye - lb;
 			Vector3 _rt = ray.eye - rt;
 
-
-			//X
+			// X
 			if(r.X > 0) // Determine candidate plane
 			{
 				t.X = Max(-1, _lb.X / -r.X); // Save distance to hit point
@@ -37,7 +51,7 @@ namespace GraphicsLibrary.Collision
 			{
 				t.X = Max(-1, _rt.X / -r.X);
 			}
-			//Y					 
+			// Y					 
 			if(r.Y > 0)
 			{
 				t.Y = Max(-1, _lb.Y / -r.Y);
@@ -46,7 +60,7 @@ namespace GraphicsLibrary.Collision
 			{
 				t.Y = Max(-1, _rt.Y / -r.Y);
 			}
-			//Z					 
+			// Z					 
 			if(r.Z < 0)
 			{
 				t.Z = Max(-1, _lb.Z / r.Z);
@@ -55,7 +69,7 @@ namespace GraphicsLibrary.Collision
 			{
 				t.Z = Max(-1, _rt.Z / r.Z);
 			}
-			r.Z *= -1; //why?
+			r.Z *= -1; // why?
 
 			// The largest hit distance must be that of the hit plane
 			if(t.X >= t.Y && t.X >= t.Z)
@@ -86,14 +100,23 @@ namespace GraphicsLibrary.Collision
 					return t.Z;
 				}
 			}
-			return -1;
+			return -1; // No intersection
 		}
 
+		/// <summary>
+		/// Intersect with the specified point
+		/// </summary>
+		/// <param name="position">Point coordinates</param>
+		/// <returns>True if the point lies inside</returns>
 		public bool isInside(Vector3 position)
 		{
 			return position.X >= lb.X && position.X <= rt.X && position.Y >= lb.Y && position.Y <= rt.Y && position.Z >= lb.Z && position.Z <= rt.Z;
 		}
 
+		/// <summary>
+		/// Translate the AABB
+		/// </summary>
+		/// <param name="delta">Movement vector</param>
 		public void Translate(Vector3 delta)
 		{
 			lb += delta;

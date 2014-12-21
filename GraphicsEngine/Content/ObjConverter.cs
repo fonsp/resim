@@ -11,11 +11,22 @@ namespace GraphicsLibrary.Content
 {
 	public static class ObjConverter
 	{
+		/// <summary>
+		/// Converts the given .obj file to a Mesh object
+		/// </summary>
+		/// <param name="inputFile">.obj file (not path)</param>
+		/// <returns>Generated Mesh</returns>
 		public static Mesh ConvertObjToMesh(string inputFile)
 		{
 			return ConvertObjToMesh(inputFile, Vector3.Zero);
 		}
 
+		/// <summary>
+		/// Converts the given .obj file to a Mesh object
+		/// </summary>
+		/// <param name="inputFile">.obj file (not path)</param>
+		/// <param name="offset">Mesh offset</param>
+		/// <returns>Generated Mesh</returns>
 		public static Mesh ConvertObjToMesh(string inputFile, Vector3 offset)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -159,6 +170,12 @@ namespace GraphicsLibrary.Content
 			return output;
 		}
 
+		/// <summary>
+		/// Converts the given .obj file to a Mesh object that supports VBO rendering
+		/// </summary>
+		/// <param name="inputFile">.obj file (not path)</param>
+		/// <param name="offset">Mesh offset</param>
+		/// <returns>Generated Mesh</returns>
 		public static Mesh ConvertObjToVboMesh(string inputFile, Vector3 offset)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -310,11 +327,22 @@ namespace GraphicsLibrary.Content
 			Debug.WriteLine("Obj conversion complete: " + faces.Count + " faces were converted.");
 			return output;
 		}
+
+		/// <summary>
+		/// Converts the given .obj file to a Mesh object that supports VBO rendering
+		/// </summary>
+		/// <param name="inputFile">.obj file (not path)</param>
+		/// <returns>Generated Mesh</returns>
 		public static Mesh ConvertObjToVboMesh(string inputFile)
 		{
 			return ConvertObjToVboMesh(inputFile, Vector3.Zero);
 		}
 
+		/// <summary>
+		/// Converts the given .obj file to an array of collision boxes. A box is created for every group in the .obj file.
+		/// </summary>
+		/// <param name="inputFile">.obj file (not path)</param>
+		/// <returns>The generated array of collision boxes</returns>
 		public static CollisionAABB[] ConvertObjToAABBarray(string inputFile)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;

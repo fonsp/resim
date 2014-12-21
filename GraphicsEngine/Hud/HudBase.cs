@@ -4,7 +4,9 @@
 	{
 		#region SingleTon
 		private static HudBase instance;
-
+		/// <summary>
+		/// The primary HudElement in ReSim.
+		/// </summary>
 		public static HudBase Instance
 		{
 			get { return instance ?? (instance = new HudBase("HudBase")); }

@@ -14,6 +14,9 @@ namespace GraphicsLibrary.Core
 
 		public Matrix4 modelview;
 
+		/// <summary>
+		/// The OpenGL projection matrix of this camera
+		/// </summary>
 		public Matrix4 projection
 		{
 			get
@@ -23,6 +26,9 @@ namespace GraphicsLibrary.Core
 		}
 
 		private float zNear = 1f;
+		/// <summary>
+		/// The near clipping plane
+		/// </summary>
 		public float ZNear
 		{
 			get
@@ -36,6 +42,9 @@ namespace GraphicsLibrary.Core
 			}
 		}
 		private float zFar = 100000f;
+		/// <summary>
+		/// The far clipping plane
+		/// </summary>
 		public float ZFar
 		{
 			get
@@ -49,6 +58,9 @@ namespace GraphicsLibrary.Core
 			}
 		}
 		private float fov = 90f;
+		/// <summary>
+		/// Vertical field of view, in degrees
+		/// </summary>
 		public float Fov
 		{
 			get

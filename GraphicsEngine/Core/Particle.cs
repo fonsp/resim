@@ -175,7 +175,7 @@ namespace GraphicsLibrary.Core
 	//particleEmitter.baseMaterial.AddTransitionColor(new Color4(0f, 0f, 1f, 0f), 1.0f);
 	//
 	//particleEmitter.baseMaterial.AddTransitionTexture("monsterTexture", 0.3f);
-	//particleEmitter.baseMaterial.AddTransitionTexture("font0", 0.6f);
+	//particleEmitter.baseMaterial.AddTransitionTexture("font2", 0.6f);
 	//particleEmitter.renderPass = 1;
 	//particleEmitter.RandomizeParticles(0.001f, 10, 9, 100, 99, 6000, 5999);
 }

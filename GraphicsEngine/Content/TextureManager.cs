@@ -7,10 +7,16 @@ using OpenTK.Graphics.OpenGL;
 
 namespace GraphicsLibrary.Content
 {
+	/// <summary>
+	/// Transfers textures to and from the GPU, and stores the pointers from GPU memory.
+	/// </summary>
 	public static class TextureManager
 	{
 		static readonly Dictionary<string, int> mTexCache;
 
+		/// <summary>
+		/// The number of loaded textures
+		/// </summary>
 		public static int numberOfTextures
 		{
 			get
@@ -32,11 +38,23 @@ namespace GraphicsLibrary.Content
 			}
 		}
 
+		/// <summary>
+		/// Load an image file to GPU memory.
+		/// </summary>
+		/// <param name="name">New texture name</param>
+		/// <param name="path">Path of the image source</param>
 		public static void AddTexture(string name, string path)
 		{
 			AddTexture(name, path, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
 		}
 
+		/// <summary>
+		/// Load an image file to GPU memory.
+		/// </summary>
+		/// <param name="name">New texture name</param>
+		/// <param name="path">Path of the image source</param>
+		/// <param name="textureMinFilter">Texture filtering: min</param>
+		/// <param name="textureMagFilter">Texture filtering: max</param>
 		public static void AddTexture(string name, string path, TextureMinFilter textureMinFilter, TextureMagFilter textureMagFilter)
 		{
 			try
@@ -73,6 +91,10 @@ namespace GraphicsLibrary.Content
 
 		}
 
+		/// <summary>
+		/// Remove a texture from GPU memory.
+		/// </summary>
+		/// <param name="name">Texture name</param>
 		public static void RemoveTexture(string name)
 		{
 			try
@@ -94,6 +116,9 @@ namespace GraphicsLibrary.Content
 
 		}
 
+		/// <summary>
+		/// Remove all textures from GPU memory.
+		/// </summary>
 		public static void ClearTextureCache()
 		{
 			foreach(KeyValuePair<string, int> feTexBuffer in mTexCache)
@@ -103,17 +128,19 @@ namespace GraphicsLibrary.Content
 			mTexCache.Clear();
 		}
 
+		/// <summary>
+		/// Gets the pointer to the texture in GPU memory.
+		/// </summary>
+		/// <param name="name">Texture name</param>
+		/// <returns>Pointer to the texture in GPU memory</returns>
 		public static int GetTexture(string name)
 		{
 			if(mTexCache.ContainsKey(name))
 			{
 				return mTexCache[name];
 			}
-			else
-			{
-				Debug.WriteLine("WARNING: failed to get texture " + name);
-				return mTexCache["default"];
-			}
+			Debug.WriteLine("WARNING: failed to get texture " + name);
+			return mTexCache["default"];
 		}
 	}
 }

@@ -21,28 +21,69 @@ namespace GraphicsLibrary
 		public GraphicsProgram program;
 
 		private static RenderWindow instance;
-
+		/// <summary>
+		/// The main render window.
+		/// </summary>
 		public static RenderWindow Instance
 		{
 			get { return instance ?? (instance = new RenderWindow()); }
 		}
 		#endregion
-
+		/// <summary>
+		/// Exit the application when the 'Esc' key is pressed.
+		/// </summary>
 		public bool escapeOnEscape = true;
 		private readonly GameTimer updateSw = new GameTimer();
+		/// <summary>
+		/// World time
+		/// </summary>
 		public float worldTime = 0f;
+		/// <summary>
+		/// Observer time
+		/// </summary>
 		public float localTime = 0f;
+		/// <summary>
+		/// The speed of light.
+		/// </summary>
 		public float c = 2000f;
+		/// <summary>
+		/// Camera velocity, relative to the world
+		/// </summary>
 		public float v = 0f;
+		/// <summary>
+		/// v/c
+		/// </summary>
 		public float b = 0f;
+		/// <summary>
+		/// The Lorentz factor
+		/// </summary>
 		public float lf = 1f;
-		public bool enableDoppler = true, enableRelBrightness = true, enableRelAberration = true;
+		/// <summary>
+		/// Enable the Doppler effect
+		/// </summary>
+		public bool enableDoppler = true;
+		/// <summary>
+		/// Enable relativistic brightness
+		/// </summary>
+		public bool enableRelBrightness = true;
+		/// <summary>
+		/// Enable relativistic aberration
+		/// </summary>
+		public bool enableRelAberration = true;
+		/// <summary>
+		/// Smoothed velocity of the camera
+		/// </summary>
 		public Vector3 smoothedVelocity = Vector3.Zero;
 		public float smoothFactor = 4000f;
-		public bool enableVelocity = true;
 		protected double timeSinceLastUpdate = 0;
+		/// <summary>
+		/// Time multiplier (not related to physics)
+		/// </summary>
 		public double timeMultiplier = 1;
-		public int amountOfRenderPasses = 3;
+		public int amountOfRenderPasses = 1;
+		/// <summary>
+		/// Default geometry shader
+		/// </summary>
 		public Shader defaultShader = Shader.diffuseShader;
 		public uint[] elementBase = new uint[1000000];
 		public uint fboHandle, colorTexture, depthTexture, depthRenderbuffer, ditherTexture;
@@ -60,7 +101,7 @@ namespace GraphicsLibrary
 
 		}
 		public RenderWindow(string windowName)
-			: this(windowName, 800, 600)
+			: this(windowName, 1280, 720)
 		{ }
 
 		public RenderWindow()
@@ -330,24 +371,12 @@ namespace GraphicsLibrary
 			worldTime += (float)timeSinceLastUpdate;
 
 
-			if(enableVelocity)
+			RootNode.Instance.UpdateNode((float)timeSinceLastUpdate);
+			if(Camera.Instance.parent == null)
 			{
-				RootNode.Instance.UpdateNode((float)timeSinceLastUpdate);
-				if(Camera.Instance.parent == null)
-				{
-					Camera.Instance.UpdateNode((float)timeSinceLastUpdate);
-				}
-				HudBase.Instance.Update((float)(e.Time * timeMultiplier));
+				Camera.Instance.UpdateNode((float)timeSinceLastUpdate);
 			}
-			else
-			{
-				RootNode.Instance.UpdateNode();
-				if(Camera.Instance.parent == null)
-				{
-					Camera.Instance.UpdateNode();
-				}
-				HudBase.Instance.Update();
-			}
+			HudBase.Instance.Update((float)(e.Time * timeMultiplier));
 		}
 
 		protected override void OnRenderFrame(FrameEventArgs e)

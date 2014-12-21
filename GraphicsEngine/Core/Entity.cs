@@ -7,11 +7,27 @@ namespace GraphicsLibrary.Core
 {
 	public class Entity:Node
 	{
+
 		public Mesh mesh;
+		/// <summary>
+		/// Entity visibility.
+		/// </summary>
 		public bool isVisible = true;
+		/// <summary>
+		/// Enable/dispable lighting.
+		/// </summary>
 		public bool isLit = true;
+		/// <summary>
+		/// Write to the OpenGL depth buffer. True by default.
+		/// </summary>
 		public bool writeDepthBuffer = true;
+		/// <summary>
+		/// Read the OpenGL depth buffer. True by default.
+		/// </summary>
 		public bool readDepthBuffer = true;
+		/// <summary>
+		/// Render a wireframe after rendering the mesh.
+		/// </summary>
 		public bool wireFrame = false;
 
 		public float materialAge = 0;

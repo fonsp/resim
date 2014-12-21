@@ -350,7 +350,7 @@ namespace Resim.Program
 			crossHair1.position.Y = 360 + (int)(200 * Math.Sin(RenderWindow.Instance.localTime * 0.2 * 3.14159265358979));
 
 			hudDebug.isVisible =
-#if DEBUG
+#if !DEBUG
  !
 #endif
 InputManager.IsKeyToggled(Key.Minus);

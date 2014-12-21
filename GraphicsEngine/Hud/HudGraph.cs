@@ -9,12 +9,24 @@ namespace GraphicsLibrary.Hud
 		private HudImage back = new HudImage("asdf");
 		public int width = 256;
 		public int height = 128;
+		/// <summary>
+		/// Background color
+		/// </summary>
 		public Color4 backgroundColor = new Color4(0f, 0f, 0f, .2f);
+		/// <summary>
+		/// Line color
+		/// </summary>
 		public Color4 color = Color4.White;
+		/// <summary>
+		/// The current value to be displayed.
+		/// </summary>
 		public byte value = 100;
 		private int index = 0;
 		private float dt = 0f;
 
+		/// <summary>
+		/// The data buffer, use 'value' to display data.
+		/// </summary>
 		public byte[] dataBuffer = new byte[256];
 
 		public HudGraph(string name)

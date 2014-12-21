@@ -15,16 +15,25 @@ namespace GraphicsLibrary.Core
 		private bool compiled;
 		public bool Compiled { get { return compiled; } }
 
+		/// <summary>
+		/// Pointer to the vertex shader object in GPU memory
+		/// </summary>
 		public int vertexShaderObject
 		{
 			get { return vso; }
 		}
 
+		/// <summary>
+		/// Pointer to the fragment shader object in GPU memory
+		/// </summary>
 		public int fragmentShaderObject
 		{
 			get { return fso; }
 		}
 
+		/// <summary>
+		/// Pointer to the shader program in GPU memory
+		/// </summary>
 		public int shaderProgram
 		{
 			get { return sp; }
@@ -42,6 +51,9 @@ namespace GraphicsLibrary.Core
 			fragmentShader = "";
 		}
 
+		/// <summary>
+		/// Tranfer shader code to GPU and compile.
+		/// </summary>
 		public void GenerateShaders()
 		{
 			int statusCode;
@@ -85,6 +97,9 @@ namespace GraphicsLibrary.Core
 			Enable();
 		}
 
+		/// <summary>
+		/// Use this shader for rendering OpenGL geometry.
+		/// </summary>
 		public void Enable()
 		{
 			if(compiled)
@@ -97,6 +112,9 @@ namespace GraphicsLibrary.Core
 			}
 		}
 
+		/// <summary>
+		/// Remove this shader from GPU memory.
+		/// </summary>
 		public void Remove()
 		{
 			if(compiled)
@@ -382,6 +400,11 @@ namespace GraphicsLibrary.Core
 		#endregion
 		#region Uniform management
 
+		/// <summary>
+		/// Sets a uniform in the specified shader.
+		/// </summary>
+		/// <param name="name">Uniform name</param>
+		/// <param name="value">New value</param>
 		public void SetUniform(string name, bool value)
 		{
 			if(!compiled)
@@ -397,6 +420,13 @@ namespace GraphicsLibrary.Core
 			GL.Uniform1(uniforms[name], intValue);
 		}
 
+		/// <summary>
+		/// Sets the effects uniform.
+		/// </summary>
+		/// <param name="name">Uniform name</param>
+		/// <param name="doppler">Enable Doppler effect</param>
+		/// <param name="relBrightness">Enable relativistic brightness</param>
+		/// <param name="relAberration">Enable relativistic aberration</param>
 		public void SetUniform(string name, bool doppler, bool relBrightness, bool relAberration)
 		{
 			if(!compiled)
@@ -424,6 +454,11 @@ namespace GraphicsLibrary.Core
 			GL.Uniform1(uniforms[name], intValue);
 		}
 
+		/// <summary>
+		/// Sets a uniform in the specified shader.
+		/// </summary>
+		/// <param name="name">Uniform name</param>
+		/// <param name="value">New value</param>
 		public void SetUniform(string name, int value)
 		{
 			if(!compiled)
@@ -438,6 +473,11 @@ namespace GraphicsLibrary.Core
 			GL.Uniform1(uniforms[name], value);
 		}
 
+		/// <summary>
+		/// Sets a uniform in the specified shader.
+		/// </summary>
+		/// <param name="name">Uniform name</param>
+		/// <param name="value">New value</param>
 		public void SetUniform(string name, uint value)
 		{
 			if(!compiled)
@@ -452,6 +492,11 @@ namespace GraphicsLibrary.Core
 			GL.Uniform1(uniforms[name], value);
 		}
 
+		/// <summary>
+		/// Sets a uniform in the specified shader.
+		/// </summary>
+		/// <param name="name">Uniform name</param>
+		/// <param name="value">New value</param>
 		public void SetUniform(string name, float value)
 		{
 			if(!compiled)
@@ -466,6 +511,11 @@ namespace GraphicsLibrary.Core
 			GL.Uniform1(uniforms[name], value);
 		}
 
+		/// <summary>
+		/// Sets a uniform in the specified shader.
+		/// </summary>
+		/// <param name="name">Uniform name</param>
+		/// <param name="value">New value</param>
 		public void SetUniform(string name, double value)
 		{
 			if(!compiled)
@@ -480,6 +530,11 @@ namespace GraphicsLibrary.Core
 			GL.Uniform1(uniforms[name], value);
 		}
 
+		/// <summary>
+		/// Sets a uniform in the specified shader.
+		/// </summary>
+		/// <param name="name">Uniform name</param>
+		/// <param name="value">New value</param>
 		public void SetUniform(string name, Vector2 value)
 		{
 			if(!compiled)
@@ -494,6 +549,11 @@ namespace GraphicsLibrary.Core
 			GL.Uniform2(uniforms[name], value);
 		}
 
+		/// <summary>
+		/// Sets a uniform in the specified shader.
+		/// </summary>
+		/// <param name="name">Uniform name</param>
+		/// <param name="value">New value</param>
 		public void SetUniform(string name, Vector3 value)
 		{
 			if(!compiled)
@@ -508,6 +568,11 @@ namespace GraphicsLibrary.Core
 			GL.Uniform3(uniforms[name], value);
 		}
 
+		/// <summary>
+		/// Sets a uniform in the specified shader.
+		/// </summary>
+		/// <param name="name">Uniform name</param>
+		/// <param name="value">New value</param>
 		public void SetUniform(string name, Vector4 value)
 		{
 			if(!compiled)
@@ -522,6 +587,11 @@ namespace GraphicsLibrary.Core
 			GL.Uniform4(uniforms[name], value);
 		}
 
+		/// <summary>
+		/// Sets a uniform in the specified shader.
+		/// </summary>
+		/// <param name="name">Uniform name</param>
+		/// <param name="value">New value</param>
 		public void SetUniform(string name, Matrix4 value)
 		{
 			if(!compiled)

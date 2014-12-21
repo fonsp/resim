@@ -5,9 +5,11 @@ namespace GraphicsLibrary.Core
 {
 	public class Material
 	{
+		/// <summary>
+		/// Name of the material texture
+		/// </summary>
 		public string textureName = "default";
 		public Color4 baseColor = Color4.White;
-
 
 		public bool enableTextureTransitions = false;
 		public bool enableColorTransitions = false;
@@ -80,6 +82,11 @@ namespace GraphicsLibrary.Core
 			return textureName;
 		}
 
+		/// <summary>
+		/// Calculates the current color, using transition colors.
+		/// </summary>
+		/// <param name="fraction">Fraction between 0.0 and 1.0</param>
+		/// <returns>The current color</returns>
 		public Color4 GetCurrentColor(float fraction)
 		{
 			if(enableColorTransitions)
@@ -114,6 +121,10 @@ namespace GraphicsLibrary.Core
 			return baseColor;
 		}
 
+		/// <summary>
+		/// Returns the base color.
+		/// </summary>
+		/// <returns>The base color</returns>
 		public Color4 GetCurrentColor()
 		{
 			return baseColor;

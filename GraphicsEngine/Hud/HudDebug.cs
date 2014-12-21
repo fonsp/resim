@@ -72,7 +72,7 @@ namespace GraphicsLibrary.Hud
 		}
 
 		/// <summary>
-		/// 
+		/// Adds a new field.
 		/// </summary>
 		/// <param name="fieldName">Field identifier</param>
 		/// <param name="lineOffset">Number of lines below the top edge of the screen</param>
@@ -91,11 +91,21 @@ namespace GraphicsLibrary.Hud
 			Add(fields[fieldName]);
 		}
 
+		/// <summary>
+		/// Set the value of the specified field.
+		/// </summary>
+		/// <param name="fieldName">Name of the field</param>
+		/// <param name="value">New value</param>
 		public void SetValue(string fieldName, string value)
 		{
 			fields[fieldName].value = value;
 		}
 
+		/// <summary>
+		/// Gets the value of the specified field.
+		/// </summary>
+		/// <param name="fieldName">Name of the field</param>
+		/// <returns>The value of the specified field</returns>
 		public string GetValue(string fieldName)
 		{
 			return fields[fieldName].value;

@@ -40,6 +40,9 @@ namespace GraphicsLibrary.Hud
 		public event HudConsoleInputHandler DebugInput;
 
 		private uint numberOfLines;
+		/// <summary>
+		/// The number of lines, not including the input line.
+		/// </summary>
 		public uint NumberOfLines
 		{
 			get
@@ -56,10 +59,17 @@ namespace GraphicsLibrary.Hud
 			}
 		}
 
+
 		public string inputPrefix = ">";
+		/// <summary>
+		/// Current input string
+		/// </summary>
 		public string input = "";
 		public bool enabled = false;
-		private string fontTextureName = "default"; //TODO: default font
+		private string fontTextureName = "font2";
+		/// <summary>
+		/// Texture name of the font to be used for all text
+		/// </summary>
 		public string FontTextureName
 		{
 			get
@@ -98,7 +108,9 @@ namespace GraphicsLibrary.Hud
 		public float width = 480;
 		public float height = 300;
 		private int sizeX = 8;
-
+		/// <summary>
+		/// Character width in pixels
+		/// </summary>
 		public int SizeX
 		{
 			get
@@ -117,7 +129,9 @@ namespace GraphicsLibrary.Hud
 		}
 
 		private int sizeY = 12;
-
+		/// <summary>
+		/// Character height in pixels
+		/// </summary>
 		public int SizeY
 		{
 			get
@@ -214,6 +228,9 @@ namespace GraphicsLibrary.Hud
 			input = "";
 		}
 
+		/// <summary>
+		/// Clear all output lines.
+		/// </summary>
 		public void ClearScreen()
 		{
 			foreach(TextField t in textFields)
@@ -222,11 +239,20 @@ namespace GraphicsLibrary.Hud
 			}
 		}
 
+		/// <summary>
+		/// Output a single line of text
+		/// </summary>
+		/// <param name="s">text to be displayed</param>
 		public void AddLine(string s)
 		{
 			AddLine(s, Color4.White);
 		}
 
+		/// <summary>
+		/// Output a single line of text
+		/// </summary>
+		/// <param name="s">text to be displayed</param>
+		/// <param name="color">line color</param>
 		public void AddLine(string s, Color4 color)
 		{
 			for(int i = 0; i < numberOfLines - 1; i++)
@@ -238,6 +264,11 @@ namespace GraphicsLibrary.Hud
 			textFields[numberOfLines - 1].textMaterial.baseColor = color;
 		}
 
+		/// <summary>
+		/// Output text, wrapping to multiple lines if needed.
+		/// </summary>
+		/// <param name="s">text to be displayed</param>
+		/// <param name="color">text color</param>
 		public void AddText(string s, Color4 color)
 		{
 			while(s.Length > width / sizeX)
@@ -248,6 +279,10 @@ namespace GraphicsLibrary.Hud
 			AddLine(s, color);
 		}
 
+		/// <summary>
+		/// Output text, wrapping to multiple lines if needed.
+		/// </summary>
+		/// <param name="s">text to be displayed</param>
 		public void AddText(string s)
 		{
 			AddText(s, Color4.White);
