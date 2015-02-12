@@ -22,7 +22,7 @@ void main()
 	v = gl_ModelViewMatrix * v;
 	if(bL > 0.001)
 	{
-		dopp = dot(v.xyz, vdirL) * bL / length(v.xyz);;
+		dopp = (dot(v.xyz, vdirL) / length(v.xyz)) * (bL / sqrt(1.0 - bL * bL));
 	} else {
 		dopp = 0.0;
 	}

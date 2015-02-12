@@ -21,7 +21,7 @@ void main()
 	vec4 fragout = texture2D(tex, gl_TexCoord[0].xy) * vec4(vec3(gl_Color.w), 1.0) * (vec4(a, a, a, 1.0) * gl_LightSource[0].diffuse + vec4(1.0-a, 1.0-a, 1.0-a, 1.0) * gl_LightSource[0].ambient);
 	if((effects / 2) % 2 == 1)
 	{
-		fragout = fragout * vec4(vec3(1.0 + dopp), 1.0);
+		fragout = fragout * vec4(vec3(1.0 / sqrt(1.0 - bL * bL) + dopp), 1.0);
 	}
 	if((effects / 4) % 2 == 1)
 	{
