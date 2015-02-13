@@ -24,7 +24,7 @@ namespace GraphicsLibrary.Hud
 			NewField("fps", 0, AlignMode.Left, "", " fps");
 			NewField("position", 1, AlignMode.Left, "Camera: (", ")");
 
-			NewField("version", 3, AlignMode.Left, "ReSim v0.2.0; github.com/fons-/resim", "");
+			NewField("version", 3, AlignMode.Left, "ReSim v1.1.0; github.com/fons-/resim", "");
 			NewField("cpuVendor", 4, AlignMode.Left, "CPU: ", "");
 			foreach(ManagementObject service in new ManagementObjectSearcher("select * from Win32_Processor").Get())
 			{

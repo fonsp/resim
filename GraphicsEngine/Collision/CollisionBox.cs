@@ -61,15 +61,14 @@ namespace GraphicsLibrary.Collision
 				t.Y = Max(-1, _rt.Y / -r.Y);
 			}
 			// Z					 
-			if(r.Z < 0)
+			if(r.Z > 0)
 			{
-				t.Z = Max(-1, _lb.Z / r.Z);
+				t.Z = Max(-1, _lb.Z / -r.Z);
 			}
 			else
 			{
-				t.Z = Max(-1, _rt.Z / r.Z);
+				t.Z = Max(-1, _rt.Z / -r.Z);
 			}
-			r.Z *= -1; // why?
 
 			// The largest hit distance must be that of the hit plane
 			if(t.X >= t.Y && t.X >= t.Z)
