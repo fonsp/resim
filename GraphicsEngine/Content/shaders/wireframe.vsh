@@ -1,10 +1,15 @@
 ﻿#version 120
+
 uniform float worldTime;
 uniform int effects;
-uniform float b;
-uniform vec3 vdir;
+uniform float bL;
+uniform float bW;
+uniform vec3 vdirL;
+uniform vec3 vdirW;
 uniform vec3 cpos;
 uniform mat4 crot;
+varying float dopp;
+uniform sampler2D tex;
 
 void main()
 {

@@ -79,8 +79,8 @@ namespace GraphicsLibrary
 		/// <summary>
 		/// Time multiplier (not related to physics)
 		/// </summary>
-		public double timeMultiplier = 1;
-		public int amountOfRenderPasses = 1;
+		public double timeMultiplier = 1.0;
+		public int amountOfRenderPasses = 2;
 		/// <summary>
 		/// Default geometry shader
 		/// </summary>

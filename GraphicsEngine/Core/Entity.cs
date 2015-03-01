@@ -108,8 +108,7 @@ namespace GraphicsLibrary.Core
 				GL.BindTexture(TextureTarget.Texture2D, TextureManager.GetTexture(mesh.material.GetCurrentTexture()));
 
 				GL.PushMatrix();
-
-				Matrix4 mult = Matrix4.Scale(derivedScale) * Matrix4.Rotate(derivedOrientation) * Matrix4.CreateTranslation(derivedPosition);
+				Matrix4 mult = Matrix4.CreateTranslation(derivedPosition) * Matrix4.Scale(derivedScale) * Matrix4.Rotate(derivedOrientation);
 				GL.MultMatrix(ref mult);
 
 				GL.Material(MaterialFace.Front, MaterialParameter.Diffuse, mesh.material.GetCurrentColor());

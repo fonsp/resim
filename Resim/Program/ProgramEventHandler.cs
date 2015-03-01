@@ -79,11 +79,11 @@ namespace Resim.Program
 							switch(e.InputArray[1].ToLower())
 							{
 								case "timemult":
-									RenderWindow.Instance.timeMultiplier = 1;
+									RenderWindow.Instance.timeMultiplier = 1.0;
 									hudConsole.AddText("timeMult was reset to " + RenderWindow.Instance.timeMultiplier);
 									break;
 								case "c":
-									RenderWindow.Instance.c = 2000;
+									RenderWindow.Instance.c = 2000f;
 									hudConsole.AddText("c was reset to " + RenderWindow.Instance.timeMultiplier);
 									break;
 								case "walkspeed":
@@ -182,6 +182,44 @@ namespace Resim.Program
 						break;
 					case "reload":
 						config.Reload();
+						walkSpeed = 400;
+						RenderWindow.Instance.worldTime = 0f;
+						RenderWindow.Instance.localTime = 0f;
+						RenderWindow.Instance.c = 2000f;
+						RenderWindow.Instance.v = 0f;
+						RenderWindow.Instance.b = 0f;
+						RenderWindow.Instance.lf = 1f;
+						RenderWindow.Instance.enableDoppler = true;
+						RenderWindow.Instance.enableRelBrightness = true;
+						RenderWindow.Instance.enableRelAberration = true;
+						RenderWindow.Instance.smoothedVelocity = Vector3.Zero;
+						RenderWindow.Instance.smoothFactor = 4000f;
+						RenderWindow.Instance.timeMultiplier = 1.0;
+						Camera.Instance.position = new Vector3(2700, 300, -6075);
+						for(float x = 2000; x <= 4000; x += 500)
+						{
+							for(float z = -7000; z <= -5000; z += 500)
+							{
+								BasicClock clock = (BasicClock)clocks.GetChild("Clock" + x.ToString("F0") + z.ToString("F0"));
+								clock.position.X = x;
+								clock.position.Z = z;
+								clock.position.Y = 100;
+							}
+						}
+						map2a.mesh.material.baseColor = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
+						map2b.mesh.material.baseColor = new Color4(0.2f, 0.2f, 0.2f, 1.0f);
+						map2c.mesh.material.baseColor = new Color4(1.0f, 0.9f, 0.6f, 1.0f);
+						map2d.mesh.material.baseColor = new Color4(0.1f, 0.1f, 0.1f, 1.0f);
+						map2e.mesh.material.baseColor = new Color4(0.3f, 0.3f, 0.3f, 1.0f);
+						map2f.mesh.material.baseColor = new Color4(0.5f, 0.9f, 0.1f, 1.0f);
+						break;
+					case "parteyy":
+						map2a.mesh.material.baseColor = new Color4(0.4f, 1.0f, 0.4f, 1.0f);
+						map2b.mesh.material.baseColor = new Color4(1.0f, 0.1f, 0.1f, 1.0f);
+						map2c.mesh.material.baseColor = new Color4(0.1f, 0.4f, 0.9f, 1.0f);
+						map2d.mesh.material.baseColor = new Color4(0.1f, 0.1f, 1.0f, 1.0f);
+						map2e.mesh.material.baseColor = new Color4(1.0f, 0.3f, 1.0f, 1.0f);
+						map2f.mesh.material.baseColor = new Color4(1.0f, 0.2f, 0.1f, 1.0f);
 						break;
 					case "list":
 					case "help":

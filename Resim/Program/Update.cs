@@ -288,7 +288,7 @@ namespace Resim.Program
 
 			collisionVisuals.isVisible = InputManager.IsKeyToggled(Key.Number1);
 
-			if(InputManager.IsKeyDown(Key.P))
+			if(InputManager.IsKeyDown(Key.P) || hudConsole.enabled)
 			{
 				if(!freezeKeyDown)
 				{
@@ -342,18 +342,13 @@ namespace Resim.Program
 			RenderWindow.Instance.enableRelBrightness = !InputManager.IsKeyToggled(Key.Number6);
 			RenderWindow.Instance.enableDoppler = !InputManager.IsKeyToggled(Key.Number7);
 
-			#endregion
-			#region HUD
-			crossHair.position.X = 640 + (int)(200 * Math.Cos(RenderWindow.Instance.worldTime * 0.2 * 3.14159265358979));
-			crossHair.position.Y = 360 + (int)(200 * Math.Sin(RenderWindow.Instance.worldTime * 0.2 * 3.14159265358979));
-			crossHair1.position.X = 640 + (int)(200 * Math.Cos(RenderWindow.Instance.localTime * 0.2 * 3.14159265358979));
-			crossHair1.position.Y = 360 + (int)(200 * Math.Sin(RenderWindow.Instance.localTime * 0.2 * 3.14159265358979));
+			speedometerPointer.position.X = RenderWindow.Instance.Width - (1f - RenderWindow.Instance.smoothedVelocity.Length / RenderWindow.Instance.c)*speedometerBase.width;
 
 			hudDebug.isVisible =
 #if !DEBUG
  !
 #endif
-InputManager.IsKeyToggled(Key.Minus);
+			InputManager.IsKeyToggled(Key.Minus);
 			#endregion
 		}
 	}

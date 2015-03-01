@@ -28,8 +28,6 @@ namespace Resim.Program
 
 			skybox.mesh.material.textureName = "skybox";
 			skybox.isLit = false;
-			float size = Camera.Instance.ZFar / 1.8f;//Sqrt(3)
-			skybox.scale = new Vector3(size, size, size);
 
 			collisionVisuals.mesh.material.textureName = "map0e";
 			collisionVisuals.wireFrame = true;
@@ -41,6 +39,30 @@ namespace Resim.Program
 			map1.mesh.material.textureName = "white";
 			map1.mesh.useVBO = true;
 			map1.mesh.GenerateVBO();
+			map2a.mesh.material.textureName = "white";
+			map2b.mesh.material.textureName = "white";
+			map2c.mesh.material.textureName = "white";
+			map2d.mesh.material.textureName = "white";
+			map2e.mesh.material.textureName = "white";
+			map2f.mesh.material.textureName = "white";
+			map2a.mesh.useVBO = true;
+			map2b.mesh.useVBO = true;
+			map2c.mesh.useVBO = true;
+			map2d.mesh.useVBO = true;
+			map2e.mesh.useVBO = true;
+			map2f.mesh.useVBO = true;
+			map2a.mesh.GenerateVBO();
+			map2b.mesh.GenerateVBO();
+			map2c.mesh.GenerateVBO();
+			map2d.mesh.GenerateVBO();
+			map2e.mesh.GenerateVBO();
+			map2f.mesh.GenerateVBO();
+			map2a.mesh.material.baseColor = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
+			map2b.mesh.material.baseColor = new Color4(0.2f, 0.2f, 0.2f, 1.0f);
+			map2c.mesh.material.baseColor = new Color4(1.0f, 0.9f, 0.6f, 1.0f);
+			map2d.mesh.material.baseColor = new Color4(0.1f, 0.1f, 0.1f, 1.0f);
+			map2e.mesh.material.baseColor = new Color4(0.3f, 0.3f, 0.3f, 1.0f);
+			map2f.mesh.material.baseColor = new Color4(0.5f, 0.9f, 0.1f, 1.0f);
 
 			BasicClock.clockMesh.useVBO = true;
 			BasicClock.clockMesh.GenerateVBO();
@@ -63,24 +85,31 @@ namespace Resim.Program
 			hudConsole.NumberOfLines = 30;
 			hudConsole.DebugInput += ConsoleInputReceived;
 
-			crossHair.width = crossHair.height = 32;
-			crossHair.color = Color4.LightBlue;
-			crossHair1.width = crossHair1.height = 32;
-			crossHair1.color = Color4.Orange;
+			speedometerBase.width = 256f;
+			speedometerBase.height = 64f;
+			speedometerPointer.width = 5f;
+			speedometerPointer.height = 68f;
+
 
 			Camera.Instance.friction = new Vector3((float)config.GetDouble("playerFriction"), 1, (float)config.GetDouble("playerFriction"));
 
-			monster.mesh.material.textureName = "huescale";//"monsterTexture";
+			monster.mesh.material.textureName = "huescale";
 
 			testHueScale.mesh.material.textureName = "huescale";
 			testHueScale.position = new Vector3(3000, 100, -6000);
 
-			map.Add(map1);
+			//map.Add(map1);
+			map.Add(map2a);
+			map.Add(map2b);
+			map.Add(map2c);
+			map.Add(map2d);
+			map.Add(map2e);
+			map.Add(map2f);
 
 			HudBase.Instance.Add(hudDebug);
 			HudBase.Instance.Add(hudConsole);
-			//HudBase.Instance.Add(crossHair);
-			//HudBase.Instance.Add(crossHair1);
+			HudBase.Instance.Add(speedometerBase);
+			HudBase.Instance.Add(speedometerPointer);
 
 			RootNode.Instance.Add(monster);
 			RootNode.Instance.Add(skybox);
