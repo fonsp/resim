@@ -94,7 +94,7 @@ namespace GraphicsLibrary.Core
 		public virtual void UpdateNode(float timeSinceLastUpdate)
 		{
 			velocity += Vector3.Multiply(acceleration, timeSinceLastUpdate);
-			velocity = Vector3.Multiply(velocity, new Vector3((float)Math.Pow(friction.X, timeSinceLastUpdate), (float)Math.Pow(friction.Y, timeSinceLastUpdate), (float)Math.Pow(friction.Z, timeSinceLastUpdate)));
+			velocity = Vector3.Multiply(velocity, new Vector3((float)Math.Pow(friction.X, timeSinceLastUpdate / RenderWindow.Instance.lf), (float)Math.Pow(friction.Y, timeSinceLastUpdate / RenderWindow.Instance.lf), (float)Math.Pow(friction.Z, timeSinceLastUpdate / RenderWindow.Instance.lf)));
 			position += Vector3.Multiply(velocity, timeSinceLastUpdate);
 
 			if(parent == null)

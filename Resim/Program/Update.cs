@@ -57,22 +57,6 @@ namespace Resim.Program
 				InputManager.ShowCursor();
 			}
 
-			/*if(InputManager.IsButtonDown(MouseButton.Right))
-			{
-				if(Camera.Instance.Fov != 50)
-				{
-					Camera.Instance.Fov = 50;
-				}
-				crossHair.isVisible = false;
-			}
-			else
-			{
-				if(Camera.Instance.Fov != 90)
-				{
-					Camera.Instance.Fov = 90;
-				}
-				crossHair.isVisible = true;
-			}*/
 			#endregion
 			#region Movement
 
@@ -217,6 +201,7 @@ namespace Resim.Program
 				grounded = true;
 				Camera.Instance.position.Y += Math.Min(config.GetInt("riseSpeed") * timeSinceLastUpdate, playerHeight - Camera.Instance.position.Y);
 			}
+
 			#endregion
 			#region Jumping/Gravity
 
@@ -228,10 +213,19 @@ namespace Resim.Program
 				{
 					Camera.Instance.velocity.Y = config.GetInt("jumpForce");
 				}
+				Camera.Instance.friction = new Vector3((float)config.GetDouble("playerFriction"), 1, (float)config.GetDouble("playerFriction"));
 			}
 			else
 			{
 				Camera.Instance.velocity.Y -= config.GetInt("gravity") * timeSinceLastUpdate / RenderWindow.Instance.lf;
+				if (delta.LengthSquared < 0.5)
+				{
+					Camera.Instance.friction = new Vector3(.9f, 1f, .9f);
+				}
+				else
+				{
+					Camera.Instance.friction = new Vector3((float)config.GetDouble("playerFriction"), 1, (float)config.GetDouble("playerFriction"));
+				}
 			}
 
 			#endregion
@@ -342,13 +336,14 @@ namespace Resim.Program
 			RenderWindow.Instance.enableRelBrightness = !InputManager.IsKeyToggled(Key.Number6);
 			RenderWindow.Instance.enableDoppler = !InputManager.IsKeyToggled(Key.Number7);
 
-			speedometerPointer.position.X = RenderWindow.Instance.Width - (1f - RenderWindow.Instance.smoothedVelocity.Length / RenderWindow.Instance.c)*speedometerBase.width;
+			speedometerPointer.position.X = RenderWindow.Instance.Width - (1f - RenderWindow.Instance.smoothedVelocity.Length / RenderWindow.Instance.c) * speedometerBase.width;
+			ActionTrigger.Update();
 
 			hudDebug.isVisible =
 #if !DEBUG
  !
 #endif
-			InputManager.IsKeyToggled(Key.Minus);
+ InputManager.IsKeyToggled(Key.Minus);
 			#endregion
 		}
 	}

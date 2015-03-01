@@ -1,5 +1,6 @@
 ﻿using System;
 using GraphicsLibrary.Core;
+using OpenTK;
 
 namespace Resim
 {
@@ -17,6 +18,15 @@ namespace Resim
 		public override void Update(float timeSinceLastUpdate)
 		{
 			base.Update(timeSinceLastUpdate);
+
+			/*if((derivedPosition - Camera.Instance.position).Length < ActionTrigger.maxDistance)
+			{
+				ActionTrigger.Display("derp");
+				if(ActionTrigger.onActive)
+				{
+					Camera.Instance.position = derivedPosition + new Vector3(0f, 200f, 0f);
+				}
+			}*/
 
 			time += timeSinceLastUpdate;
 		}

@@ -14,6 +14,7 @@ namespace Resim.Program
 	{
 		private Node map = new Node("map");
 		private Node clocks = new Node("clocks");
+		private Cannon cannon = new Cannon("cannon");
 
 		private List<CollisionAABB> mapCollision = new List<CollisionAABB>();
 
@@ -79,6 +80,8 @@ namespace Resim.Program
 				}
 			}
 
+			cannon.position = new Vector3(3700f, 250f, -5300f);
+
 			hudConsole.enabled = false;
 			hudConsole.isVisible = false;
 			hudConsole.FontTextureName = "font2";
@@ -89,7 +92,6 @@ namespace Resim.Program
 			speedometerBase.height = 64f;
 			speedometerPointer.width = 5f;
 			speedometerPointer.height = 68f;
-
 
 			Camera.Instance.friction = new Vector3((float)config.GetDouble("playerFriction"), 1, (float)config.GetDouble("playerFriction"));
 
@@ -110,12 +112,14 @@ namespace Resim.Program
 			HudBase.Instance.Add(hudConsole);
 			HudBase.Instance.Add(speedometerBase);
 			HudBase.Instance.Add(speedometerPointer);
+			HudBase.Instance.Add(ActionTrigger.textField);
 
 			RootNode.Instance.Add(monster);
 			RootNode.Instance.Add(skybox);
 			RootNode.Instance.Add(collisionVisuals);
 			RootNode.Instance.Add(map);
 			RootNode.Instance.Add(clocks);
+			RootNode.Instance.Add(cannon);
 			RootNode.Instance.Add(testHueScale);
 
 			#endregion
