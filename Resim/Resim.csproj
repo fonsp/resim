@@ -61,7 +61,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GraphicsEngine\GraphicsLibrary.csproj">
+    <ProjectReference Include="..\GraphicsLibrary\GraphicsLibrary.csproj">
       <Project>{c428141c-bfc6-4390-909c-230bff7650c5}</Project>
       <Name>GraphicsLibrary</Name>
     </ProjectReference>

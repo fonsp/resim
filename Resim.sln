@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resim", "Resim\Resim.csproj", "{049C5B6D-1395-44D0-97BC-F09A92DE42B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphicsLibrary", "GraphicsEngine\GraphicsLibrary.csproj", "{C428141C-BFC6-4390-909C-230BFF7650C5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphicsLibrary", "GraphicsLibrary\GraphicsLibrary.csproj", "{C428141C-BFC6-4390-909C-230BFF7650C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
