@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using OpenTK;
 using GraphicsLibrary.Content;
 using GraphicsLibrary.Core;
 using GraphicsLibrary.Hud;
-using GraphicsLibrary.Collision;
+using OpenTK.Graphics.OpenGL;
 
 namespace Resim.Program
 {
@@ -21,11 +20,11 @@ namespace Resim.Program
 		private Entity map2f = new Entity("map2f");
 		private Entity monster = new Entity("monster");
 		private Entity testHueScale = new Entity("testHueScale");
+		private Mesh slideMesh;
 		private HudConsole hudConsole = new HudConsole("hudConsole", 5);
 		private HudDebug hudDebug = new HudDebug("hudDebug");
 		private HudImage speedometerBase = new HudImage("spedb", "spedb");
 		private HudImage speedometerPointer = new HudImage("spedp", "spedp");
-		private CollisionAABB playerAABB;
 
 		public override void LoadResources()
 		{
@@ -41,12 +40,17 @@ namespace Resim.Program
 			TextureManager.AddTexture("huescale", @"Content/textures/huescale.png");
 			TextureManager.AddTexture("spedb", @"Content/textures/speedometer_base.png");
 			TextureManager.AddTexture("spedp", @"Content/textures/speedometer_pointer.png");
-			TextureManager.AddTexture("map0a", @"Content/textures/map0/darkBrick.png", OpenTK.Graphics.OpenGL.TextureMinFilter.Linear, OpenTK.Graphics.OpenGL.TextureMagFilter.Linear);
-			TextureManager.AddTexture("map0b", @"Content/textures/map0/rockWall.png", OpenTK.Graphics.OpenGL.TextureMinFilter.Linear, OpenTK.Graphics.OpenGL.TextureMagFilter.Linear);
-			TextureManager.AddTexture("map0c", @"Content/textures/map0/crate.png", OpenTK.Graphics.OpenGL.TextureMinFilter.Linear, OpenTK.Graphics.OpenGL.TextureMagFilter.Linear);
-			TextureManager.AddTexture("map0d", @"Content/textures/map0/metal.png", OpenTK.Graphics.OpenGL.TextureMinFilter.Linear, OpenTK.Graphics.OpenGL.TextureMagFilter.Linear);
-			TextureManager.AddTexture("map0e", @"Content/textures/floor0.png", OpenTK.Graphics.OpenGL.TextureMinFilter.Linear, OpenTK.Graphics.OpenGL.TextureMagFilter.Linear);
+			TextureManager.AddTexture("map0a", @"Content/textures/map0/darkBrick.png", TextureMinFilter.Linear, TextureMagFilter.Linear);
+			TextureManager.AddTexture("map0b", @"Content/textures/map0/rockWall.png", TextureMinFilter.Linear, TextureMagFilter.Linear);
+			TextureManager.AddTexture("map0c", @"Content/textures/map0/crate.png", TextureMinFilter.Linear, TextureMagFilter.Linear);
+			TextureManager.AddTexture("map0d", @"Content/textures/map0/metal.png", TextureMinFilter.Linear, TextureMagFilter.Linear);
+			TextureManager.AddTexture("map0e", @"Content/textures/floor0.png", TextureMinFilter.Linear, TextureMagFilter.Linear);
 			TextureManager.AddTexture("playerTexture", @"Content/textures/player.png");
+			TextureManager.AddTexture("testimage", @"Content/textures/testimage.png");
+			for(int i = 0; i < config.GetInt("numSlides"); i++)
+			{
+				TextureManager.AddTexture("slide" + i.ToString("D2"), @"Content/textures/slides/slide" + i.ToString("D2") + ".png", TextureMinFilter.Nearest, TextureMagFilter.Linear);
+			}
 
 			testHueScale.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/monsterUVd.obj"), new Vector3(101, -19, 205));
 			monster.mesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/monsterUVd.obj"), new Vector3(101, -19, 205));
@@ -59,9 +63,12 @@ namespace Resim.Program
 			map2d.mesh = ObjConverter.ConvertObjToVboMesh(File.ReadAllText(@"Content/models/map2/map2d.obj"));
 			map2e.mesh = ObjConverter.ConvertObjToVboMesh(File.ReadAllText(@"Content/models/map2/map2e.obj"));
 			map2f.mesh = ObjConverter.ConvertObjToVboMesh(File.ReadAllText(@"Content/models/map2/map2f.obj"));
+			Lamp.lampHeadMesh = ObjConverter.ConvertObjToVboMesh(File.ReadAllText(@"Content/models/lamp/lamphead.obj"));
+			Lamp.lampPostMesh = ObjConverter.ConvertObjToVboMesh(File.ReadAllText(@"Content/models/lamp/lamppost.obj"));
+			slideMesh = ObjConverter.ConvertObjToMesh(File.ReadAllText(@"Content/models/slide.obj"));
 
 			mapCollision.AddRange(ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/map1/collision.obj")));
-			playerAABB = ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/player.obj"))[0];
+			//playerAABB = ObjConverter.ConvertObjToAABBarray(File.ReadAllText(@"Content/models/player.obj"))[0];
 
 			BasicClock.clockMesh = ObjConverter.ConvertObjToVboMesh(File.ReadAllText(@"Content/models/player.obj"));
 			BasicClock.clockMesh.material.textureName = "huescale";

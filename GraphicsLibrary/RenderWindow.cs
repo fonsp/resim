@@ -165,7 +165,7 @@ namespace GraphicsLibrary
 			{
 				GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { .2f, .2f, .2f, 1.0f });
 				GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { .95f, .95f, .95f, 1.0f });
-				GL.Light(LightName.Light0, LightParameter.Position, Vector4.Normalize(new Vector4(.4f, -.9f, .5f, 0.0f)));
+				GL.Light(LightName.Light0, LightParameter.Position, Vector4.Normalize(new Vector4(.4f, .9f, .5f, 0.0f)));
 
 				GL.Enable(EnableCap.Lighting);
 				GL.Enable(EnableCap.Light0);

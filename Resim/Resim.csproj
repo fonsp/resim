@@ -47,6 +47,8 @@
     <Compile Include="ActionTrigger.cs" />
     <Compile Include="BasicClock.cs" />
     <Compile Include="Cannon.cs" />
+    <Compile Include="Lamp.cs" />
+    <Compile Include="LampSwitch.cs" />
     <Compile Include="Program\InitGame.cs" />
     <Compile Include="Program\InitNetwork.cs" />
     <Compile Include="Program\LoadResources.cs" />

@@ -2,10 +2,12 @@
 using System.Globalization;
 using System.Threading;
 using GraphicsLibrary.Core;
+using GraphicsLibrary.Input;
 using OpenTK;
 using GraphicsLibrary;
 using GraphicsLibrary.Hud;
 using OpenTK.Graphics;
+using OpenTK.Input;
 
 namespace Resim.Program
 {
@@ -63,14 +65,41 @@ namespace Resim.Program
 										hudConsole.AddText("VSync was set to " + RenderWindow.Instance.VSync);
 									}
 									break;
+								case "mouse":
+									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
+									{
+										mouseSensitivityFactor = (float)Convert.ToDouble(e.InputArray[2]);
+										hudConsole.AddText("mouse sensitivity was set to " + mouseSensitivityFactor);
+									}
+									break;
+								case "fov":
+									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
+									{
+										Camera.Instance.Fov = (float)Convert.ToDouble(e.InputArray[2]);
+										hudConsole.AddText("fov was set to " + Camera.Instance.Fov);
+									}
+									break;
+								case "skybox":
+									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
+									{
+										try
+										{
+											((Entity)RootNode.Instance.GetChild("skybox")).isVisible = bool.Parse(e.InputArray[2]);
+										}
+										catch(Exception exception)
+										{
+										}
+										hudConsole.AddText("Skybox visibilty was set to " + ((Entity)RootNode.Instance.GetChild("skybox")).isVisible);
+									}
+									break;
 								default:
-									hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync|c] [value]", Color4.LightBlue);
+									hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync|mouse|c|fov|skybox] [value]", Color4.LightBlue);
 									break;
 							}
 						}
 						else
 						{
-							hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync|c] [value]", Color4.LightBlue);
+							hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync|mouse|c|fov|skybox] [value]", Color4.LightBlue);
 						}
 						break;
 					case "reset":
@@ -94,14 +123,26 @@ namespace Resim.Program
 									RenderWindow.Instance.VSync = VSyncMode.On;
 									hudConsole.AddText("walkSpeed was reset to " + RenderWindow.Instance.VSync);
 									break;
+								case "mouse":
+									mouseSensitivityFactor = 1f;
+									hudConsole.AddText("mouse sensitivity was reset to " + mouseSensitivityFactor);
+									break;
+								case "fov":
+									Camera.Instance.Fov = 90f;
+									hudConsole.AddText("fov was reset to " + Camera.Instance.Fov);
+									break;
+								case "skybox":
+									((Entity)RootNode.Instance.GetChild("skybox")).isVisible = true;
+									hudConsole.AddText("Skybox visibilty was reset to " + ((Entity)RootNode.Instance.GetChild("skybox")).isVisible);
+									break;
 								default:
-									hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync|c]", Color4.LightBlue);
+									hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync|mouse|c|fov|skybox]", Color4.LightBlue);
 									break;
 							}
 						}
 						else
 						{
-							hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync|c]", Color4.LightBlue);
+							hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync|mouse|c|fov|skybox]", Color4.LightBlue);
 						}
 						break;
 					case "get":
@@ -121,26 +162,35 @@ namespace Resim.Program
 								case "vsync":
 									hudConsole.AddText("VSync = " + RenderWindow.Instance.VSync);
 									break;
+								case "mouse":
+									hudConsole.AddText("mouse = " + mouseSensitivityFactor);
+									break;
+								case "fov":
+									hudConsole.AddText("fov = " + Camera.Instance.Fov);
+									break;
+								case "skybox":
+									hudConsole.AddText("skybox = " + ((Entity)RootNode.Instance.GetChild("skybox")).isVisible);
+									break;
 								default:
-									hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync|c]", Color4.LightBlue);
+									hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync|mouse|c|fov|skybox]", Color4.LightBlue);
 									break;
 							}
 						}
 						else
 						{
-							hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync|c]", Color4.LightBlue);
+							hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync|mouse|c|fov|skybox]", Color4.LightBlue);
 						}
 						break;
 					case "tp":
 						if(e.InputArray.Length > 3 && !String.IsNullOrEmpty(e.InputArray[1]) && !String.IsNullOrEmpty(e.InputArray[2]) &&
 							!String.IsNullOrEmpty(e.InputArray[3]))
 						{
-							if (e.InputArray[1][0] == '#')
+							if(e.InputArray[1][0] == '#')
 							{
-								if (e.InputArray[1].Length > 1)
+								if(e.InputArray[1].Length > 1)
 								{
 									Camera.Instance.position.X +=
-										(float) Convert.ToDouble(e.InputArray[1].Substring(1, e.InputArray[1].Length - 1));
+										(float)Convert.ToDouble(e.InputArray[1].Substring(1, e.InputArray[1].Length - 1));
 								}
 							}
 							else
@@ -182,6 +232,8 @@ namespace Resim.Program
 						break;
 					case "reload":
 						config.Reload();
+						InputManager.ClearToggleStates();
+						fpsCam = Vector2.Zero;
 						walkSpeed = 400;
 						RenderWindow.Instance.worldTime = 0f;
 						RenderWindow.Instance.localTime = 0f;
@@ -195,12 +247,12 @@ namespace Resim.Program
 						RenderWindow.Instance.smoothedVelocity = Vector3.Zero;
 						RenderWindow.Instance.smoothFactor = 4000f;
 						RenderWindow.Instance.timeMultiplier = 1.0;
-						Camera.Instance.position = new Vector3(2700, 300, -6075);
+						Camera.Instance.position = new Vector3(2700, 250, -6075);
 						for(float x = 2000; x <= 4000; x += 500)
 						{
 							for(float z = -7000; z <= -5000; z += 500)
 							{
-								BasicClock clock = (BasicClock)clocks.GetChild("Clock" + x.ToString("F0") + z.ToString("F0"));
+								BasicClock clock = (BasicClock)clocks.GetChild("Clock" + x.ToString("F0") + "_" + z.ToString("F0"));
 								clock.position.X = x;
 								clock.position.Z = z;
 								clock.position.Y = 100;

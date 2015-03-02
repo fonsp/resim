@@ -17,8 +17,6 @@ namespace Resim
 
 		public override void Update(float timeSinceLastUpdate)
 		{
-			base.Update(timeSinceLastUpdate);
-
 			if((derivedPosition - Camera.Instance.position).Length < ActionTrigger.maxDistance)
 			{
 				ActionTrigger.Display("jump");

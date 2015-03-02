@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Input;
 using GraphicsLibrary;
 using GraphicsLibrary.Collision;
@@ -17,12 +18,15 @@ namespace Resim.Program
 		private int walkSpeed = 400;
 		private int playerHeight = 170;
 		private Vector2 mouseSensitivity = new Vector2(200, 200); //TODO: config
+		private float mouseSensitivityFactor = 1f;
 		private Vector3 cameraBobDelta = Vector3.Zero;
 		private bool mouseDown = false;
 		private bool windowKeyDown = false;
 		private bool freezeKeyDown = false;
+		private bool slideKeyDown = false;
+		private int slideIndex = 0;
 		private double timeMultPreFreeze = 1.0;
-		private CollisionAABB monsterAABB = new CollisionAABB(new Vector3(-50, 0, -50), new Vector3(50, 110, 50));
+		private CollisionAABB slideAABB = new CollisionAABB(new Vector3(0, 75, -5230), new Vector3(100, 350, -5130));
 
 		public override void Update(float timeSinceLastUpdate)
 		{
@@ -42,8 +46,8 @@ namespace Resim.Program
 			if(!InputManager.IsKeyToggled(Key.Delete))
 			{
 				Vector2 mouseDelta = InputManager.GetMousePosition();
-				mouseDelta.Y /= mouseSensitivity.Y;
-				mouseDelta.X /= mouseSensitivity.X;
+				mouseDelta.Y /= mouseSensitivity.Y / mouseSensitivityFactor;
+				mouseDelta.X /= mouseSensitivity.X / mouseSensitivityFactor;
 				fpsCam += mouseDelta;
 				fpsCam.Y = (float)Math.Max(-1.57, Math.Min(1.57, fpsCam.Y));
 
@@ -218,7 +222,7 @@ namespace Resim.Program
 			else
 			{
 				Camera.Instance.velocity.Y -= config.GetInt("gravity") * timeSinceLastUpdate / RenderWindow.Instance.lf;
-				if (delta.LengthSquared < 0.5)
+				if(delta.LengthSquared < 0.5)
 				{
 					Camera.Instance.friction = new Vector3(.9f, 1f, .9f);
 				}
@@ -344,6 +348,74 @@ namespace Resim.Program
  !
 #endif
  InputManager.IsKeyToggled(Key.Minus);
+			#endregion
+			#region Slides
+
+			slides[Math.Min(Math.Max(slideIndex, 0), config.GetInt("numSlides") - 1)].isLit = true;
+			if(InputManager.IsKeyDown(Key.K))
+			{
+				if(!slideKeyDown)
+				{
+					slideIndex--;
+					slideAABB.lb.Z = -5230 - 100 * slideIndex;
+					slideAABB.rt.Z = -5130 - 100 * slideIndex;
+				}
+				slideKeyDown = true;
+			}
+			else if(InputManager.IsKeyDown(Key.L))
+			{
+				if(!slideKeyDown)
+				{
+					slideIndex++;
+					slideAABB.lb.Z = -5230 - 100 * slideIndex;
+					slideAABB.rt.Z = -5130 - 100 * slideIndex;
+				}
+				slideKeyDown = true;
+			}
+			else if(InputManager.IsKeyDown(Key.J))
+			{
+				if(!slideKeyDown)
+				{
+					slideIndex = 0;
+					slideAABB.lb.Z = -5230 - 100 * slideIndex;
+					slideAABB.rt.Z = -5130 - 100 * slideIndex;
+				}
+				slideKeyDown = true;
+			}
+			else if(InputManager.IsKeyDown(Key.U))
+			{
+				if(!slideKeyDown)
+				{
+					Camera.Instance.position = new Vector3(30f, 250f, -5100f - 100f * slideIndex);
+				}
+				slideKeyDown = true;
+			}
+			else
+			{
+				slideKeyDown = false;
+			}
+			speedometerBase.isVisible = speedometerPointer.isVisible = !InputManager.IsKeyToggled(Key.I);
+			if(InputManager.IsKeyToggled(Key.O))
+			{
+				RenderWindow.Instance.VSync = VSyncMode.On;
+				Camera.Instance.position.Y = 249.6f;
+				Camera.Instance.Fov = 111f;
+				fpsCam.Y = 0;
+				fpsCam.X = 4.7123889803846898576939650749193f;
+				map2e.mesh.material.baseColor = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
+			}
+			else
+			{
+				if(InputManager.IsKeyDown(Key.O))
+				{
+					map2e.mesh.material.baseColor = new Color4(0.3f, 0.3f, 0.3f, 1.0f);
+					RenderWindow.Instance.VSync = VSyncMode.Off;
+				}
+
+			}
+
+			slides[Math.Min(Math.Max(slideIndex, 0), config.GetInt("numSlides") - 1)].isLit = false;
+
 			#endregion
 		}
 	}

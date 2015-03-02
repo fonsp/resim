@@ -19,7 +19,7 @@ namespace Resim.Program
 			new Vector3(798, 169, 264),
 			new Vector3(-50, 169, -508),
 			new Vector3(-96, 394, -621)*/
-			new Vector3(2700, 300, -6075) 
+			new Vector3(2700, 250, -6075) 
 		};
 
 		private void Respawn()

@@ -1,6 +1,5 @@
 ﻿using System;
 using GraphicsLibrary.Core;
-using OpenTK;
 
 namespace Resim
 {

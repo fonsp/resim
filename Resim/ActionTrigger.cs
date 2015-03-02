@@ -11,7 +11,7 @@ namespace Resim
 {
 	public static class ActionTrigger
 	{
-		public static float maxDistance = 200f;
+		public static float maxDistance = 300f;
 		public static TextField textField;
 		public static bool enable = false;
 		private static bool prevDown = false;
