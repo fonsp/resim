@@ -26,10 +26,22 @@ void main()
 	if((effects / 4) % 2 == 1)
 	{
 		vec4 shift = vec4(1.0);
-		shift.r = 2 * max(0, 0.5 - abs(dopp + 0.0)) * fragout.r + 2 * max(0, 0.5 - abs(dopp + 0.5)) * fragout.g + 2 * max(0, 0.5 - abs(dopp + 1.0)) * fragout.b;
-		shift.g = 2 * max(0, 0.5 - abs(dopp - 0.5)) * fragout.r + 2 * max(0, 0.5 - abs(dopp + 0.0)) * fragout.g + 2 * max(0, 0.5 - abs(dopp + 0.5)) * fragout.b;
-		shift.b = 2 * max(0, 0.5 - abs(dopp - 1.0)) * fragout.r + 2 * max(0, 0.5 - abs(dopp - 0.5)) * fragout.g + 2 * max(0, 0.5 - abs(dopp + 0.0)) * fragout.b;
+		shift.r = 2 * max(0.0, 0.5 - abs(dopp + 0.0)) * fragout.r + 2 * max(0.0, 0.5 - abs(dopp + 0.5)) * fragout.g + 2 * max(0.0, 0.5 - abs(dopp + 1.0)) * fragout.b;
+		shift.g = 2 * max(0.0, 0.5 - abs(dopp - 0.5)) * fragout.r + 2 * max(0.0, 0.5 - abs(dopp + 0.0)) * fragout.g + 2 * max(0.0, 0.5 - abs(dopp + 0.5)) * fragout.b;
+		shift.b = 2 * max(0.0, 0.5 - abs(dopp - 1.0)) * fragout.r + 2 * max(0.0, 0.5 - abs(dopp - 0.5)) * fragout.g + 2 * max(0.0, 0.5 - abs(dopp + 0.0)) * fragout.b;
 		fragout = shift;
 	}
+
+	a = max(0.0, fragout.r - 1.0);
+	fragout.g += a;
+	fragout.b += a;
+	a = max(0.0, fragout.g - 1.0);
+	fragout.r += a;
+	fragout.b += a;
+	a = max(0.0, fragout.b - 1.0);
+	fragout.r += a;
+	fragout.g += a;
+
+	fragout += vec4(vec3(a), 0.0);
 	gl_FragColor = fragout;
 }

@@ -10,10 +10,6 @@ namespace GraphicsLibrary.Core
 
 		public Mesh mesh;
 		/// <summary>
-		/// Entity visibility.
-		/// </summary>
-		public bool isVisible = true;
-		/// <summary>
 		/// Enable/dispable lighting.
 		/// </summary>
 		public bool isLit = true;

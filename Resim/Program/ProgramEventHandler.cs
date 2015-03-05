@@ -7,7 +7,6 @@ using OpenTK;
 using GraphicsLibrary;
 using GraphicsLibrary.Hud;
 using OpenTK.Graphics;
-using OpenTK.Input;
 
 namespace Resim.Program
 {
@@ -29,77 +28,97 @@ namespace Resim.Program
 					case "set":
 						if(e.InputArray.Length > 1 && !String.IsNullOrEmpty(e.InputArray[1]))
 						{
-							switch(e.InputArray[1].ToLower())
+							try
 							{
-								case "timemult":
-									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
-									{
-										RenderWindow.Instance.timeMultiplier = Convert.ToDouble(e.InputArray[2]);
-										hudConsole.AddText("timeMult was set to " + RenderWindow.Instance.timeMultiplier);
-									}
-									break;
-								case "c":
-									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
-									{
-										RenderWindow.Instance.c = (float)Convert.ToDouble(e.InputArray[2]);
-										hudConsole.AddText("c was set to " + RenderWindow.Instance.c);
-									}
-									break;
-								case "walkspeed":
-									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
-									{
-										walkSpeed = (int)Convert.ToDouble(e.InputArray[2]);
-										hudConsole.AddText("walkSpeed was set to " + walkSpeed);
-									}
-									break;
-								case "vsync":
-									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
-									{
-										try
+								switch(e.InputArray[1].ToLower())
+								{
+									case "timemult":
+										if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 										{
-											RenderWindow.Instance.VSync = (VSyncMode)Enum.Parse(typeof(VSyncMode), e.InputArray[2], true);
+											RenderWindow.Instance.timeMultiplier = Convert.ToDouble(e.InputArray[2]);
+											hudConsole.AddText("timeMult was set to " + RenderWindow.Instance.timeMultiplier);
 										}
-										catch(Exception exception)
+										break;
+									case "c":
+										if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 										{
+											RenderWindow.Instance.c = (float)Convert.ToDouble(e.InputArray[2]);
+											hudConsole.AddText("c was set to " + RenderWindow.Instance.c);
 										}
-										hudConsole.AddText("VSync was set to " + RenderWindow.Instance.VSync);
-									}
-									break;
-								case "mouse":
-									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
-									{
-										mouseSensitivityFactor = (float)Convert.ToDouble(e.InputArray[2]);
-										hudConsole.AddText("mouse sensitivity was set to " + mouseSensitivityFactor);
-									}
-									break;
-								case "fov":
-									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
-									{
-										Camera.Instance.Fov = (float)Convert.ToDouble(e.InputArray[2]);
-										hudConsole.AddText("fov was set to " + Camera.Instance.Fov);
-									}
-									break;
-								case "skybox":
-									if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
-									{
-										try
+										break;
+									case "walkspeed":
+										if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 										{
-											((Entity)RootNode.Instance.GetChild("skybox")).isVisible = bool.Parse(e.InputArray[2]);
+											walkSpeed = (int)Convert.ToDouble(e.InputArray[2]);
+											hudConsole.AddText("walkSpeed was set to " + walkSpeed);
 										}
-										catch(Exception exception)
+										break;
+									case "vsync":
+										if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
 										{
+											try
+											{
+												RenderWindow.Instance.VSync = (VSyncMode)Enum.Parse(typeof(VSyncMode), e.InputArray[2], true);
+											}
+											catch(Exception exception)
+											{
+											}
+											hudConsole.AddText("VSync was set to " + RenderWindow.Instance.VSync);
 										}
-										hudConsole.AddText("Skybox visibilty was set to " + ((Entity)RootNode.Instance.GetChild("skybox")).isVisible);
-									}
-									break;
-								default:
-									hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync|mouse|c|fov|skybox] [value]", Color4.LightBlue);
-									break;
+										break;
+									case "mouse":
+										if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
+										{
+											mouseSensitivityFactor = (float)Convert.ToDouble(e.InputArray[2]);
+											hudConsole.AddText("mouse sensitivity was set to " + mouseSensitivityFactor);
+										}
+										break;
+									case "fov":
+										if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
+										{
+											Camera.Instance.Fov = Math.Max(10f, Math.Min(170f, (float)Convert.ToDouble(e.InputArray[2])));
+											hudConsole.AddText("fov was set to " + Camera.Instance.Fov);
+										}
+										break;
+									case "showskybox":
+										if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
+										{
+											try
+											{
+												RootNode.Instance.GetChild("skybox").isVisible = bool.Parse(e.InputArray[2]);
+											}
+											catch(Exception exception)
+											{
+											}
+											hudConsole.AddText("Skybox visibilty was set to " + RootNode.Instance.GetChild("skybox").isVisible);
+										}
+										break;
+									case "showswitches":
+										if(e.InputArray.Length > 2 && !String.IsNullOrEmpty(e.InputArray[2]))
+										{
+											try
+											{
+												LampSwitch.showSwitches = bool.Parse(e.InputArray[2]);
+											}
+											catch(Exception exception)
+											{
+											}
+											hudConsole.AddText("Switch visibilty was set to " + LampSwitch.showSwitches);
+										}
+										break;
+									default:
+										hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync|mouse|c|fov|showSkybox|showSwitches] [value]",
+											Color4.LightBlue);
+										break;
+								}
+							}
+							catch(Exception exception)
+							{
 							}
 						}
 						else
 						{
-							hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync|mouse|c|fov|skybox] [value]", Color4.LightBlue);
+							hudConsole.AddText("Usage: set [timeMult|walkSpeed|VSync|mouse|c|fov|showSkybox|showSwitches] [value]", Color4.LightBlue);
 						}
 						break;
 					case "reset":
@@ -131,18 +150,22 @@ namespace Resim.Program
 									Camera.Instance.Fov = 90f;
 									hudConsole.AddText("fov was reset to " + Camera.Instance.Fov);
 									break;
-								case "skybox":
-									((Entity)RootNode.Instance.GetChild("skybox")).isVisible = true;
-									hudConsole.AddText("Skybox visibilty was reset to " + ((Entity)RootNode.Instance.GetChild("skybox")).isVisible);
+								case "showskybox":
+									RootNode.Instance.GetChild("skybox").isVisible = true;
+									hudConsole.AddText("Skybox visibilty was reset to " + RootNode.Instance.GetChild("skybox").isVisible);
+									break;
+								case "showswitches":
+									LampSwitch.showSwitches = true;
+									hudConsole.AddText("Switch visibilty was set to " + LampSwitch.showSwitches);
 									break;
 								default:
-									hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync|mouse|c|fov|skybox]", Color4.LightBlue);
+									hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync|mouse|c|fov|showSkybox|showSwitches]", Color4.LightBlue);
 									break;
 							}
 						}
 						else
 						{
-							hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync|mouse|c|fov|skybox]", Color4.LightBlue);
+							hudConsole.AddText("Usage: reset [timeMult|walkSpeed|VSync|mouse|c|fov|showSkybox|showSwitches]", Color4.LightBlue);
 						}
 						break;
 					case "get":
@@ -168,17 +191,20 @@ namespace Resim.Program
 								case "fov":
 									hudConsole.AddText("fov = " + Camera.Instance.Fov);
 									break;
-								case "skybox":
-									hudConsole.AddText("skybox = " + ((Entity)RootNode.Instance.GetChild("skybox")).isVisible);
+								case "showkybox":
+									hudConsole.AddText("showSkybox = " + RootNode.Instance.GetChild("skybox").isVisible);
+									break;
+								case "showswitches":
+									hudConsole.AddText("showSwitches = " + LampSwitch.showSwitches);
 									break;
 								default:
-									hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync|mouse|c|fov|skybox]", Color4.LightBlue);
+									hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync|mouse|c|fov|showSkybox|showSwitches]", Color4.LightBlue);
 									break;
 							}
 						}
 						else
 						{
-							hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync|mouse|c|fov|skybox]", Color4.LightBlue);
+							hudConsole.AddText("Usage: get [timeMult|walkSpeed|VSync|mouse|c|fov|showSkybox|showSwitches]", Color4.LightBlue);
 						}
 						break;
 					case "tp":
@@ -248,16 +274,6 @@ namespace Resim.Program
 						RenderWindow.Instance.smoothFactor = 4000f;
 						RenderWindow.Instance.timeMultiplier = 1.0;
 						Camera.Instance.position = new Vector3(2700, 250, -6075);
-						for(float x = 2000; x <= 4000; x += 500)
-						{
-							for(float z = -7000; z <= -5000; z += 500)
-							{
-								BasicClock clock = (BasicClock)clocks.GetChild("Clock" + x.ToString("F0") + "_" + z.ToString("F0"));
-								clock.position.X = x;
-								clock.position.Z = z;
-								clock.position.Y = 100;
-							}
-						}
 						map2a.mesh.material.baseColor = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
 						map2b.mesh.material.baseColor = new Color4(0.2f, 0.2f, 0.2f, 1.0f);
 						map2c.mesh.material.baseColor = new Color4(1.0f, 0.9f, 0.6f, 1.0f);

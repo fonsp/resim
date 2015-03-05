@@ -145,6 +145,12 @@
     <None Include="Content\shaders\dither.vsh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Content\shaders\fbo.fsh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\shaders\fbo.vsh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\shaders\hud.fsh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

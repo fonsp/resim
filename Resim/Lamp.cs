@@ -23,8 +23,8 @@ namespace Resim
 			lampHead.position = new Vector3(0f, 60f, 0f);
 			Add(lampHead);
 
-			
-			
+
+
 			lampPost = new Entity(name + "_post");
 			lampPost.mesh = new Mesh();
 			lampPost.mesh.polygonList = lampPostMesh.polygonList;

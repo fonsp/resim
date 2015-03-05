@@ -59,12 +59,18 @@ namespace GraphicsLibrary.Core
 		/// </summary>
 		public string name;
 
-
+		/// <summary>
+		/// Debug rendering.
+		/// </summary>
 		public bool debugRendering = false;
 		/// <summary>
 		/// Rendering pass, starting at 0.
 		/// </summary>
 		public int renderPass = 0;
+		/// <summary>
+		/// Entity visibility.
+		/// </summary>
+		public bool isVisible = true;
 
 		/// <summary>
 		/// All children attached to this node.
@@ -77,6 +83,8 @@ namespace GraphicsLibrary.Core
 		}
 
 		private List<QueueItem> eventQueue = new List<QueueItem>();
+
+
 
 		/// <summary>
 		/// Add a method to be queued. The method will be called when the event (traveling at c) has reached the camera.
@@ -124,12 +132,12 @@ namespace GraphicsLibrary.Core
 			{
 				n.UpdateNode(timeSinceLastUpdate);
 			}
-			
+
 			Vector3 relativeToCam = derivedPosition - Camera.Instance.position;
 
-			
 
-			for (int i = 0; i < eventQueue.Count; i++)
+
+			for(int i = 0; i < eventQueue.Count; i++)
 			{
 				if(eventQueue[i].Update(timeSinceLastUpdate / RenderWindow.Instance.lf, relativeToCam.Length))
 				{
@@ -302,10 +310,13 @@ namespace GraphicsLibrary.Core
 		/// </summary>
 		public void StartRender(int pass)
 		{
-			Render(pass);
-			foreach(Node n in children.Values)
+			if(isVisible)
 			{
-				n.StartRender(pass);
+				Render(pass);
+				foreach(Node n in children.Values)
+				{
+					n.StartRender(pass);
+				}
 			}
 		}
 

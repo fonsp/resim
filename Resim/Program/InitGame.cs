@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OpenTK;
 using GraphicsLibrary;
 using GraphicsLibrary.Core;
@@ -13,13 +12,13 @@ namespace Resim.Program
 	public partial class Game
 	{
 		private Node map = new Node("map");
-		private Node clocks = new Node("clocks");
 		private Node lamps1 = new Node("lamps1");
 		private Node lamps2 = new Node("lamps2");
 		private LampSwitch lampSwitch1, lampSwitch2, lampSwitch3, lampSwitch4, lampSwitch5, lampSwitch6, lampSwitch7, lampSwitch8;
 		private List<Entity> slides = new List<Entity>();
 		private Node slideNode = new Node("slides");
 		private Cannon cannon = new Cannon("cannon");
+		private BasicClock clock1 = new BasicClock("clock1", new Vector3(200f, 435f, -5120f), new Vector3(4000f, 435f, -5120f), 3f);
 		private List<CollisionAABB> mapCollision = new List<CollisionAABB>();
 
 		public override void InitGame()
@@ -71,18 +70,7 @@ namespace Resim.Program
 
 			BasicClock.clockMesh.useVBO = true;
 			BasicClock.clockMesh.GenerateVBO();
-
-			for(float x = 2000; x <= 4000; x += 500)
-			{
-				for(float z = -7000; z <= -5000; z += 500)
-				{
-					BasicClock clock = new BasicClock("Clock" + x.ToString("F0") + "_" + z.ToString("F0"));
-					clock.position.X = x;
-					clock.position.Z = z;
-					clock.position.Y = 100;
-					clocks.Add(clock);
-				}
-			}
+			clock1.position = new Vector3(1200f, 435f, -5120f);
 
 			cannon.position = new Vector3(3700f, 0f, -5300f);
 
@@ -155,7 +143,7 @@ namespace Resim.Program
 				slide.mesh = new Mesh();
 				slide.mesh.polygonList = slideMesh.polygonList;
 				slide.mesh.material.textureName = "slide" + i.ToString("D2");
-				slide.position.Z = - 100 * i;
+				slide.position.Z = -100 * i;
 				slides.Add(slide);
 				slideNode.Add(slide);
 			}
@@ -180,9 +168,9 @@ namespace Resim.Program
 			RootNode.Instance.Add(skybox);
 			RootNode.Instance.Add(collisionVisuals);
 			RootNode.Instance.Add(map);
-			//RootNode.Instance.Add(clocks);
 			RootNode.Instance.Add(cannon);
 			RootNode.Instance.Add(testHueScale);
+			RootNode.Instance.Add(clock1);
 			RootNode.Instance.Add(lamps1);
 			RootNode.Instance.Add(lamps2);
 			RootNode.Instance.Add(lampSwitch1);

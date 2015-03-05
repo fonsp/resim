@@ -390,6 +390,7 @@ namespace GraphicsLibrary
 			Shader.wireframeShaderCompiled.SetUniform("worldTime", worldTime);
 			Shader.collisionShaderCompiled.SetUniform("worldTime", worldTime);
 			Shader.hudShaderCompiled.SetUniform("worldTime", worldTime);
+			Shader.fboShaderCompiled.SetUniform("worldTime", worldTime);
 			Shader.blurShaderCompiled.SetUniform("worldTime", worldTime);
 			Shader.crtShaderCompiled.SetUniform("worldTime", worldTime);
 			Shader.ditherShaderCompiled.SetUniform("worldTime", worldTime);
@@ -523,8 +524,12 @@ namespace GraphicsLibrary
 				}
 				else
 				{
-					Shader.hudShaderCompiled.Enable();
-					Shader.hudShaderCompiled.SetUniform("tex", 0);
+					GL.ActiveTexture(TextureUnit.Texture1);
+					GL.BindTexture(TextureTarget.Texture2D, depthTexture);
+
+					Shader.fboShaderCompiled.Enable();
+					Shader.fboShaderCompiled.SetUniform("tex", 0);
+					Shader.fboShaderCompiled.SetUniform("depthTex", 1);
 				}
 			}
 
@@ -539,6 +544,9 @@ namespace GraphicsLibrary
 			GL.TexCoord2(1, 0); GL.Vertex2(Width, Height);
 			GL.TexCoord2(1, 1); GL.Vertex2(Width, 0);
 			GL.End();
+
+			Shader.hudShaderCompiled.Enable();
+			Shader.hudShaderCompiled.SetUniform("tex", 0);
 
 			// HUD render pass
 			HudBase.Instance.StartRender();

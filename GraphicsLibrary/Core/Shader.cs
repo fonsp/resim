@@ -278,6 +278,34 @@ namespace GraphicsLibrary.Core
 			}
 		}
 
+		public static Shader fboShader
+		{
+			get
+			{
+				return new Shader
+				{
+					vertexShader = File.ReadAllText(@"Content/shaders/fbo.vsh"),
+					fragmentShader = File.ReadAllText(@"Content/shaders/fbo.fsh")
+				};
+			}
+		}
+
+		private static Shader fboShaderCompiledi;
+		public static Shader fboShaderCompiled
+		{
+			get
+			{
+				if(fboShaderCompiledi == null)
+				{
+					fboShaderCompiledi = fboShader;
+				}
+				if(fboShaderCompiledi.Compiled == false)
+				{
+					fboShaderCompiledi.GenerateShaders();
+				}
+				return fboShaderCompiledi;
+			}
+		}
 		#endregion
 		#region Default gfx shaders
 

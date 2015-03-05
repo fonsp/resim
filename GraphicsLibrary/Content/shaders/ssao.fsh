@@ -1,58 +1,42 @@
 ﻿#version 120
 uniform float worldTime;
+uniform float width;
+uniform float height;
 uniform sampler2D tex;
 uniform sampler2D depthTex;
-
-uniform float focalDist;
-
-float asdf = 0.0;
 
 void main()
 {
 	float dx = 2.0 / 1280.0;
 	float dy = 2.0 / 0720.0;
 	
-	float depth = texture2D(depthTex, gl_TexCoord[0].xy).x;
-	float n = 1.0; // camera z near
-	float f = 100000.0; // camera z far
-	depth = 2000.0 * (2.0 * n) / (f + n - depth * (f - n));
-
-	
-	float focalDist2 = 2000.0 * (2.0 * n) / (f + n - focalDist * (f - n));
-
-	depth = abs(1.0 - sqrt(depth / focalDist2));
-	depth = clamp(depth, 0.0, 1.0);
 	vec4 sum = vec4(0.0);
-	if(depth >= 0.5)
+	vec4 fin;
+	float[] pascal = float[7](1.0, 6.0, 15.0, 20.0, 15.0, 6.0, 1.0);
+		
+	for(int x = 0; x < 7; x++)
 	{
-		float[] pascal = float[7](1.0, 6.0, 15.0, 20.0, 15.0, 6.0, 1.0);
-		
-		for(int x = 0; x < 7; x++)
+		for(int y = 0; y < 7; y++)
 		{
-			for(int y = 0; y < 7; y++)
-			{
-				sum = sum + texture2D(tex, gl_TexCoord[0].xy + vec2((x - 3) * dx, (y - 3) * dy)) * pascal[x] * pascal[y];
-			}
+			fin = texture2D(tex, gl_TexCoord[0].xy + vec2((x - 3) * dx, (y - 3) * dy)) - vec4(0.9, 0.9, 0.9, 0.0);
+			fin.r = max(0.0, fin.r);
+			fin.g = max(0.0, fin.g);
+			fin.b = max(0.0, fin.b);
+			sum = sum + fin * pascal[x] * pascal[y];
 		}
-		sum = sum / 4096.0;
-		//sum.r = 1.0;
-		depth = 1.0;
-	} else {
-		float[] pascal = float[5](1.0, 4.0, 6.0, 4.0, 1.0);
-		
-		for(int x = 0; x < 5; x++)
-		{
-			for(int y = 0; y < 5; y++)
-			{
-				sum = sum + texture2D(tex, gl_TexCoord[0].xy + vec2((x - 2) * dx, (y - 2) * dy)) * pascal[x] * pascal[y];
-			}
-		}
-		sum = sum / 256.0;
-		//sum.g = 1.0;
-		depth = depth * 2;
 	}
+	sum = 10.0 * sum / 4096.0;
 	
-	vec4 diff = texture2D(tex, gl_TexCoord[0].xy);
-	//diff.b = 1.0;
-	gl_FragColor = sum * depth + diff * (1.0 - depth) + vec4(0.2, 0.0, 0.0, 0.0);
+	gl_FragColor = texture2D(tex, gl_TexCoord[0].xy);
+
+	if(gl_FragColor.r < 0.9) {
+		gl_FragColor.r += sum.r;
+	}
+	if(gl_FragColor.g < 0.9) {
+		gl_FragColor.g += sum.g;
+	}
+	if(gl_FragColor.b < 0.9) {
+		gl_FragColor.b += sum.b;
+	}
+	//gl_FragColor = sum;
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GraphicsLibrary.Core;
+﻿using GraphicsLibrary.Core;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -11,11 +6,13 @@ namespace Resim
 {
 	public class LampSwitch:Entity
 	{
+		public static bool showSwitches = true;
 		public Node connectedLamps;
 		public Entity lampHead, lampPost;
 		public bool enabled = true;
 
-		public LampSwitch(string name, Node connectedLamps) : base(name)
+		public LampSwitch(string name, Node connectedLamps)
+			: base(name)
 		{
 			this.connectedLamps = connectedLamps;
 			lampHead = new Entity(name + "_head");
@@ -45,6 +42,7 @@ namespace Resim
 					}
 				}
 			}
+			isVisible = showSwitches;
 		}
 	}
 }

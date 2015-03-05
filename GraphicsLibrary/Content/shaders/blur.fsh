@@ -5,8 +5,6 @@ uniform sampler2D depthTex;
 
 uniform float focalDist;
 
-float asdf = 0.0;
-
 void main()
 {
 	float dx = 2.0 / 1280.0;

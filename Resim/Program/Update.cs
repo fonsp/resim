@@ -300,11 +300,6 @@ namespace Resim.Program
 				if(freezeKeyDown)
 				{
 					RenderWindow.Instance.timeMultiplier = timeMultPreFreeze;
-
-					foreach(BasicClock clock in clocks.children.Values)
-					{
-						clock.QueueMethod(BasicClock.Jump);
-					}
 				}
 				freezeKeyDown = false;
 			}
