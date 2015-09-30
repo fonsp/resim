@@ -114,7 +114,7 @@ namespace GraphicsLibrary.Core
 			}
 			else
 			{
-				if(parent == Camera.Instance)
+				/*if(parent == Camera.Instance)
 				{
 					derivedOrientation = Quaternion.Conjugate(parent.derivedOrientation) * orientation;
 				}
@@ -125,8 +125,18 @@ namespace GraphicsLibrary.Core
 				Vector3 t = 2 * Vector3.Cross(derivedOrientation.Xyz, position);
 				derivedPosition = parent.derivedPosition + (position + derivedOrientation.W * t + Vector3.Cross(derivedOrientation.Xyz, t));
 				derivedScale = Vector3.Multiply(parent.derivedScale, scale);
+				derivedVelocity = parent.derivedVelocity + velocity;*/
+				if(parent == Camera.Instance)
+				{
+					derivedOrientation = Quaternion.Conjugate(parent.derivedOrientation) * orientation;
+				}
+				else
+				{
+					derivedOrientation = (orientation * parent.derivedOrientation).Normalized();
+				}
+				derivedPosition = parent.derivedPosition + RotateVector(position, parent.derivedOrientation);
+				derivedScale = Vector3.Multiply(parent.derivedScale, scale);
 				derivedVelocity = parent.derivedVelocity + velocity;
-
 			}
 			foreach(Node n in children.Values)
 			{
@@ -322,6 +332,12 @@ namespace GraphicsLibrary.Core
 
 		public virtual void Render(int pass)
 		{
+		}
+
+		public static Vector3 RotateVector(Vector3 vector, Quaternion quaternion)
+		{
+			Vector3 t = 2 * Vector3.Cross(quaternion.Xyz, vector);
+			return vector + quaternion.W * t + Vector3.Cross(quaternion.Xyz, t);
 		}
 	}
 

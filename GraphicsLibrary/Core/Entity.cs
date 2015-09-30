@@ -103,9 +103,30 @@ namespace GraphicsLibrary.Core
 
 				GL.BindTexture(TextureTarget.Texture2D, TextureManager.GetTexture(mesh.material.GetCurrentTexture()));
 
-				GL.PushMatrix();
+				/*GL.PushMatrix();
 				Matrix4 mult = Matrix4.CreateTranslation(derivedPosition) * Matrix4.Scale(derivedScale) * Matrix4.Rotate(derivedOrientation);
-				GL.MultMatrix(ref mult);
+				GL.MultMatrix(ref mult);*/
+
+				GL.MatrixMode(MatrixMode.Modelview);
+				GL.PushMatrix();
+				GL.LoadIdentity();
+				GL.Translate(-Camera.Instance.derivedPosition);
+				if(parent == null)
+				{
+					Matrix4 mult = Matrix4.CreateFromQuaternion(derivedOrientation);
+					GL.MultMatrix(ref mult);
+					GL.Translate(derivedPosition);
+				}
+				else
+				{
+					GL.Translate(parent.derivedPosition);
+					Matrix4 mult = Matrix4.CreateFromQuaternion(parent.derivedOrientation);
+					GL.MultMatrix(ref mult);
+					GL.Translate(position);
+					mult = Matrix4.CreateFromQuaternion(orientation);
+					GL.MultMatrix(ref mult);
+				}
+				GL.Translate(Camera.Instance.derivedPosition);
 
 				GL.Material(MaterialFace.Front, MaterialParameter.Diffuse, mesh.material.GetCurrentColor());
 
